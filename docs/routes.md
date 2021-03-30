@@ -1,5 +1,12 @@
 # Routes
 
+## Route Protectors
+
+```
+SignedInGuard   # Ensures the user is signed in
+SignedOutGuard  # Ensures the user is *not* signed in
+```
+
 ## Authentication
 
 ```
