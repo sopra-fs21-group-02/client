@@ -40,3 +40,9 @@ SignedOutGuard  # Ensures the user is *not* signed in
 ⮑ /route/:id   # Shows the given route on the map
    ⮑ /review   # Shows the screen to create a new review for the given route
 ```
+
+## User Profile
+
+```
+/profile    # Shows the user's own profile
+```

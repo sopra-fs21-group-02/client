@@ -16,11 +16,6 @@ const Container = styled.div`
   align-items: center;
 `;
 
-const Title = styled.h1`
-  font-weight: bold;
-  color: white;
-  text-align: center;
-`;
 /**
  * This is an example of a Functional and stateless component (View) in React. Functional components are not classes and thus don't handle internal state changes.
  * Conceptually, components are like JavaScript functions. They accept arbitrary inputs (called “props”) and return React elements describing what should appear on the screen.
@@ -32,7 +27,7 @@ const Title = styled.h1`
 const Header = props => {
   return (
     <Container height={props.height}>
-      <Title>SoPra FS21 rocks with React!</Title>
+      <h1 class="font-bold text-center text-lg">SoPra FS21 rocks with React!</h1>
       <ReactLogo width={60} height={60} />
     </Container>
   );

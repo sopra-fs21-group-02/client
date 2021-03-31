@@ -1,18 +1,18 @@
 import React from "react";
 import { BrowserRouter, Redirect, Route, Switch } from "react-router-dom";
-import { GameGuard } from "../routeProtectors/GameGuard";
-import GameRouter from "./GameRouter";
-import { LoginGuard } from "../routeProtectors/LoginGuard";
+
+import { SignedInGuard } from "../routeProtectors/SignedInGuard";
+import { SignedOutGuard } from "../routeProtectors/SignedOutGuard";
+
+import UsersRouter from "./UsersRouter";
+import ChatRouter from "./ChatRouter";
+import MapRouter from "./MapRouter";
+
 import Login from "../../login/Login";
+import Profile from "../../profile/Profile";
 
 /**
- * Main router of your application.
- * In the following class, different routes are rendered. In our case, there is a Login Route with matches the path "/login"
- * and another Router that matches the route "/game".
- * The main difference between these two routes is the following:
- * /login renders another component without any sub-route
- * /game renders a Router that contains other sub-routes that render in turn other react components
- * Documentation about routing in React: https://reacttraining.com/react-router/web/guides/quick-start
+ * Main router of the application.
  */
 class AppRouter extends React.Component {
   render() {
@@ -20,24 +20,68 @@ class AppRouter extends React.Component {
       <BrowserRouter>
         <Switch>
           <div>
+            {/* sign-in / sign-out routes */}
             <Route
-              path="/game"
+              path="/sign-in"
               render={() => (
-                <GameGuard>
-                  <GameRouter base={"/game"} />
-                </GameGuard>
-              )}
-            />
-            <Route
-              path="/login"
-              exact
-              render={() => (
-                <LoginGuard>
+                <SignedOutGuard>
                   <Login />
-                </LoginGuard>
+                </SignedOutGuard>
               )}
             />
-            <Route path="/" exact render={() => <Redirect to={"/game"} />} />
+            <Route
+              path="/sign-out"
+              render={() => (
+                <SignedInGuard>
+                  {/* TODO: Log out the user here! */}
+                  {alert("Logged out!")}
+                  <Redirect to={"/"}></Redirect>
+                </SignedInGuard>
+              )}
+            />
+
+            {/* Subrouter for Users area */}
+            <Route
+              path="/users"
+              render={() => (
+                <SignedInGuard>
+                  <UsersRouter base={"/users"}></UsersRouter>
+                </SignedInGuard>
+              )}
+            />
+
+            {/* Subrouter for Chat area */}
+            <Route
+              path="/chat"
+              render={() => (
+                <SignedInGuard>
+                  <ChatRouter base={"/chat"}></ChatRouter>
+                </SignedInGuard>
+              )}
+            />
+
+            {/* Subrouter for Map area */}
+            <Route
+              path="/map"
+              render={() => (
+                <SignedInGuard>
+                  <MapRouter base={"/map"}></MapRouter>
+                </SignedInGuard>
+              )}
+            />
+
+            {/* Edit user's own profile */}
+            <Route
+              path="/profile"
+              render={() => (
+                <SignedInGuard>
+                  <Profile></Profile>
+                </SignedInGuard>
+              )}
+            />
+
+            {/* Fallback: Root path redirects to the map (main entrypoint) */}
+            <Route path="/" exact render={() => <Redirect to={"/map"} />} />
           </div>
         </Switch>
       </BrowserRouter>
