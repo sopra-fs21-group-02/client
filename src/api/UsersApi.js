@@ -80,6 +80,47 @@ export default class UsersApi {
     }
 
     /**
+     * Callback function to receive the result of the usersLoginPost operation.
+     * @callback module:api/UsersApi~usersLoginPostCallback
+     * @param {String} error Error message, if any.
+     * @param data This operation does not return a value.
+     * @param {String} response The complete HTTP response.
+     */
+
+    /**
+     * User is logged in/registered
+     * A user can register/login.
+     * @param {module:model/User} user User object that needs to be created
+     * @param {module:api/UsersApi~usersLoginPostCallback} callback The callback function, accepting three arguments: error, data, response
+     */
+    usersLoginPost(user, callback) {
+      let postBody = user;
+      // verify the required parameter 'user' is set
+      if (user === undefined || user === null) {
+        throw new Error("Missing the required parameter 'user' when calling usersLoginPost");
+      }
+
+      let pathParams = {
+      };
+      let queryParams = {
+      };
+      let headerParams = {
+      };
+      let formParams = {
+      };
+
+      let authNames = [];
+      let contentTypes = ['application/json'];
+      let accepts = ['application/json'];
+      let returnType = null;
+      return this.apiClient.callApi(
+        '/users/login', 'POST',
+        pathParams, queryParams, headerParams, formParams, postBody,
+        authNames, contentTypes, accepts, returnType, null, callback
+      );
+    }
+
+    /**
      * Callback function to receive the result of the usersLogoutPut operation.
      * @callback module:api/UsersApi~usersLogoutPutCallback
      * @param {String} error Error message, if any.

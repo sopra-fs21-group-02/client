@@ -62,6 +62,12 @@ class User {
             if (data.hasOwnProperty('name')) {
                 obj['name'] = ApiClient.convertToType(data['name'], 'String');
             }
+            if (data.hasOwnProperty('provider')) {
+                obj['provider'] = ApiClient.convertToType(data['provider'], 'String');
+            }
+            if (data.hasOwnProperty('providerUid')) {
+                obj['providerUid'] = ApiClient.convertToType(data['providerUid'], 'String');
+            }
             if (data.hasOwnProperty('gender')) {
                 obj['gender'] = Gender.constructFromObject(data['gender']);
             }
@@ -80,11 +86,8 @@ class User {
             if (data.hasOwnProperty('latestLocation')) {
                 obj['latestLocation'] = Coordinate.constructFromObject(data['latestLocation']);
             }
-            if (data.hasOwnProperty('lookingFor')) {
-                obj['lookingFor'] = ApiClient.convertToType(data['lookingFor'], 'String');
-            }
-            if (data.hasOwnProperty('offering')) {
-                obj['offering'] = ApiClient.convertToType(data['offering'], [Tag]);
+            if (data.hasOwnProperty('tags')) {
+                obj['tags'] = ApiClient.convertToType(data['tags'], [Tag]);
             }
             if (data.hasOwnProperty('conversations')) {
                 obj['conversations'] = ApiClient.convertToType(data['conversations'], [Conversation]);
@@ -113,6 +116,16 @@ User.prototype['email'] = undefined;
  * @member {String} name
  */
 User.prototype['name'] = undefined;
+
+/**
+ * @member {String} provider
+ */
+User.prototype['provider'] = undefined;
+
+/**
+ * @member {String} providerUid
+ */
+User.prototype['providerUid'] = undefined;
 
 /**
  * @member {module:model/Gender} gender
@@ -145,14 +158,9 @@ User.prototype['profilePicture'] = undefined;
 User.prototype['latestLocation'] = undefined;
 
 /**
- * @member {module:model/User.LookingForEnum} lookingFor
+ * @member {Array.<module:model/Tag>} tags
  */
-User.prototype['lookingFor'] = undefined;
-
-/**
- * @member {Array.<module:model/Tag>} offering
- */
-User.prototype['offering'] = undefined;
+User.prototype['tags'] = undefined;
 
 /**
  * @member {Array.<module:model/Conversation>} conversations
@@ -166,33 +174,6 @@ User.prototype['dogs'] = undefined;
 
 
 
-
-
-/**
- * Allowed values for the <code>lookingFor</code> property.
- * @enum {String}
- * @readonly
- */
-User['LookingForEnum'] = {
-
-    /**
-     * value: "PETSITTING"
-     * @const
-     */
-    "PETSITTING": "PETSITTING",
-
-    /**
-     * value: "MEETINGFORWALKS"
-     * @const
-     */
-    "MEETINGFORWALKS": "MEETINGFORWALKS",
-
-    /**
-     * value: "BREEDING"
-     * @const
-     */
-    "BREEDING": "BREEDING"
-};
 
 
 

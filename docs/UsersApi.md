@@ -5,6 +5,7 @@ All URIs are relative to *https://api.server.test/v1*
 Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**usersGet**](UsersApi.md#usersGet) | **GET** /users | Return all users
+[**usersLoginPost**](UsersApi.md#usersLoginPost) | **POST** /users/login | User is logged in/registered
 [**usersLogoutPut**](UsersApi.md#usersLogoutPut) | **PUT** /users/logout | Log out from account
 [**usersUserIdDelete**](UsersApi.md#usersUserIdDelete) | **DELETE** /users/{userId} | Delete user with userId
 [**usersUserIdGet**](UsersApi.md#usersUserIdGet) | **GET** /users/{userId} | Return user by userId
@@ -56,6 +57,51 @@ No authorization required
 ### HTTP request headers
 
 - **Content-Type**: Not defined
+- **Accept**: application/json
+
+
+## usersLoginPost
+
+> usersLoginPost(user)
+
+User is logged in/registered
+
+A user can register/login.
+
+### Example
+
+```javascript
+import DogsApp from 'dogs_app';
+
+let apiInstance = new DogsApp.UsersApi();
+let user = new DogsApp.User(); // User | User object that needs to be created
+apiInstance.usersLoginPost(user, (error, data, response) => {
+  if (error) {
+    console.error(error);
+  } else {
+    console.log('API called successfully.');
+  }
+});
+```
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **user** | [**User**](User.md)| User object that needs to be created | 
+
+### Return type
+
+null (empty response body)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+- **Content-Type**: application/json
 - **Accept**: application/json
 
 

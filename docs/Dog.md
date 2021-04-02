@@ -10,7 +10,6 @@ Name | Type | Description | Notes
 **sex** | [**Gender**](Gender.md) |  | 
 **dateOfBirth** | **Date** |  | [optional] 
 **weight** | **Number** |  | [optional] 
-**profilePicture** | **String** |  | [optional] 
 **description** | **String** |  | [optional] 
 **color** | **String** |  | [optional] 
 

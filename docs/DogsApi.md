@@ -6,6 +6,8 @@ Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**usersUserIdDogsDogIdDelete**](DogsApi.md#usersUserIdDogsDogIdDelete) | **DELETE** /users/{userId}/dogs/{dogId} | Delete dog with dogId
 [**usersUserIdDogsDogIdGet**](DogsApi.md#usersUserIdDogsDogIdGet) | **GET** /users/{userId}/dogs/{dogId} | Return dog of user by dogId
+[**usersUserIdDogsDogIdImageGet**](DogsApi.md#usersUserIdDogsDogIdImageGet) | **GET** /users/{userId}/dogs/{dogId}/image | 
+[**usersUserIdDogsDogIdImagePost**](DogsApi.md#usersUserIdDogsDogIdImagePost) | **POST** /users/{userId}/dogs/{dogId}/image | 
 [**usersUserIdDogsDogIdPut**](DogsApi.md#usersUserIdDogsDogIdPut) | **PUT** /users/{userId}/dogs/{dogId} | Update an existing dog
 [**usersUserIdDogsGet**](DogsApi.md#usersUserIdDogsGet) | **GET** /users/{userId}/dogs | Return all dogs of user with userId
 [**usersUserIdDogsPost**](DogsApi.md#usersUserIdDogsPost) | **POST** /users/{userId}/dogs | Add dog to user profile
@@ -101,6 +103,102 @@ No authorization required
 ### HTTP request headers
 
 - **Content-Type**: Not defined
+- **Accept**: application/json
+
+
+## usersUserIdDogsDogIdImageGet
+
+> File usersUserIdDogsDogIdImageGet(userId, dogId)
+
+
+
+Get dog&#39;s profile image
+
+### Example
+
+```javascript
+import DogsApp from 'dogs_app';
+
+let apiInstance = new DogsApp.DogsApi();
+let userId = 789; // Number | Numeric ID of the user
+let dogId = 789; // Number | Numeric ID of the dog
+apiInstance.usersUserIdDogsDogIdImageGet(userId, dogId, (error, data, response) => {
+  if (error) {
+    console.error(error);
+  } else {
+    console.log('API called successfully. Returned data: ' + data);
+  }
+});
+```
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **userId** | **Number**| Numeric ID of the user | 
+ **dogId** | **Number**| Numeric ID of the dog | 
+
+### Return type
+
+**File**
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: image/gif, image/jpeg, image/png, image/tiff, application/json
+
+
+## usersUserIdDogsDogIdImagePost
+
+> usersUserIdDogsDogIdImagePost(userId, dogId, body)
+
+
+
+Upload dog&#39;s profile image
+
+### Example
+
+```javascript
+import DogsApp from 'dogs_app';
+
+let apiInstance = new DogsApp.DogsApi();
+let userId = 789; // Number | Numeric ID of the user
+let dogId = 789; // Number | Numeric ID of the dog
+let body = "/path/to/file"; // File | 
+apiInstance.usersUserIdDogsDogIdImagePost(userId, dogId, body, (error, data, response) => {
+  if (error) {
+    console.error(error);
+  } else {
+    console.log('API called successfully.');
+  }
+});
+```
+
+### Parameters
+
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **userId** | **Number**| Numeric ID of the user | 
+ **dogId** | **Number**| Numeric ID of the dog | 
+ **body** | **File**|  | 
+
+### Return type
+
+null (empty response body)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+- **Content-Type**: image/gif, image/jpeg, image/png, image/tiff
 - **Accept**: application/json
 
 

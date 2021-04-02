@@ -72,9 +72,6 @@ class Dog {
             if (data.hasOwnProperty('weight')) {
                 obj['weight'] = ApiClient.convertToType(data['weight'], 'Number');
             }
-            if (data.hasOwnProperty('profilePicture')) {
-                obj['profilePicture'] = ApiClient.convertToType(data['profilePicture'], 'String');
-            }
             if (data.hasOwnProperty('description')) {
                 obj['description'] = ApiClient.convertToType(data['description'], 'String');
             }
@@ -117,11 +114,6 @@ Dog.prototype['dateOfBirth'] = undefined;
  * @member {Number} weight
  */
 Dog.prototype['weight'] = undefined;
-
-/**
- * @member {String} profilePicture
- */
-Dog.prototype['profilePicture'] = undefined;
 
 /**
  * @member {String} description

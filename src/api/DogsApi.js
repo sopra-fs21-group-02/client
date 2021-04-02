@@ -132,6 +132,106 @@ export default class DogsApi {
     }
 
     /**
+     * Callback function to receive the result of the usersUserIdDogsDogIdImageGet operation.
+     * @callback module:api/DogsApi~usersUserIdDogsDogIdImageGetCallback
+     * @param {String} error Error message, if any.
+     * @param {File} data The data returned by the service call.
+     * @param {String} response The complete HTTP response.
+     */
+
+    /**
+     * Get dog's profile image
+     * @param {Number} userId Numeric ID of the user
+     * @param {Number} dogId Numeric ID of the dog
+     * @param {module:api/DogsApi~usersUserIdDogsDogIdImageGetCallback} callback The callback function, accepting three arguments: error, data, response
+     * data is of type: {@link File}
+     */
+    usersUserIdDogsDogIdImageGet(userId, dogId, callback) {
+      let postBody = null;
+      // verify the required parameter 'userId' is set
+      if (userId === undefined || userId === null) {
+        throw new Error("Missing the required parameter 'userId' when calling usersUserIdDogsDogIdImageGet");
+      }
+      // verify the required parameter 'dogId' is set
+      if (dogId === undefined || dogId === null) {
+        throw new Error("Missing the required parameter 'dogId' when calling usersUserIdDogsDogIdImageGet");
+      }
+
+      let pathParams = {
+        'userId': userId,
+        'dogId': dogId
+      };
+      let queryParams = {
+      };
+      let headerParams = {
+      };
+      let formParams = {
+      };
+
+      let authNames = [];
+      let contentTypes = [];
+      let accepts = ['image/gif', 'image/jpeg', 'image/png', 'image/tiff', 'application/json'];
+      let returnType = File;
+      return this.apiClient.callApi(
+        '/users/{userId}/dogs/{dogId}/image', 'GET',
+        pathParams, queryParams, headerParams, formParams, postBody,
+        authNames, contentTypes, accepts, returnType, null, callback
+      );
+    }
+
+    /**
+     * Callback function to receive the result of the usersUserIdDogsDogIdImagePost operation.
+     * @callback module:api/DogsApi~usersUserIdDogsDogIdImagePostCallback
+     * @param {String} error Error message, if any.
+     * @param data This operation does not return a value.
+     * @param {String} response The complete HTTP response.
+     */
+
+    /**
+     * Upload dog's profile image
+     * @param {Number} userId Numeric ID of the user
+     * @param {Number} dogId Numeric ID of the dog
+     * @param {File} body 
+     * @param {module:api/DogsApi~usersUserIdDogsDogIdImagePostCallback} callback The callback function, accepting three arguments: error, data, response
+     */
+    usersUserIdDogsDogIdImagePost(userId, dogId, body, callback) {
+      let postBody = body;
+      // verify the required parameter 'userId' is set
+      if (userId === undefined || userId === null) {
+        throw new Error("Missing the required parameter 'userId' when calling usersUserIdDogsDogIdImagePost");
+      }
+      // verify the required parameter 'dogId' is set
+      if (dogId === undefined || dogId === null) {
+        throw new Error("Missing the required parameter 'dogId' when calling usersUserIdDogsDogIdImagePost");
+      }
+      // verify the required parameter 'body' is set
+      if (body === undefined || body === null) {
+        throw new Error("Missing the required parameter 'body' when calling usersUserIdDogsDogIdImagePost");
+      }
+
+      let pathParams = {
+        'userId': userId,
+        'dogId': dogId
+      };
+      let queryParams = {
+      };
+      let headerParams = {
+      };
+      let formParams = {
+      };
+
+      let authNames = [];
+      let contentTypes = ['image/gif', 'image/jpeg', 'image/png', 'image/tiff'];
+      let accepts = ['application/json'];
+      let returnType = null;
+      return this.apiClient.callApi(
+        '/users/{userId}/dogs/{dogId}/image', 'POST',
+        pathParams, queryParams, headerParams, formParams, postBody,
+        authNames, contentTypes, accepts, returnType, null, callback
+      );
+    }
+
+    /**
      * Callback function to receive the result of the usersUserIdDogsDogIdPut operation.
      * @callback module:api/DogsApi~usersUserIdDogsDogIdPutCallback
      * @param {String} error Error message, if any.
