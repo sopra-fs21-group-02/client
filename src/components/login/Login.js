@@ -20,11 +20,22 @@ const FormContainer = styled.div`
 class Login extends React.Component {
 
   async onLogin(response){
-    const tokenId = response.tokenId;
-    console.log(tokenId)
-    const url = "/login/"+tokenId;
-    //const res = await api.post(url);
+    const requestBody =JSON.stringify({
+      tokenId: response.tokenId,
+      emailId: response.profileObj.email
+    });
+
+    console.log(requestBody);
+
+    const res = await api.post("v1/users/login", requestBody);
+
+    if(res.data){
+      this.props.history.push('/profile');
+    }else{
+      this.props.history.push('/map');
+    }
   }
+
 
 
   render() {
