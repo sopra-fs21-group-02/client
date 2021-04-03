@@ -27,7 +27,7 @@ class Login extends React.Component {
 
     console.log(requestBody);
 
-    const res = await api.post("/login", requestBody);
+    const res = await api.post("v1/users/login", requestBody);
 
     if(res.data){
       this.props.history.push('/profile');
