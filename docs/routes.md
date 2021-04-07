@@ -34,7 +34,7 @@ SignedOutGuard  # Ensures the user is *not* signed in
 ```
 /map            # Shows the map at the user's current location
 ⮑ /filters     # Shows the map filtering options
-⮑ /user/:id    # Shows the given user on the map
+⮑ /users/:id    # Shows the given user on the map
 ⮑ /park/:id    # Shows the given park on the map
    ⮑ /review   # Shows the screen to create a new review for the given park
 ⮑ /route/:id   # Shows the given route on the map
