@@ -9,7 +9,7 @@ class UserList extends React.Component {
         this.state = {
             usersList: []
         };
-
+        // TODO
         // this.responseCallback.bind(this);
         // this.initUsers();
     }
