@@ -1,5 +1,5 @@
 import React from "react";
-import { Redirect, Route } from "react-router-dom";
+import { Redirect, Route, Switch } from "react-router-dom";
 import Filters from "../../map/Filters";
 import Map from "../../map/Map";
 import MapUser from "../../map/MapUser";
@@ -11,7 +11,7 @@ import WalkingRoute from "../../map/WalkingRoute";
 class MapRouter extends React.Component {
   render() {
     return (
-      <div>
+      <Switch>
         {/* /map/users/:id shows given user on the map */}
         <Route
           path={`${this.props.base}/users/:id`}
@@ -54,7 +54,7 @@ class MapRouter extends React.Component {
           path={`${this.props.base}`}
           render={() => <Map />}
         />
-      </div>
+      </Switch>
     );
   }
 }

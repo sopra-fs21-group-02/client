@@ -1,5 +1,5 @@
 import React from "react";
-import { Redirect, Route } from "react-router-dom";
+import { Redirect, Route, Switch } from "react-router-dom";
 
 import Contacts from "../../chat/Contacts";
 import Conversation from "../../chat/Conversation";
@@ -8,7 +8,7 @@ import Inbox from "../../chat/Inbox";
 class ChatRouter extends React.Component {
     render() {
       return (
-        <div>
+        <Switch>
           {/* /chat/new shows list of users to start convo with */} 
           <Route
             path={`${this.props.base}/new`}
@@ -27,7 +27,7 @@ class ChatRouter extends React.Component {
             path={`${this.props.base}`}
             render={() => <Inbox />}
           />
-        </div>
+        </Switch>
       );
     }
 }
