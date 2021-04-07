@@ -17,6 +17,13 @@ const FormContainer = styled.div`
   justify-content: center;
 `;
 
+const ErrorMessage = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: 0px;
+  color: orangered;
+`;
+
 class Login extends React.Component {
 
   async onLogin(response){
@@ -30,10 +37,17 @@ class Login extends React.Component {
     const res = await api.post("v1/users/login", requestBody);
 
     if(res.data){
-      this.props.history.push('/profile');
+      localStorage.setItem('jwtToken', res.data.jwtToken);
+
+      if(res.data.isNewUser){
+        this.props.history.push('/profile');
+      }else{
+        this.props.history.push('/map');
+      }
     }else{
-      this.props.history.push('/map');
+
     }
+
   }
 
 
@@ -47,6 +61,7 @@ class Login extends React.Component {
     return (
         <BaseContainer>
           <FormContainer>
+            <ErrorMessage>{this.state.errorMessage}</ErrorMessage>
             <GoogleLogin
                 clientId={getClientId()}
                 buttonText="Login with Google"
