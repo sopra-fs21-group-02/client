@@ -17,13 +17,6 @@ const FormContainer = styled.div`
   justify-content: center;
 `;
 
-const ErrorMessage = styled.div`
-  display: flex;
-  justify-content: center;
-  margin-top: 0px;
-  color: orangered;
-`;
-
 class Login extends React.Component {
 
   async onLogin(response){
@@ -61,7 +54,6 @@ class Login extends React.Component {
     return (
         <BaseContainer>
           <FormContainer>
-            <ErrorMessage>{this.state.errorMessage}</ErrorMessage>
             <GoogleLogin
                 clientId={getClientId()}
                 buttonText="Login with Google"
