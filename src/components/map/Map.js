@@ -3,10 +3,15 @@ import { withRouter } from 'react-router';
 import TabBar from '../../views/TabBar';
 
 import { Map as GoogleMap, GoogleApiWrapper, Marker } from 'google-maps-react';
+import ReactDOM from "react-dom";
+import styled from "styled-components";
+import {Button} from "../../views/design/Button";
+import Reverse from "../../views/design/icons/Reverse";
+import CurrentLocation from "../../views/design/icons/CurrentLocation";
 
-const mapStyles = {
+const style = {
   width: '100%',
-  height: '100%'
+  height: '92%'
 };
 
 class Map extends React.Component {
@@ -15,11 +20,22 @@ class Map extends React.Component {
     this.saveLatestPosition = this.saveLatestPosition.bind(this);
     this.getCurrentLocation = this.getCurrentLocation.bind(this);
     this.onMarkerClick = this.onMarkerClick.bind(this);
+    this.setState = this.setState.bind(this);
+    this.centerMoved = this.centerMoved.bind(this);
     this.state = {
-      currentLocation: {lat: 5, lng: 45},
+      mapCenter: {lat: 47.497215999999995, lng: 8.71956479999999},
+      currentLocation: {lat: null, lng: null},
       activeMarker: {},          // Shows the active marker upon click
-      users: []
+      users: [],
+      centerAroundCurrentLocation: true,
+      isMapDragged: false
     };
+  }
+
+  _mapLoaded(mapProps, map) {
+    map.setOptions({
+      styles: mapStyle
+    })
   }
 
   onMarkerClick = (props, marker, e) => {
@@ -28,21 +44,45 @@ class Map extends React.Component {
   };
 
   saveLatestPosition(position) {
-    this.setState({currentLocation: {lat : position.coords.latitude, lng : position.coords.longitude},});
+    this.setState({currentLocation: {lat: position.coords.latitude, lng: position.coords.longitude},});
+    if (this.state.isMapDragged === false){
+      this.setState({mapCenter: this.state.currentLocation});
+    }
   }
 
-  getCurrentLocation(){
+  getCurrentLocation() {
     if ("geolocation" in navigator) {
-        navigator.geolocation.getCurrentPosition(this.saveLatestPosition);
+      navigator.geolocation.getCurrentPosition(this.saveLatestPosition);
+    } else {
+      throw "you did not allow your location. Please allow it to use the app"
     }
-    else{
-        console.log("else ")
-        throw "you did not allow your location. Please allow it to use the app"
-    }
+  }
+
+  centerMoved(mapProps, map) {
+    console.log(this.state.isMapDragged)
+    this.setState({isMapDragged: true})
+    console.log(this.state.isMapDragged)
+  }
+
+  redirectToCurrentLocation() {
+    this.setState({isMapDragged: false})
+    this.setState({mapCenter: this.state.currentLocation})
+    this.getCurrentLocation()
   }
 
   componentDidMount() {
+    setInterval(this.getCurrentLocation(), 1000);
+    console.log("recentered")
+    if (this.props.centerAroundCurrentLocation) {
+      this.getCurrentLocation();
+      this.setState({mapCenter: this.state.currentLocation});
+    }
+
     this.getCurrentLocation()
+    if (this.state.isMapDragged === false) {
+      this.setState({mapCenter: this.state.currentLocation});
+    }
+
 
     // TODO: Fetch users from API
     this.setState({
@@ -61,7 +101,7 @@ class Map extends React.Component {
           name: "User Two",
           status: "ONLINE",
           location: {
-            lat: 47.381019226154905, 
+            lat: 47.381019226154905,
             lng: 7.951315032221059
           }
         },
@@ -81,15 +121,19 @@ class Map extends React.Component {
   render() {
     console.log(this.state.currentLocation)
     return (
-      <div>
-        <GoogleMap
-            google={this.props.google}
-            zoom={14}
-            style={mapStyles}
-            center={this.state.currentLocation}
-            fullscreenControl={false}
-            mapTypeControl={false}
-        >
+        <div>
+          <GoogleMap
+              google={this.props.google}
+              zoom={14}
+              style={style}
+              center={this.state.mapCenter}
+              fullscreenControl={false}
+              mapTypeControl={false}
+              onReady={(mapProps, map) => this._mapLoaded(mapProps, map)}
+              onDragend={this.centerMoved}
+              centerAroundCurrentLocation={true}
+              streetViewControl={false}
+          >
             {/* Other Users */}
             {this.state.users.map((user, id) => {
               let iconUrl = "";
@@ -109,15 +153,260 @@ class Map extends React.Component {
                   icon={iconUrl} />
               )
             })}
-        </GoogleMap>
+            {/* Users Current Location displayed*/}
+            <Marker
+                title={"Your current location"}
+                key={this.id}
+                position={{lat: this.state.currentLocation.lat, lng: this.state.currentLocation.lng}}
+                icon={"/images/map/marker-own.png"}/>
 
-        <div className="absolute inset-x-0 bottom-0">
-          <TabBar active="map" />
+            <div className="absolute inset-x-0 bottom-15 right-0  w-12 max-w-1/4 paddingBottom: 20">
+                  <CurrentLocation
+                      active={this.state.isMapDragged}
+                      onClick={() => this.redirectToCurrentLocation()}
+              />
+            </div>
+          </GoogleMap>
+          <div className="absolute inset-x-0 bottom-0">
+            <TabBar active="map"/>
+          </div>
         </div>
-      </div>
     )
   }
 }
+
+const mapStyle = [
+  {
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#f5f5f5"
+      }
+    ]
+  },
+  {
+    "elementType": "labels.icon",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#616161"
+      }
+    ]
+  },
+  {
+    "elementType": "labels.text.stroke",
+    "stylers": [
+      {
+        "color": "#f5f5f5"
+      }
+    ]
+  },
+  {
+    "featureType": "administrative.land_parcel",
+    "elementType": "labels",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "administrative.land_parcel",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#bdbdbd"
+      }
+    ]
+  },
+  {
+    "featureType": "landscape.man_made",
+    "elementType": "labels.icon",
+    "stylers": [
+      {
+        "color": "#0433ff"
+      },
+      {
+        "visibility": "on"
+      }
+    ]
+  },
+  {
+    "featureType": "poi",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#eeeeee"
+      }
+    ]
+  },
+  {
+    "featureType": "poi",
+    "elementType": "labels.text",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "poi",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#757575"
+      }
+    ]
+  },
+  {
+    "featureType": "poi.business",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "poi.park",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#e5e5e5"
+      }
+    ]
+  },
+  {
+    "featureType": "poi.park",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#9e9e9e"
+      }
+    ]
+  },
+  {
+    "featureType": "road",
+    "stylers": [
+      {
+        "visibility": "simplified"
+      }
+    ]
+  },
+  {
+    "featureType": "road",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#ffffff"
+      }
+    ]
+  },
+  {
+    "featureType": "road",
+    "elementType": "labels.icon",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "road.arterial",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#757575"
+      }
+    ]
+  },
+  {
+    "featureType": "road.highway",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#dadada"
+      }
+    ]
+  },
+  {
+    "featureType": "road.highway",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#616161"
+      }
+    ]
+  },
+  {
+    "featureType": "road.local",
+    "elementType": "labels",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "road.local",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#9e9e9e"
+      }
+    ]
+  },
+  {
+    "featureType": "transit",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "transit.line",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#e5e5e5"
+      }
+    ]
+  },
+  {
+    "featureType": "transit.station",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#eeeeee"
+      }
+    ]
+  },
+  {
+    "featureType": "water",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#c9c9c9"
+      }
+    ]
+  },
+  {
+    "featureType": "water",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#9e9e9e"
+      }
+    ]
+  }
+]
 
 export default withRouter(
   GoogleApiWrapper({
