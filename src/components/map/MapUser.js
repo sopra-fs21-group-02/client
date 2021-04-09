@@ -5,17 +5,21 @@ import { Map as GoogleMap, GoogleApiWrapper, Marker } from 'google-maps-react';
 import Dog from '../../views/profile/Dog';
 import Button from '../../views/design/Button';
 import StatusIndicator from '../../views/design/StatusIndicator';
+import moment from 'moment';
+
+import GeoCoordinateHelper from '../../helpers/GeoCoordinateHelper';
+import DateHelper from '../../helpers/DateHelper';
 
 const ALL_USERS = [
   {
     id: 1,
     name: "User One",
     bio: "I love all dogs, but Dalamtians are my absolute favorite! Totally open to watch your dogs while you are on holiday!",
+    profilePicture: "https://upload.wikimedia.org/wikipedia/en/6/64/Cruella_de_Vil.png",
     status: "ONLINE",
-    distance: "15KM AWAY",
-    location: {
-      lat: 47.38507005180391,
-      lng: 7.944326876563231
+    latestLocation: {
+      latitude: 47.38507005180391,
+      longitude: 7.944326876563231
     },
     dogs: [
       {
@@ -23,7 +27,7 @@ const ALL_USERS = [
         name: "Bello",
         sex: "MALE",
         breed: "Dalmatian",
-        age: "6 Months",
+        dateOfBirth: "2020-10-01",
         imageUrl: "https://www.pdsa.org.uk/media/7888/dalmatian-gallery-outdoors-8-min.jpg"
       },
       {
@@ -31,7 +35,7 @@ const ALL_USERS = [
         name: "Winston",
         sex: "MALE",
         breed: "Dalmatian",
-        age: "3 Years",
+        dateOfBirth: "2018-04-01",
         imageUrl: "https://vetstreet-brightspot.s3.amazonaws.com/ee/140380a73111e0a0d50050568d634f/file/Dalmatian-2-645mk062311.jpg"
       },
       {
@@ -39,7 +43,7 @@ const ALL_USERS = [
         name: "Fifi",
         sex: "FEMALE",
         breed: "Dalmatian",
-        age: "4 Years",
+        dateOfBirth: "2017-04-01",
         imageUrl: "http://azure.wgp-cdn.co.uk/app-yourdog/posts/dalmatian.jpg"
       },
       {
@@ -47,7 +51,7 @@ const ALL_USERS = [
         name: "Jumper",
         sex: "MALE",
         breed: "Dalmatian",
-        age: "11 Months",
+        dateOfBirth: "2020-03-01",
         imageUrl: "https://dogtime.com/assets/uploads/gallery/dalmatian-dog-breed-pictures/10-water.jpg"
       }
     ]
@@ -56,11 +60,11 @@ const ALL_USERS = [
     id: 2,
     name: "User Two",
     bio: "I'm a user and I like dogs!!!",
+    profilePicture: "https://upload.wikimedia.org/wikipedia/en/6/64/Cruella_de_Vil.png",
     status: "ONLINE",
-    distance: "1KM AWAY",
-    location: {
-      lat: 47.381019226154905, 
-      lng: 7.951315032221059
+    latestLocation: {
+      latitude: 47.381019226154905, 
+      longitude: 7.951315032221059
     },
     dogs: [
       {
@@ -68,7 +72,7 @@ const ALL_USERS = [
         name: "Fifi",
         sex: "FEMALE",
         breed: "Dalmatian",
-        age: "4 Years",
+        dateOfBirth: "2017-04-01",
         imageUrl: "http://azure.wgp-cdn.co.uk/app-yourdog/posts/dalmatian.jpg"
       }
     ]
@@ -77,11 +81,11 @@ const ALL_USERS = [
     id: 3,
     name: "User Three",
     bio: "Lorem ipsum dolor sit amet",
+    profilePicture: "https://upload.wikimedia.org/wikipedia/en/6/64/Cruella_de_Vil.png",
     status: "OFFLINE",
-    distance: "5KM AWAY",
-    location: {
-      lat: 47.38275533240448,
-      lng: 7.931205231766877
+    latestLocation: {
+      latitude: 47.38275533240448,
+      longitude: 7.931205231766877
     },
     dogs: [
       {
@@ -89,7 +93,7 @@ const ALL_USERS = [
         name: "Winston",
         sex: "MALE",
         breed: "Dalmatian",
-        age: "3 Years",
+        dateOfBirth: "2018-04-01",
         imageUrl: "https://vetstreet-brightspot.s3.amazonaws.com/ee/140380a73111e0a0d50050568d634f/file/Dalmatian-2-645mk062311.jpg"
       }
     ]
@@ -115,20 +119,25 @@ class MapUser extends React.Component {
     super(props);
     this.state = {
       user: {
-        name: "Loading",
+        name: "",
+        bio: "",
         id: 0,
-        location: {
-          lat: 0,
-          lng: 0
+        latestLocation: {
+          latitude: 0,
+          longitude: 0
         },
         status: "",
-        dogs: [],
-        distance: ""
+        dogs: []
+      },
+      ownLocation: {
+        latitude: 0,
+        longitude: 0
       }
     };
 
     this.redirectToChat = this.redirectToChat.bind(this);
     this.redirectToProfile = this.redirectToProfile.bind(this);
+    this.saveOwnLocation = this.saveOwnLocation.bind(this);
   }
 
   componentDidMount() {
@@ -137,6 +146,8 @@ class MapUser extends React.Component {
     this.setState({
       user: user
     });
+
+    GeoCoordinateHelper.getCurrentLocation(this.saveOwnLocation);
   }
 
   redirectToProfile() {
@@ -149,6 +160,15 @@ class MapUser extends React.Component {
     this.props.history.push(url);
   }
 
+  saveOwnLocation(position) {
+    this.setState({
+      ownLocation: {
+        latitude: position.coords.latitude,
+        longitude: position.coords.longitude
+      }
+    });
+  }
+
   render() {
     let iconUrl = "";
     if (this.state.user.status === "ONLINE") {
@@ -157,13 +177,30 @@ class MapUser extends React.Component {
       iconUrl = "/images/map/marker-offline.png";
     }
 
+    let distance = GeoCoordinateHelper.getDistanceFromLatLonInKm(this.state.ownLocation.latitude, this.state.ownLocation.longitude,
+                                                                 this.state.user.latestLocation.latitude, this.state.user.latestLocation.longitude);
+    
+    // Cloaks the distance string while own location has not been loaded
+    let distanceString = () => {
+      if(this.state.ownLocation.latitude > 0 && this.state.ownLocation.longitude > 0) {
+        return Math.round(distance).toString() + "KM AWAY";
+      } else {
+        return "...";
+      }
+    }
+
+    let googleMapsPosition = {
+      lat: this.state.user.latestLocation.latitude, 
+      lng: this.state.user.latestLocation.longitude
+    }
+
     // TODO: Fix map alignment (oversheets screen bottom atm.)
     return (
       <div className="h-screen flex flex-col">
         <div className="p-4 bg-gray-100">
           <div className="flex">
             <div className="flex-none mr-4">
-              <img src="https://upload.wikimedia.org/wikipedia/en/6/64/Cruella_de_Vil.png" className="h-24 w-24 rounded-full bg-gray-400"></img>
+              <img src={this.state.user.profilePicture} className="h-24 w-24 rounded-full bg-gray-400"></img>
             </div>
             <div>
               <div>
@@ -171,7 +208,7 @@ class MapUser extends React.Component {
               </div>
               <div>
                 <StatusIndicator status={this.state.user.status} />
-                <span className="text-xs font-bold text-gray-500 ml-2">{this.state.user.distance}</span>
+                <span className="text-xs font-bold text-gray-500 ml-2">{distanceString()}</span>
               </div>
               <div>
                 <p>{this.state.user.bio}</p>
@@ -182,9 +219,10 @@ class MapUser extends React.Component {
             <h2 className="font-bold text-lg mb-2 mt-4">DOGS</h2>
             <div className="flex flex-wrap">
               {this.state.user.dogs.map(dog => {
+                let ageString = DateHelper.getAgeStringFromDateOfBirth(dog.dateOfBirth);
                 return (
                   <div key={dog.id} className="w-1/2">
-                    <Dog name={dog.name} sex={dog.sex} breed={dog.breed} age={dog.age} imageUrl={dog.imageUrl}></Dog>
+                    <Dog name={dog.name} sex={dog.sex} breed={dog.breed} age={ageString} imageUrl={dog.imageUrl}></Dog>
                   </div>   
                 )
               })}
@@ -201,7 +239,7 @@ class MapUser extends React.Component {
               google={this.props.google}
               zoom={18}
               containerStyle={mapStyles}
-              center={this.state.user.location}
+              center={googleMapsPosition}
               fullscreenControl={false}
               mapTypeControl={false}
           >
@@ -211,7 +249,7 @@ class MapUser extends React.Component {
               name={this.state.user.name}
               id={this.state.user.id}
               key={this.state.user.id}
-              position={this.state.user.location}
+              position={googleMapsPosition}
               onClick={this.onMarkerClick}
               icon={iconUrl} />
           </GoogleMap>

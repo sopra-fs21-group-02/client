@@ -5,6 +5,7 @@ import TabBar from '../../views/TabBar';
 import { Map as GoogleMap, GoogleApiWrapper, InfoWindow, Marker } from 'google-maps-react';
 import ReactDOM from "react-dom";
 import styled from "styled-components";
+import GeoCoordinateHelper from '../../helpers/GeoCoordinateHelper';
 
 const mapStyles = {
   width: '100%',
@@ -15,7 +16,6 @@ class Map extends React.Component {
   constructor(props) {
     super(props);
     this.saveLatestPosition = this.saveLatestPosition.bind(this);
-    this.getCurrentLocation = this.getCurrentLocation.bind(this);
     this.state = {
       currentLocation: {lat: 5, lng: 45},
       activeMarker: {},          // Shows the active marker upon click
@@ -30,23 +30,13 @@ class Map extends React.Component {
   };
 
   saveLatestPosition(position) {
-    this.setState({currentLocation: {lat : position.coords.latitude, lng : position.coords.longitude},});
-  }
-
-  getCurrentLocation(){
-    if ("geolocation" in navigator) {
-        navigator.geolocation.getCurrentPosition(this.saveLatestPosition);
-    }
-    else{
-        console.log("else ")
-        throw "you did not allow your location. Please allow it to use the app"
-    }
+    this.setState({currentLocation: {lat : position.coords.latitude, lng : position.coords.longitude}});
   }
 
   componentDidMount() {
-    this.getCurrentLocation()
+    GeoCoordinateHelper.getCurrentLocation(this.saveLatestPosition);
   }
-
+  
   render() {
     console.log(this.state.currentLocation)
     return (
@@ -68,7 +58,9 @@ class Map extends React.Component {
   }
 }
 
-export default GoogleApiWrapper({
-  apiKey: 'AIzaSyA0LrnCgNKy53NOcrnzzUkHJxeD5eyeWT4'
-})(Map);
+export default withRouter(
+  GoogleApiWrapper({
+    apiKey: 'AIzaSyA0LrnCgNKy53NOcrnzzUkHJxeD5eyeWT4'
+  })(Map)
+);
 
