@@ -1,5 +1,5 @@
 import React from "react";
-import { Redirect, Route } from "react-router-dom";
+import { Redirect, Route, Switch } from "react-router-dom";
 
 import User from "../../users/User";
 import UserList from "../../users/UserList";
@@ -7,7 +7,7 @@ import UserList from "../../users/UserList";
 class UsersRouter extends React.Component {
   render() {
     return (
-      <div>
+      <Switch>
         {/* /users/:id shows user's full profile by ID */}
         <Route
           path={`${this.props.base}/:id`}
@@ -20,7 +20,7 @@ class UsersRouter extends React.Component {
           path={`${this.props.base}`}
           render={() => <UserList />}
         />
-      </div>
+      </Switch>
     );
   }
 }
