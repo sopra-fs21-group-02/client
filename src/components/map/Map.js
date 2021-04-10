@@ -17,7 +17,6 @@ class Map extends React.Component {
   constructor(props) {
     super(props);
     this.saveLatestPosition = this.saveLatestPosition.bind(this);
-    this.getCurrentLocation = this.getCurrentLocation.bind(this);
     this.onMarkerClick = this.onMarkerClick.bind(this);
 
     this.state = {
@@ -38,8 +37,6 @@ class Map extends React.Component {
 
   componentDidMount() {
     GeoCoordinateHelper.getCurrentLocation(this.saveLatestPosition);
-
-    this.getCurrentLocation()
 
     // TODO: Fetch users from API
     this.setState({
