@@ -24,6 +24,16 @@ class StatusIndicator extends React.Component {
           <span className="text-xs font-bold text-red-600 inline-block align-middle">OFFLINE</span>
         </div>
       )
+    } else if (this.props.status === "UNREAD") {
+      return (
+        <div className="inline-block">
+          <div className="inline-block align-middle">
+              <span className="h-4 w-4 bg-blue-100 rounded-full flex items-center justify-center">
+                  <span className="h-2 w-2 bg-blue-500 rounded-full"></span>
+              </span>
+          </div>
+        </div>
+      )
     } else {
       console.warn("Status '" + this.props.status + "' is not supported by this component!");
       return (
