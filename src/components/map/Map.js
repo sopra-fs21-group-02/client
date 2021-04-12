@@ -19,10 +19,15 @@ class Map extends React.Component {
     super(props);
     this.saveLatestPosition = this.saveLatestPosition.bind(this);
     this.getCurrentLocation = this.getCurrentLocation.bind(this);
+    this.redirectToCurrentLocation = this.redirectToCurrentLocation.bind(this);
     this.onMarkerClick = this.onMarkerClick.bind(this);
-    this.setState = this.setState.bind(this);
     this.centerMoved = this.centerMoved.bind(this);
+    this._mapLoaded = this._mapLoaded.bind(this);
+
+    this.updateInterval = undefined;
+    
     this.state = {
+      mapZoom: 14,
       mapCenter: {lat: 47.497215999999995, lng: 8.71956479999999},
       currentLocation: {lat: null, lng: null},
       activeMarker: {},          // Shows the active marker upon click
@@ -33,6 +38,7 @@ class Map extends React.Component {
   }
 
   _mapLoaded(mapProps, map) {
+    this.map = map;
     map.setOptions({
       styles: mapStyle
     })
@@ -44,9 +50,10 @@ class Map extends React.Component {
   };
 
   saveLatestPosition(position) {
-    this.setState({currentLocation: {lat: position.coords.latitude, lng: position.coords.longitude},});
+    this.setState({currentLocation: {lat: position.coords.latitude, lng: position.coords.longitude}});
+    
     if (this.state.isMapDragged === false){
-      this.setState({mapCenter: this.state.currentLocation});
+      this.map.panTo(this.state.currentLocation);
     }
   }
 
@@ -59,30 +66,35 @@ class Map extends React.Component {
   }
 
   centerMoved(mapProps, map) {
-    console.log(this.state.isMapDragged)
-    this.setState({isMapDragged: true})
-    console.log(this.state.isMapDragged)
+    if (this.state.isMapDragged) { return; }
+    this.setState({
+      isMapDragged: true,
+    })
   }
 
   redirectToCurrentLocation() {
-    this.setState({isMapDragged: false})
-    this.setState({mapCenter: this.state.currentLocation})
-    this.getCurrentLocation()
+    if (!this.state.isMapDragged) { return; }
+    this.map.setZoom(14);
+    this.map.panTo(this.state.currentLocation);
+    this.setState({
+      isMapDragged: false
+    })
+
+    // Re-set map dragged state once pan/zoom reset is done animating
+    let panFinishCallback = () => {
+      this.setState({
+        isMapDragged: false
+      });
+    }
+    panFinishCallback = panFinishCallback.bind(this);
+    this.props.google.maps.event.addListenerOnce(this.map, 'idle', panFinishCallback);
   }
 
   componentDidMount() {
-    setInterval(this.getCurrentLocation(), 1000);
-    console.log("recentered")
     if (this.props.centerAroundCurrentLocation) {
       this.getCurrentLocation();
-      this.setState({mapCenter: this.state.currentLocation});
+      this.updateInterval = setInterval(this.getCurrentLocation, 1000);
     }
-
-    this.getCurrentLocation()
-    if (this.state.isMapDragged === false) {
-      this.setState({mapCenter: this.state.currentLocation});
-    }
-
 
     // TODO: Fetch users from API
     this.setState({
@@ -118,22 +130,26 @@ class Map extends React.Component {
     });
   }
 
+  componentWillUnmount() {
+    clearInterval(this.updateInterval);
+  }
+
   render() {
-    console.log(this.state.currentLocation)
     return (
         <div>
           <GoogleMap
               google={this.props.google}
-              zoom={14}
               style={style}
               center={this.state.mapCenter}
+              zoom={this.state.mapZoom}
               fullscreenControl={false}
               mapTypeControl={false}
               onReady={(mapProps, map) => this._mapLoaded(mapProps, map)}
-              onDragend={this.centerMoved}
-              centerAroundCurrentLocation={true}
+              onDragstart={this.centerMoved}
+              onZoomChanged={this.centerMoved}
               streetViewControl={false}
           >
+
             {/* Other Users */}
             {this.state.users.map((user, id) => {
               let iconUrl = "";
@@ -153,7 +169,8 @@ class Map extends React.Component {
                   icon={iconUrl} />
               )
             })}
-            {/* Users Current Location displayed*/}
+
+            {/* Users Current Location */}
             <Marker
                 title={"Your current location"}
                 key={this.id}
@@ -161,9 +178,9 @@ class Map extends React.Component {
                 icon={"/images/map/marker-own.png"}/>
 
             <div className="absolute inset-x-0 bottom-15 right-0  w-12 max-w-1/4 paddingBottom: 20">
-                  <CurrentLocation
-                      active={this.state.isMapDragged}
-                      onClick={() => this.redirectToCurrentLocation()}
+              <CurrentLocation
+                  active={this.state.isMapDragged}
+                  onClick={() => this.redirectToCurrentLocation()}
               />
             </div>
           </GoogleMap>
