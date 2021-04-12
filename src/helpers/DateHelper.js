@@ -14,6 +14,10 @@ class DateHelper {
             return years + " Year";
         }
     }
+
+    static getShortElapsedTimeString(date) {
+        return moment(date).fromNow();
+    }
 }
 
 export default DateHelper;
