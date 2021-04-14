@@ -29,6 +29,7 @@ class Profile extends React.Component {
         this.handleBioChange = this.handleBioChange.bind(this);
         this.deleteTag = this.deleteTag.bind(this);
 
+        // TODO: Remove mock data once API is integrated
         this.state = {
             user: {
                 name: "Cruella de Vil",
@@ -222,6 +223,7 @@ class Profile extends React.Component {
         this.props.history.push("/profile/tag/new");
     }
 
+    //TODO adapt method one API is integrated
     handleBioChange(event) {
         this.setState({user : {bio: event.target.value}});
         let newUser = Object.assign({}, this.state.user);
@@ -229,6 +231,7 @@ class Profile extends React.Component {
         this.setState({ user: newUser });
     }
 
+    //TODO adapt method one API is integrated
     deleteTag(tagId){
         let tag;
         let tags = this.state.user.tags;
