@@ -7,6 +7,7 @@ import { SignedOutGuard } from "../routeProtectors/SignedOutGuard";
 import UsersRouter from "./UsersRouter";
 import ChatRouter from "./ChatRouter";
 import MapRouter from "./MapRouter";
+import ProfileRouter from "./ProfileRouter";
 
 import Login from "../../login/Login";
 import Profile from "../../profile/Profile";
@@ -74,7 +75,7 @@ class AppRouter extends React.Component {
             path="/profile"
             render={() => (
               <SignedInGuard>
-                <Profile></Profile>
+                  <ProfileRouter base={"/profile"}></ProfileRouter>
               </SignedInGuard>
             )}
           />
