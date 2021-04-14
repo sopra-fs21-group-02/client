@@ -6,6 +6,7 @@ import DateHelper from "../../helpers/DateHelper";
 import EditDog from "../../views/profile/EditDog";
 import styled from "styled-components";
 import Tag from "../../views/profile/Tag";
+import {array} from "prop-types";
 
 const InputField = styled.input`
   &::placeholder {
@@ -25,10 +26,13 @@ const InputField = styled.input`
 class Profile extends React.Component {
     constructor(props) {
         super(props);
+        this.handleBioChange = this.handleBioChange.bind(this);
+        this.deleteTag = this.deleteTag.bind(this);
+
         this.state = {
             user: {
-                name: "Celine",
-                bio: "",
+                name: "Cruella de Vil",
+                bio: "Short description about you",
                 id: 1,
                 profilePicture: "https://upload.wikimedia.org/wikipedia/en/6/64/Cruella_de_Vil.png",
                 latestLocation: {
@@ -107,13 +111,6 @@ class Profile extends React.Component {
         }
     }
   render() {
-    let bio;
-    if (this.state.user.bio == ""){
-        bio = "Write a short description about you";
-    }
-    else {bio = this.state.user.bio}
-    let plus =<svg width="12" height="28" viewBox="0 0 18 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M11.373 7.67383H17.7188V12.2617H11.373V19.4336H6.53906V12.2617H0.175781V7.67383H6.53906V0.800781H11.373V7.67383Z" fill="black"/></svg>
       return (
           <div className="p-4 h-screen">
               <div className="absolute inset-x-0 top-0">
@@ -133,12 +130,8 @@ class Profile extends React.Component {
                           <StatusIndicator status={this.state.user.status} />
                       </div>
                       <div className="w-screen select-text text-black flex flex-content flex-box mr-0">
-                          <InputField
-                              placeholder={bio}
-                              onChange={e => {
-                                  this.handleInputChange('bio', e.target.value);
-                              }}
-                          />
+                          <textarea value={this.state.user.bio}
+                              onChange={this.handleBioChange}/>
                       </div>
                   </div>
               </div>
@@ -166,7 +159,7 @@ class Profile extends React.Component {
                           <span className="font-bold text-m leading-none">Add Dog…</span>
                       </div>
                   </div>
-                  </div>
+              </div>
               <div>
                   <h2 className="font-bold text-lg mt-2">OFFERING</h2>
                   <div className="flex flex-wrap">
@@ -174,15 +167,22 @@ class Profile extends React.Component {
                           if (tag.tagType === "OFFERING"){
                           return (
                               <div key={tag.id} className="w-flex mt-2">
-                                  <Tag name={tag.name}></Tag>
+                                  <Tag name={tag.name} onRemoveClick={() => this.deleteTag(tag.id)}></Tag>
                               </div>
                           )}
                       })}
-                      <div className="cursor-pointer w-24 h-10 mt-2 place-items-center inline-block p-2 mr-2 bg-gray-300 font-semibold rounded-md"
-                           onClick={() => this.redirectToAddTag()}>
-                          <h3 className="font-bold leading-none"><span>{plus}</span> Add</h3>
+                      <div className="flex mb-4 cursor-pointer w-18 h-10 mt-2 place-items-center inline-block p-2 bg-gray-300 rounded-md" onClick={() => this.redirectToAddTag()}>
+                          <div className="flex-none mr-2">
+                              <svg width="12" height="28" viewBox="0 0 18 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                  <path d="M11.373 7.67383H17.7188V12.2617H11.373V19.4336H6.53906V12.2617H0.175781V7.67383H6.53906V0.800781H11.373V7.67383Z" fill="black"/></svg>
+                          </div>
+                          <div className="flex-grow">
+                              <h3 className="font-bold leading-none">Add</h3>
+                          </div>
                       </div>
                   </div>
+
+                  {/*the user can add various tags for which he /she is looking for*/}
                   <h2 className="ml-0 font-bold text-lg mt-4">LOOKING FOR</h2>
                   <div className="flex flex-wrap">
                       {this.state.user.tags.map(tag => {
@@ -193,16 +193,20 @@ class Profile extends React.Component {
                                   </div>
                               )}
                       })}
-                      <div className="cursor-pointer w-24 h-10 mt-2 place-items-center inline-block p-2 mr-2 bg-gray-300 font-semibold rounded-md"
-                           onClick={() => this.redirectToAddTag()}>
-                          <h3 className="font-bold leading-none"><span>{plus}</span> Add</h3>
+                      <div className="flex mb-4 cursor-pointer w-18 h-10 mt-2 place-items-center inline-block p-2 bg-gray-300 rounded-md" onClick={() => this.redirectToAddTag()}>
+                          <div className="flex-none mr-2">
+                              <svg width="12" height="28" viewBox="0 0 18 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                  <path d="M11.373 7.67383H17.7188V12.2617H11.373V19.4336H6.53906V12.2617H0.175781V7.67383H6.53906V0.800781H11.373V7.67383Z" fill="black"/></svg>
+                          </div>
+                          <div className="flex-grow">
+                              <h3 className="font-bold leading-none">Add</h3>
+                          </div>
                       </div>
                   </div>
               </div>
-
-            <div className="absolute inset-x-0 bottom-0">
-          <TabBar active="profile" />
-            </div>
+          <div className="absolute inset-x-0 bottom-0">
+            <TabBar active="profile" />
+          </div>
       </div>
     );
   }
@@ -214,15 +218,37 @@ class Profile extends React.Component {
     redirectToEditDog(dogId) {
         this.props.history.push("/profile/dog/" + dogId.toString());
     }
-
-    handleInputChange(bio, value) {
-        this.setState({ [bio]: value });
-    }
-
-
     redirectToAddTag() {
         this.props.history.push("/profile/tag/new");
     }
+
+    handleBioChange(event) {
+        this.setState({user : {bio: event.target.value}});
+        let newUser = Object.assign({}, this.state.user);
+        newUser.bio = event.target.value;
+        this.setState({ user: newUser });
+    }
+
+    deleteTag(tagId){
+        let tag;
+        let tags = this.state.user.tags;
+        let key;
+        let index = 0;
+        for (tag in tags){
+            for (key in tags[tag]){
+                if (tags[tag][key] === tagId){
+                    if (tags[tag][key] === tagId){
+                        console.log("The following tag is deleted")
+                        console.log(tags[index])
+                        delete tags[index];
+                        break
+                    }
+                }
+            }
+            index ++;
+        }
+    }
+
 }
 
 export default withRouter(Profile)
