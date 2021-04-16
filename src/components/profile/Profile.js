@@ -4,24 +4,8 @@ import TabBar from "../../views/TabBar";
 import StatusIndicator from "../../views/design/StatusIndicator";
 import DateHelper from "../../helpers/DateHelper";
 import EditDog from "../../views/profile/EditDog";
-import styled from "styled-components";
 import Tag from "../../views/profile/Tag";
-import {array} from "prop-types";
 
-const InputField = styled.input`
-  &::placeholder {
-    color: black;
-  }
-  height: 35px;
-  width: screen;
-  padding-left: 8px;
-  margin-left: -4px;
-  border: none;
-  border-radius: 20px;
-  margin-bottom: 20px;
-  background: rgba(255, 255, 255, 0.2);
-  color: black;
-`;
 
 class Profile extends React.Component {
     constructor(props) {
@@ -168,7 +152,7 @@ class Profile extends React.Component {
                           if (tag.tagType === "OFFERING"){
                           return (
                               <div key={tag.id} className="w-flex mt-2">
-                                  <Tag name={tag.name} onRemoveClick={() => this.deleteTag(tag.id)}></Tag>
+                                  <Tag name={tag.name} onRemoveClick={() => this.deleteTag(tag.id)} disabled={false}></Tag>
                               </div>
                           )}
                       })}
@@ -223,7 +207,7 @@ class Profile extends React.Component {
         this.props.history.push("/profile/tag/new");
     }
 
-    //TODO adapt method one API is integrated
+    //TODO adapt method once API is integrated
     handleBioChange(event) {
         this.setState({user : {bio: event.target.value}});
         let newUser = Object.assign({}, this.state.user);
@@ -231,7 +215,7 @@ class Profile extends React.Component {
         this.setState({ user: newUser });
     }
 
-    //TODO adapt method one API is integrated
+    //TODO adapt method once API is integrated
     deleteTag(tagId){
         let tag;
         let tags = this.state.user.tags;

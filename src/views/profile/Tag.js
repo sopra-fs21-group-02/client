@@ -13,9 +13,11 @@ class Tag extends React.Component {
                 <h3 className="font-bold leading-none">
                     <span>{tagIcon}</span>
                     {this.props.name}
-                    <span className="cursor-pointer text-gray-700 ml-1"
-                          onClick={this.props.onRemoveClick}> x
-                    </span>
+                    {!this.props.disabled ?
+                        <span className="cursor-pointer text-gray-700 ml-1"
+                              onClick={this.props.onRemoveClick}> x
+                        </span>
+                        : null }
                 </h3>
             </div>
         )
