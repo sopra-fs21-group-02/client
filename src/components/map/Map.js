@@ -9,6 +9,7 @@ import {Button} from "../../views/design/Button";
 import Reverse from "../../views/design/icons/Reverse";
 import CurrentLocation from "../../views/design/icons/CurrentLocation";
 
+
 const style = {
   width: '100%',
   height: '92%'
@@ -125,8 +126,8 @@ class Map extends React.Component {
           name: "User One",
           status: "ONLINE",
           location: {
-            lat: 47.38507005180391,
-            lng: 7.944326876563231
+            latitude: 47.38507005180391,
+            longitude: 7.944326876563231
           }
         },
         {
@@ -134,8 +135,8 @@ class Map extends React.Component {
           name: "User Two",
           status: "ONLINE",
           location: {
-            lat: 47.381019226154905,
-            lng: 7.951315032221059
+            latitude: 47.381019226154905,
+            longitude: 7.951315032221059
           }
         },
         {
@@ -143,13 +144,14 @@ class Map extends React.Component {
           name: "User Three",
           status: "OFFLINE",
           location: {
-            lat: 47.38275533240448,
-            lng: 7.931205231766877
+            latitude: 47.38275533240448,
+            longitude: 7.931205231766877
           }
         }
       ]
     });
   }
+
 
   componentWillUnmount() {
     navigator.geolocation.clearWatch(this.updatePosition);
@@ -206,7 +208,7 @@ class Map extends React.Component {
                   name={user.name}
                   id={user.id}
                   key={user.id}
-                  position={{lat: user.location.lat, lng: user.location.lng}}
+                  position={{lat: user.location.latitude, lng: user.location.longitude}}
                   onClick={this.onMarkerClick}
                   icon={iconUrl} />
               )
