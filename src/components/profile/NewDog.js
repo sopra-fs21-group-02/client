@@ -30,6 +30,25 @@ class NewDog extends React.Component {
             dateOfBirth : ""
         }
     }
+
+    componentDidMount() {
+        let routeId = this.props.match.params.id;
+        if (routeId === undefined) { // New dog
+            this.setState({
+                dog: {
+                    name: "",
+                    image: ""
+                }
+            });
+        } else { // Editing dog
+            let dog = {} 
+            // ...Fetch dog from array/API
+            this.setState({
+                dog: dog
+            });
+        }
+    }
+
     render() {
         let container = "cursor-pointer hover:bg-gray-400 flex-grow inline-block p-3 mr-2 bg-gray-300 text-xs rounded-md";
         let containerMale=container;
