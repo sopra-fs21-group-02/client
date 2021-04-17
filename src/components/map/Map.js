@@ -6,8 +6,7 @@ import { Map as GoogleMap, GoogleApiWrapper, Marker } from 'google-maps-react';
 import ReactDOM from "react-dom";
 import styled from "styled-components";
 import {Button} from "../../views/design/Button";
-import Reverse from "../../views/design/icons/Reverse";
-import CurrentLocation from "../../views/design/icons/CurrentLocation";
+import RecenterMap from "../../views/design/icons/RecenterMap";
 
 
 const style = {
@@ -222,7 +221,7 @@ class Map extends React.Component {
                 icon={"/images/map/marker-own.png"}/>
 
             <div className="absolute inset-x-0 bottom-15 right-0  w-12 max-w-1/4 paddingBottom: 20">
-              <CurrentLocation
+              <RecenterMap
                   active={this.state.isMapDragged}
                   onClick={() => this.redirectToCurrentLocation()}
               />

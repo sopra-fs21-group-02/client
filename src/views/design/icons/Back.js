@@ -1,6 +1,6 @@
 import React from "react";
 
-class Reverse extends React.Component {
+class Back extends React.Component {
   render() {
     return (
         <div onClick={this.props.onClick}>
@@ -14,4 +14,4 @@ class Reverse extends React.Component {
 }
 
 
-export default Reverse;
+export default Back;
