@@ -97,12 +97,13 @@ class Profile extends React.Component {
     }
   render() {
       return (
-          <div className="p-4 h-screen">
-              <div className="absolute inset-x-0 top-0">
-                  <div className=" h-12 bg-gray-300 text-center">
-                      <h1 className="font-bold text-xl align-middle pt-2.5">Edit Profile</h1>
-                  </div>
-              </div>
+        <div className="h-screen w-screen">
+            <div className="absolute inset-x-0 top-0">
+                <div className=" h-12 bg-gray-300 text-center">
+                    <h1 className="font-bold text-xl align-middle pt-2.5">Edit Profile</h1>
+                </div>
+            </div>
+            <div className="h-full overflow-auto w-full p-4 pt-6 pb-24">
               <div className="flex">
                   <div className="flex-none mr-4 mt-10">
                       <img src={this.state.user.profilePicture} className="h-24 w-24 rounded-full bg-gray-400"></img>
@@ -189,10 +190,11 @@ class Profile extends React.Component {
                       </div>
                   </div>
               </div>
-          <div className="absolute inset-x-0 bottom-0">
-            <TabBar active="profile" />
-          </div>
-      </div>
+            </div>
+            <div className="absolute inset-x-0 bottom-0">
+                <TabBar active="profile" />
+            </div>
+        </div>
     );
   }
 
