@@ -3,6 +3,10 @@ import { withRouter } from 'react-router';
 import TabBar from '../../views/TabBar';
 
 import { Map as GoogleMap, GoogleApiWrapper, Marker } from 'google-maps-react';
+import ReactDOM from "react-dom";
+import styled from "styled-components";
+import GeoCoordinateHelper from '../../helpers/GeoCoordinateHelper';
+
 
 const mapStyles = {
   width: '100%',
@@ -13,8 +17,8 @@ class Map extends React.Component {
   constructor(props) {
     super(props);
     this.saveLatestPosition = this.saveLatestPosition.bind(this);
-    this.getCurrentLocation = this.getCurrentLocation.bind(this);
     this.onMarkerClick = this.onMarkerClick.bind(this);
+
     this.state = {
       currentLocation: {lat: 5, lng: 45},
       activeMarker: {},          // Shows the active marker upon click
@@ -28,21 +32,11 @@ class Map extends React.Component {
   };
 
   saveLatestPosition(position) {
-    this.setState({currentLocation: {lat : position.coords.latitude, lng : position.coords.longitude},});
-  }
-
-  getCurrentLocation(){
-    if ("geolocation" in navigator) {
-        navigator.geolocation.getCurrentPosition(this.saveLatestPosition);
-    }
-    else{
-        console.log("else ")
-        throw "you did not allow your location. Please allow it to use the app"
-    }
+    this.setState({currentLocation: {lat : position.coords.latitude, lng : position.coords.longitude}});
   }
 
   componentDidMount() {
-    this.getCurrentLocation()
+    GeoCoordinateHelper.getCurrentLocation(this.saveLatestPosition);
 
     // TODO: Fetch users from API
     this.setState({
@@ -52,8 +46,8 @@ class Map extends React.Component {
           name: "User One",
           status: "ONLINE",
           location: {
-            lat: 47.38507005180391,
-            lng: 7.944326876563231
+            latitude: 47.38507005180391,
+            longitude: 7.944326876563231
           }
         },
         {
@@ -61,8 +55,8 @@ class Map extends React.Component {
           name: "User Two",
           status: "ONLINE",
           location: {
-            lat: 47.381019226154905, 
-            lng: 7.951315032221059
+            latitude: 47.381019226154905, 
+            longitude: 7.951315032221059
           }
         },
         {
@@ -70,14 +64,14 @@ class Map extends React.Component {
           name: "User Three",
           status: "OFFLINE",
           location: {
-            lat: 47.38275533240448,
-            lng: 7.931205231766877
+            latitude: 47.38275533240448,
+            longitude: 7.931205231766877
           }
         }
       ]
     });
   }
-
+  
   render() {
     console.log(this.state.currentLocation)
     return (
@@ -104,7 +98,7 @@ class Map extends React.Component {
                   name={user.name}
                   id={user.id}
                   key={user.id}
-                  position={{lat: user.location.lat, lng: user.location.lng}}
+                  position={{lat: user.location.latitude, lng: user.location.longitude}}
                   onClick={this.onMarkerClick}
                   icon={iconUrl} />
               )
