@@ -28,32 +28,32 @@ class Profile extends React.Component {
                 tags: [
                     {
                         id: 1,
-                        name: "Chat",
+                        name: "💬 Chat",
                         tagType: "OFFERING"
                     },
                     {
                         id: 2,
-                        name: "Training",
+                        name: "🏇🏻 Training",
                         tagType: "LOOKING"
                     },
                     {
                         id: 3,
-                        name: "Petsitting",
+                        name: "👀 Petsitting",
                         tagType: "OFFERING"
                     },
                     {
                         id: 4,
-                        name: "Chat",
+                        name: "💬 Chat",
                         tagType: "LOOKING"
                     },
                     {
                         id: 5,
-                        name: "Shared Food Orders",
+                        name: "🍽️ Shared Food Orders",
                         tagType: "OFFERING"
                     },
                     {
                         id: 6,
-                        name: "Walking Buddies",
+                        name: "🐾 Walking Buddies",
                         tagType: "OFFERING"
                     },
                 ],
@@ -153,7 +153,7 @@ class Profile extends React.Component {
                           if (tag.tagType === "OFFERING"){
                           return (
                               <div key={tag.id} className="w-flex mt-2">
-                                  <Tag name={tag.name} onRemoveClick={() => this.deleteTag(tag.id)} disabled={false}></Tag>
+                                  <Tag name={tag.name} onRemoveClick={() => this.deleteTag(tag.id)} removable={true}></Tag>
                               </div>
                           )}
                       })}
