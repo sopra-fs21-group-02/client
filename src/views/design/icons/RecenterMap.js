@@ -1,8 +1,7 @@
 import React from "react";
-import {withRouter} from "react-router";
 
 
-class CurrentLocation extends React.Component {
+class RecenterMap extends React.Component {
 
     render() {
         let containerClasses = "flex-1 bg-gray-300 hover:bg-gray-400 p-4 cursor-pointer hover:font-bold rounded-full absolute top-4 left-4";
@@ -33,4 +32,4 @@ class CurrentLocation extends React.Component {
     }
 }
 
-export default CurrentLocation;
+export default RecenterMap;
