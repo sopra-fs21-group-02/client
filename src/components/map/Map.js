@@ -11,7 +11,7 @@ import RecenterMap from "../../views/design/icons/RecenterMap";
 
 const style = {
   width: '100%',
-  height: '92%'
+  height: 'calc(100% - 70px)'
 };
 
 class Map extends React.Component {
@@ -175,7 +175,7 @@ class Map extends React.Component {
         <div>
           
           {showOverlay ?
-            <div className="bg-yellow-400 w-screen p-4 z-10 text-center font-semibold text-gray-900">
+            <div className="bg-yellow-400 w-screen p-4 z-10 absolute top-0 inset-x-0 text-center font-semibold text-gray-900">
               <p>{overlayText}</p>
             </div>
           : null}
