@@ -23,6 +23,7 @@ class Map extends React.Component {
     this.onMarkerClick = this.onMarkerClick.bind(this);
     this.centerMoved = this.centerMoved.bind(this);
     this._mapLoaded = this._mapLoaded.bind(this);
+    this.handlePositionError = this.handlePositionError.bind(this);
 
     this.updatePosition = undefined;
     
@@ -33,7 +34,9 @@ class Map extends React.Component {
       activeMarker: {},          // Shows the active marker upon click
       users: [],
       centerAroundCurrentLocation: true,
-      isMapDragged: false
+      isMapDragged: false,
+      isLocationAvailable: true,
+      isLocationDenied: false
     };
   }
 
@@ -50,19 +53,31 @@ class Map extends React.Component {
   };
 
   saveLatestPosition(position) {
-    this.setState({currentLocation: {lat: position.coords.latitude, lng: position.coords.longitude}});
+    this.setState({
+      currentLocation: {lat: position.coords.latitude, lng: position.coords.longitude},
+      isLocationAvailable: true,
+      isLocationDenied: false
+    });
     
     if (this.state.isMapDragged === false){
       this.map.panTo(this.state.currentLocation);
     }
   }
 
+  handlePositionError(error) {
+    if (error.code == error.PERMISSION_DENIED) {
+      this.setState({
+        currentLocation: { lat: null, lng: null },
+        isLocationDenied: true
+      });
+    }
+  }
+
   getCurrentLocation() {
     if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition(this.saveLatestPosition);
+      navigator.geolocation.getCurrentPosition(this.saveLatestPosition, this.handlePositionError);
     } else {
-      // TODO: Show nice message
-      throw "you did not allow your location. Please allow it to use the app"
+      this.setState({ isLocationAvailable: false });
     }
   }
 
@@ -97,7 +112,10 @@ class Map extends React.Component {
       this.getCurrentLocation();
 
       // Listen for changes to the user's position
-      this.updatePosition = navigator.geolocation.watchPosition(this.saveLatestPosition);
+      this.updatePosition = navigator.geolocation.watchPosition(this.saveLatestPosition, this.handlePositionError);
+
+      // Listen for permission changes to re-load location
+      PermissionStatus.onchange = () => { this.getCurrentLocation(); }
     }
 
     // TODO: Fetch users from API
@@ -139,19 +157,40 @@ class Map extends React.Component {
   }
 
   render() {
+    let showOverlay = this.state.currentLocation.lat === null || 
+                      this.state.currentLocation.lng === null ||
+                      !this.state.isLocationAvailable ||
+                      this.state.isLocationDenied;
+
+    let overlayText = "";
+    if (showOverlay && this.state.isLocationDenied) {
+      overlayText = "Please allow location & reload the page!";
+    } else if (showOverlay && this.state.isLocationAvailable) {
+      overlayText = "Loading...";
+    } else if (showOverlay) {
+      overlayText = "Your browser does not support location tracking."
+    }
+    
     return (
         <div>
+          
+          {showOverlay ?
+            <div className="bg-yellow-400 w-screen p-4 z-10 text-center font-semibold text-gray-900">
+              <p>{overlayText}</p>
+            </div>
+          : null}
+
           <GoogleMap
-              google={this.props.google}
-              style={style}
-              center={this.state.mapCenter}
-              zoom={this.state.mapZoom}
-              fullscreenControl={false}
-              mapTypeControl={false}
-              onReady={(mapProps, map) => this._mapLoaded(mapProps, map)}
-              onDragstart={this.centerMoved}
-              onZoomChanged={this.centerMoved}
-              streetViewControl={false}
+          google={this.props.google}
+          style={style}
+          center={this.state.mapCenter}
+          zoom={this.state.mapZoom}
+          fullscreenControl={false}
+          mapTypeControl={false}
+          onReady={(mapProps, map) => this._mapLoaded(mapProps, map)}
+          onDragstart={this.centerMoved}
+          onZoomChanged={this.centerMoved}
+          streetViewControl={false}
           >
 
             {/* Other Users */}
@@ -188,6 +227,7 @@ class Map extends React.Component {
               />
             </div>
           </GoogleMap>
+          
           <div className="absolute inset-x-0 bottom-0">
             <TabBar active="map"/>
           </div>
