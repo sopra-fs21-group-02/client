@@ -24,7 +24,7 @@ class Map extends React.Component {
     this.centerMoved = this.centerMoved.bind(this);
     this._mapLoaded = this._mapLoaded.bind(this);
 
-    this.updateInterval = undefined;
+    this.updatePosition = undefined;
     
     this.state = {
       mapZoom: 14,
@@ -96,9 +96,8 @@ class Map extends React.Component {
       // TODO: Show loading screen before location is determined.
       this.getCurrentLocation();
 
-      // TODO: Use this instead - register a handler that updates when location changes
-      //       https://stackoverflow.com/questions/47581575/only-request-geolocation-information-in-response-to-a-user-gesture
-      this.updateInterval = setInterval(this.getCurrentLocation, 1000);
+      // Listen for changes to the user's position
+      this.updatePosition = navigator.geolocation.watchPosition(this.saveLatestPosition);
     }
 
     // TODO: Fetch users from API
@@ -136,7 +135,7 @@ class Map extends React.Component {
   }
 
   componentWillUnmount() {
-    clearInterval(this.updateInterval);
+    navigator.geolocation.clearWatch(this.updatePosition);
   }
 
   render() {
