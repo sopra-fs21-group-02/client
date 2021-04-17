@@ -3,7 +3,7 @@ import { withRouter } from "react-router";
 import TabBar from "../../views/TabBar";
 import StatusIndicator from "../../views/design/StatusIndicator";
 import DateHelper from "../../helpers/DateHelper";
-import EditDog from "../../views/profile/EditDog";
+import Dog from "../../views/profile/Dog";
 import Tag from "../../views/profile/Tag";
 
 
@@ -129,7 +129,7 @@ class Profile extends React.Component {
                           return (
                               <div key={dog.id} className="w-1/2 "
                                    onClick={() => this.redirectToEditDog(dog.id)}>
-                                  <EditDog name={dog.name} sex={dog.sex} breed={dog.breed} age={ageString} imageUrl={dog.imageUrl}></EditDog>
+                                  <Dog name={dog.name} sex={dog.sex} breed={dog.breed} age={ageString} imageUrl={dog.imageUrl} editable={true}></Dog>
                               </div>
                           )
                       })}
