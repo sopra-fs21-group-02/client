@@ -108,7 +108,6 @@ class Map extends React.Component {
 
   componentDidMount() {
     if (this.props.centerAroundCurrentLocation) {
-      // TODO: Show loading screen before location is determined.
       this.getCurrentLocation();
 
       // Listen for changes to the user's position
