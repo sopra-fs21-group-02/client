@@ -61,6 +61,7 @@ class Map extends React.Component {
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(this.saveLatestPosition);
     } else {
+      // TODO: Show nice message
       throw "you did not allow your location. Please allow it to use the app"
     }
   }
@@ -92,7 +93,11 @@ class Map extends React.Component {
 
   componentDidMount() {
     if (this.props.centerAroundCurrentLocation) {
+      // TODO: Show loading screen before location is determined.
       this.getCurrentLocation();
+
+      // TODO: Use this instead - register a handler that updates when location changes
+      //       https://stackoverflow.com/questions/47581575/only-request-geolocation-information-in-response-to-a-user-gesture
       this.updateInterval = setInterval(this.getCurrentLocation, 1000);
     }
 
