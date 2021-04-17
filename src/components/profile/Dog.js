@@ -18,33 +18,77 @@ const InputField = styled.input`
   color: black;
 `;
 
-class NewDog extends React.Component {
+const ALL_DOGS = [
+    {
+
+            id: 1,
+            name: "Bello",
+            sex: "MALE",
+            breed: "Dalmatian",
+            dateOfBirth: "2020-10-01",
+            imageUrl: "https://www.pdsa.org.uk/media/7888/dalmatian-gallery-outdoors-8-min.jpg"
+        },
+        {
+            id: 2,
+            name: "Winston",
+            sex: "MALE",
+            breed: "Dalmatian",
+            dateOfBirth: "2018-04-01",
+            imageUrl: "https://vetstreet-brightspot.s3.amazonaws.com/ee/140380a73111e0a0d50050568d634f/file/Dalmatian-2-645mk062311.jpg"
+        },
+        {
+            id: 3,
+            name: "Fifi",
+            sex: "FEMALE",
+            breed: "Dalmatian",
+            dateOfBirth: "2017-04-01",
+            imageUrl: "http://azure.wgp-cdn.co.uk/app-yourdog/posts/dalmatian.jpg"
+        },
+
+];
+
+const FAKE_FETCH_DOGS = (id) => {
+    for (let i = 0; i < ALL_DOGS.length; i++) {
+        if(ALL_DOGS[i].id === id) {
+            return ALL_DOGS[i];
+        }
+    }
+}
+
+class Dog extends React.Component {
     constructor() {
         super();
         this.state = {
             active : false,
-            breed : "",
-            sex : "",
-            name : "",
-            imageUrl : "https://www.pdsa.org.uk/media/7888/dalmatian-gallery-outdoors-8-min.jpg",
-            dateOfBirth : ""
+            dog :{
+                breed : "",
+                sex : "",
+                name : "",
+                imageUrl : "https://www.pdsa.org.uk/media/7888/dalmatian-gallery-outdoors-8-min.jpg",
+                dateOfBirth : "",
+                id : 0
+            }
         }
     }
 
-    componentDidMount() {
-        let routeId = this.props.match.params.id;
-        if (routeId === undefined) { // New dog
-            this.setState({
+    async componentDidMount() {
+        let routeId = this.props.match.params.dogId;
+        console.log(routeId)
+        if (routeId === "new") { // New dog
+            await this.setState({
                 dog: {
+                    breed: "",
+                    sex: "",
                     name: "",
-                    image: ""
+                    imageUrl: "https://www.pdsa.org.uk/media/7888/dalmatian-gallery-outdoors-8-min.jpg",
+                    dateOfBirth: "",
+                    id: this.props.match.params.dogId
                 }
             });
         } else { // Editing dog
-            let dog = {} 
-            // ...Fetch dog from array/API
-            this.setState({
-                dog: dog
+            let dogServer = FAKE_FETCH_DOGS(parseInt(routeId));
+            await this.setState({
+                dog: dogServer
             });
         }
     }
@@ -83,8 +127,11 @@ class NewDog extends React.Component {
                 <div className="pt-2 pr-2 flex flex-cols">
                     <div className="flex-grow ml-5 mt-2 pr-10">
                         <h2 className="font-bold text-black">NAME</h2>
+
+                        {/*TODO if value – it should be changeable*/}
                         <InputField
                             placeholder="Fifi"
+                            value = {this.state.dog.name}
                             onChange={e => {
                                 this.handleInputChange('name', e.target.value);
                             }}
@@ -185,4 +232,4 @@ class NewDog extends React.Component {
     }
 }
 
-export default withRouter(NewDog);
+export default withRouter(Dog);

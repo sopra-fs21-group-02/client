@@ -8,20 +8,6 @@ import styled from "styled-components";
 import Tag from "../../views/profile/Tag";
 import {array} from "prop-types";
 
-const InputField = styled.input`
-  &::placeholder {
-    color: black;
-  }
-  height: 35px;
-  width: screen;
-  padding-left: 8px;
-  margin-left: -4px;
-  border: none;
-  border-radius: 20px;
-  margin-bottom: 20px;
-  background: rgba(255, 255, 255, 0.2);
-  color: black;
-`;
 
 class Profile extends React.Component {
     constructor(props) {
@@ -219,6 +205,7 @@ class Profile extends React.Component {
     redirectToEditDog(dogId) {
         this.props.history.push("/profile/dog/" + dogId.toString());
     }
+
     redirectToAddTag() {
         this.props.history.push("/profile/tag/new");
     }
