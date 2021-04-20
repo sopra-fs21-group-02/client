@@ -22,7 +22,7 @@ class Dog extends React.Component {
                       : <div className="flex-none mr-2">
                           <img src={this.props.imageUrl} className="h-16 w-16 rounded-full bg-gray-400"></img>
                       </div> }
-              <div className="flex-grow">
+              <div className="flex-grow ml-3">
                   <h3 className="font-bold leading-none">{this.props.name} <span>{sexIcon}</span></h3>
                   <span className="text-sm leading-none">{this.props.breed}</span><br/>
                   <span className="text-sm leading-none">{this.props.age}</span>
