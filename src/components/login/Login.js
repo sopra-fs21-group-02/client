@@ -17,7 +17,21 @@ const FormContainer = styled.div`
   justify-content: center;
 `;
 
+const ErrorMessage = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+  color: orangered;
+`;
+
 class Login extends React.Component {
+
+  constructor() {
+    super();
+    this.state = {
+      errorMessage: null,
+    };
+  }
 
   async onLogin(response){
     const requestBody =JSON.stringify({
@@ -25,15 +39,24 @@ class Login extends React.Component {
       emailId: response.profileObj.email
     });
 
-    console.log(requestBody);
+    try{
+      const res = await api.post("v1/users/login", requestBody);
 
-    const res = await api.post("v1/users/login", requestBody);
+      localStorage.setItem('accessToken', res.data.accessToken);
+      localStorage.setItem('accessTokenExpiry', res.data.accessTokenExpiry);
 
-    if(res.data){
-      this.props.history.push('/profile');
-    }else{
-      this.props.history.push('/map');
-    }
+      if(res.data.isNewUser){
+        this.props.history.push('/profile');
+      }else{
+        this.props.history.push('/map');
+      }
+    }catch (error) {
+      const errMessage = handleError(error);
+      this.setState({errorMessage:errMessage});
+    };
+
+
+
   }
 
 
@@ -41,12 +64,12 @@ class Login extends React.Component {
   render() {
     const clientId = "1057742566572-4ufig26uc1s8tiggp6ja3tf13s4iuo87.apps.googleusercontent.com";
     const responseGoogle = (response) => {
-      console.log(response);
       this.onLogin(response);
     }
     return (
         <BaseContainer>
           <FormContainer>
+
             <GoogleLogin
                 clientId={getClientId()}
                 buttonText="Login with Google"
@@ -54,6 +77,7 @@ class Login extends React.Component {
                 onFailure={responseGoogle}
                 cookiePolicy={'single_host_origin'}
             />
+            <ErrorMessage>{this.state.errorMessage}</ErrorMessage>
           </FormContainer>
         </BaseContainer>
 
