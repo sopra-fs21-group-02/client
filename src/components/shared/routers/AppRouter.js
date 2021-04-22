@@ -75,7 +75,7 @@ class AppRouter extends React.Component {
             path="/profile"
             render={() => (
               <SignedInGuard>
-                  <ProfileRouter base={"/profile"}></ProfileRouter>
+                <ProfileRouter base={"/profile"}></ProfileRouter>
               </SignedInGuard>
             )}
           />
