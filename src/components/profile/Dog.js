@@ -1,6 +1,9 @@
-import React from 'react';
+import React, {useRef} from 'react';
 import { withRouter } from 'react-router';
 import styled from "styled-components";
+import {RefObject} from "react";
+import moment from "moment";
+
 
 
 const ALL_DOGS = [
@@ -41,6 +44,7 @@ const FAKE_FETCH_DOGS = (id) => {
 }
 
 class Dog extends React.Component {
+    inputRef : RefObject<HTMLInputElement>
 
     constructor() {
         super();
@@ -49,6 +53,8 @@ class Dog extends React.Component {
         this.saveDog = this.saveDog.bind(this);
         this.saveImage = this.saveImage.bind(this);
         this.redirectToProfile = this.redirectToProfile.bind(this);
+        this.deleteDog = this.deleteDog.bind(this);
+        this.checkDate = this.checkDate.bind(this);
         this.inputRef = React.createRef();
         this.state = {
             active : false,
@@ -111,8 +117,8 @@ class Dog extends React.Component {
         }
 
         return (
-            <div className="h-screen">
-                <div className="">
+            <div className="h-screen w-full flex-col">
+                <div className="flex-none z-50">
                     <div className=" h-12 bg-gray-300 text-center">
                         {(!this.state.dog.sex || !this.state.dog.name || !this.state.dog.breed || !this.state.dog.dateOfBirth) ?
                             <h1 className="font-bold text-xl align-middle pt-2.5">New Dog</h1> :
@@ -121,9 +127,11 @@ class Dog extends React.Component {
                     </div>
                 </div>
 
-                <div className="pt-2 pr-2 flex flex-cols">
-                    <div className="flex-grow ml-5 mt-2 pr-10">
-                        <h2 className="font-bold text-black">NAME</h2>
+                {/* to edit or add */}
+                <div className="overflow-auto p-4 flex flex-cols">
+                    {/* attributes of dog: name, breed, date of birth and sex and del dog*/}
+                    <div className="flex-grow w-full">
+                        <h2 className="font-bold">NAME</h2>
                             <input
                                 placeholder="Enter the name of your dog here (e.g. Fifi)."
                                 name = "name"
@@ -158,10 +166,26 @@ class Dog extends React.Component {
                                 onClick={() => this.saveSex("MALE")}>
                             <h3 className="font-bold leading-none">Male</h3>
                         </div>
+
+                        {/* delete button "remove dog" */}
+                        {(this.state.dog.sex || this.state.dog.name || this.state.dog.breed || this.state.dog.dateOfBirth)  ?
+                            <h2 className="font-bold text-black mt-5">REMOVE FROM PROFILE?</h2> : null}
+                        {(this.state.dog.sex || this.state.dog.name || this.state.dog.breed || this.state.dog.dateOfBirth) ?
+                            <div className={container}>
+                                <h3 className="font-bold leading-none">
+                                    Delete Dog
+                                    <span className="cursor-pointer text-gray-700 ml-1"
+                                          onClick={(e) => {
+                                              if (window.confirm('Are you sure you want to remove this dog from your profile?')) this.deleteDog(e)
+                                          }}> x
+                                    </span>
+                                </h3>
+                            </div>
+                            : null}
                     </div>
 
-                    {/* adding image here*/}
-                    <div className="flex mr-2 mt-2">
+                    {/* adding image here */}
+                    <div className="flex m-2">
                     <div className="bg-cover bg-no-repeat bg-center h-20 w-20 rounded-full" style={{
                         backgroundImage: `url(${this.state.dog.imageUrl})`,
                     }}>
@@ -177,20 +201,23 @@ class Dog extends React.Component {
                                             </div>
                                         </div>
                                     </label>
-                                    <input hidden id="fileUpload"
+                                    <input hidden
+                                           id="fileUpload"
                                            type="file"
                                            accept="image/*"
                                            ref={this.inputRef}
-                                           onChange={this.showOpenFileDlg}
+                                           style={{display: 'none'}}
+                                           onChange={e => {this.setFile(e.target.files)}}
                                            className="upload bg-cover bg-no-repeat bg-center h-20 w-20 rounded-full"/>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                </div>
 
-                <div className="absolute inset-x-0 bottom-0">
+                </div>
+                {/*Cancel or Save*/}
+                <div className="absolute inset-x-0 bottom-0 flex-1">
                     <div className=" h-12 bg-gray-300 text-center">
                         <div className="flex">
                             <h1
@@ -206,9 +233,9 @@ class Dog extends React.Component {
         );
     }
 
-    showOpenFileDlg = () => {
+    setFile = (file) => {
         this.inputRef.current.click()
-        this.saveImage(this.inputRef)
+        this.saveImage(file[0]["name"])
     }
 
     //TODO adapt method once API is integrated
@@ -221,7 +248,15 @@ class Dog extends React.Component {
         if (!this.state.dog.sex || !this.state.dog.name || !this.state.dog.breed || !this.state.dog.dateOfBirth){
             alert("please enter all attributes of your dog. Name, breed, date of birth and sex")
         }
+        if (!this.checkDate()){
+            alert("please enter a correct birth date (format JJJJ-MM-DD)")
+        }
         else {this.redirectToProfile()}
+    }
+
+    checkDate(){
+        let date = moment(this.state.dog.dateOfBirth)
+        return date.isValid()
     }
 
     //TODO adapt method once API is integrated
@@ -255,6 +290,11 @@ class Dog extends React.Component {
             return { dog };
         })
         console.log(this.state.dog)
+    }
+
+    deleteDog(e) {
+        delete this.state.dog;
+        this.redirectToProfile()
     }
 }
 
