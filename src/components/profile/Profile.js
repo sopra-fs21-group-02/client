@@ -172,14 +172,14 @@ class Profile extends React.Component {
               </div>
             </div>
 
-            {/*the user can add various tags for which he /she is looking for*/}
+            {/*add tag for which a user is looking for*/}
             <h2 className="ml-0 font-bold text-lg mt-4">LOOKING FOR</h2>
             <div className="flex flex-wrap">
               {this.state.user.tags.map(tag => {
                 if (tag.tagType === "LOOKING") {
                   return (
                     <div key={tag.id} className="w-flex mt-2 ">
-                      <Tag name={tag.name}></Tag>
+                      <Tag name={tag.name} onRemoveClick={() => this.deleteTag(tag.id)} removable={true}></Tag>
                     </div>
                   )
                 }
