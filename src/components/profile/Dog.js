@@ -117,7 +117,7 @@ class Dog extends React.Component {
         }
 
         return (
-            <div className="h-screen w-full flex-col">
+            <div className="h-screen w-full flex-col flex">
                 <div className="flex-none z-50">
                     <div className=" h-12 bg-gray-300 text-center">
                         {(!this.state.dog.sex || !this.state.dog.name || !this.state.dog.breed || !this.state.dog.dateOfBirth) ?
@@ -217,9 +217,9 @@ class Dog extends React.Component {
 
                 </div>
                 {/*Cancel or Save*/}
-                <div className="absolute inset-x-0 bottom-0 flex-1">
-                    <div className=" h-12 bg-gray-300 text-center">
-                        <div className="flex">
+                <div className="flex-none">
+                    <div className="h-12">
+                        <div className="flex bg-gray-300 text-center absolute inset-x-0 bottom-0">
                             <h1
                                 className="hover:bg-gray-400 cursor-pointer hover:font-bold h-12 text-xl align-middle pt-2.5 w-1/2"
                                 onClick={() => this.redirectToProfile()}
