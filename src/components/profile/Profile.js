@@ -97,27 +97,28 @@ class Profile extends React.Component {
     }
   render() {
       return (
-        <div className="h-screen w-screen">
-            <div className="absolute inset-x-0 top-0 z-50">
+        <div className="h-screen w-full flex flex-col">
+            <div className="flex-none z-50">
                 <div className=" h-12 bg-gray-300 text-center">
                     <h1 className="font-bold text-xl align-middle pt-2.5">Edit Profile</h1>
                 </div>
             </div>
-            <div className="h-full overflow-auto w-full p-4 pt-6 pb-24">
-              <div className="flex">
-                  <div className="flex-none mr-4 mt-10">
+            <div className="flex-1 overflow-auto p-4">
+              <div className="flex w-full">
+                  <div className="flex-none mr-4">
                       <img src={this.state.user.profilePicture} className="h-24 w-24 rounded-full bg-gray-400"></img>
                   </div>
-                  <div>
+                  <div className="flex-1">
                       <div>
-                          <h2 className="font-bold text-black mt-10 text-2xl">{this.state.user.name}</h2>
+                          <h2 className="font-bold text-black text-2xl">{this.state.user.name}</h2>
                       </div>
                       <div className="mt-1">
                           <StatusIndicator status={this.state.user.status} />
                       </div>
-                      <div className="w-screen select-text text-black flex flex-content flex-box mr-0">
+                      <div className="w-full select-text text-black mr-0">
                           <textarea value={this.state.user.bio}
-                              onChange={this.handleBioChange}/>
+                              onChange={this.handleBioChange}
+                              className="w-full p-2 bg-white" />
                       </div>
                   </div>
               </div>
@@ -192,7 +193,7 @@ class Profile extends React.Component {
                   </div>
               </div>
             </div>
-            <div className="absolute inset-x-0 bottom-0">
+            <div className="flex-none">
                 <TabBar active="profile" />
             </div>
         </div>
