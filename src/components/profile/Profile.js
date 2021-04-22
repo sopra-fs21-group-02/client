@@ -98,7 +98,7 @@ class Profile extends React.Component {
   render() {
       return (
         <div className="h-screen w-screen">
-            <div className="absolute inset-x-0 top-0">
+            <div className="absolute inset-x-0 top-0 z-50">
                 <div className=" h-12 bg-gray-300 text-center">
                     <h1 className="font-bold text-xl align-middle pt-2.5">Edit Profile</h1>
                 </div>
@@ -133,7 +133,7 @@ class Profile extends React.Component {
                               </div>
                           )
                       })}
-                      <div className="bg-gray-300 cursor-pointer h-16 w-16 rounded-full flex flex-col opacity-80"
+                      <div className="bg-gray-300 cursor-pointer h-16 w-16 rounded-full flex flex-col"
                            onClick={() => this.redirectToAddDog()}>
                           <div className="flex-initial mx-auto mt-0">
                               {<svg width="18" height="60" viewBox="0 0 18 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -158,13 +158,14 @@ class Profile extends React.Component {
                           )}
                       })}
                       <div className="flex mb-4 cursor-pointer w-18 h-10 mt-2 place-items-center inline-block p-2 bg-gray-300 rounded-md" onClick={() => this.redirectToAddTag()}>
-                          <div className="flex-none mr-2">
-                              <svg width="12" height="28" viewBox="0 0 18 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                  <path d="M11.373 7.67383H17.7188V12.2617H11.373V19.4336H6.53906V12.2617H0.175781V7.67383H6.53906V0.800781H11.373V7.67383Z" fill="black"/></svg>
-                          </div>
-                          <div className="flex-grow">
-                              <h3 className="font-bold leading-none">Add</h3>
-                          </div>
+                        <div className="flex-none mr-2">
+                            <svg width="12" height="28" viewBox="0 0 18 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M11.373 7.67383H17.7188V12.2617H11.373V19.4336H6.53906V12.2617H0.175781V7.67383H6.53906V0.800781H11.373V7.67383Z" fill="black"/>
+                            </svg>
+                        </div>
+                        <div className="flex-grow">
+                            <h3 className="font-bold leading-none">Add</h3>
+                        </div>
                       </div>
                   </div>
 
