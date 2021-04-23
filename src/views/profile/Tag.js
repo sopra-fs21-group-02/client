@@ -1,5 +1,4 @@
 import React from 'react';
-import Profile from "../../components/profile/Profile";
 
 class Tag extends React.Component {
   render() {

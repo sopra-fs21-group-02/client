@@ -13,23 +13,19 @@ const suggestedTags = [
     "🍽 Shared Food Orders"
 ]
 
-
-
-const App = () => {
-  const [chosenEmoji, setChosenEmoji] = useState(null);
-
-  const onEmojiClick = (event, emojiObject) => {
-    setChosenEmoji(emojiObject);
-  };}
-
-
 class NewTag extends React.Component {
   constructor() {
     super();
+    this.handleInputChange = this.handleInputChange.bind(this);
+    this.onEmojiClick = this.onEmojiClick.bind(this);
+    this.addCustomTag = this.addCustomTag.bind(this);
+
     this.state = {
-      chosenEmoji: null,
       tagsAdded: [],
-      tagType: "OFFERING"
+      tagType: "OFFERING",
+      customTag:
+          {name: "", emoji : ""},
+      showEmojiSelection : false
     }
   }
 
@@ -43,6 +39,12 @@ class NewTag extends React.Component {
   }
 
   render() {
+    let emoji = "";
+    if (this.state.customTag.emoji === ""){
+      emoji += "☺ Pick Icon ..."}
+    else {
+      emoji += this.state.customTag.emoji}
+
     let saveContainer = "";
     if ((this.state.tagsAdded).length === 0) {
       saveContainer += "h-12 font-bold text-xl align-middle pt-2.5 w-1/2 opacity-20 cursor-not-allowed"
@@ -67,7 +69,7 @@ class NewTag extends React.Component {
           </div>
 
           {/*adding tags*/}
-          <div className="flex-1 ml-3 mt-3">
+          <div className="flex-1 overflow-auto ml-3 mt-3">
             {/*suggested tags*/}
             <div>
               <h2 className="font-bold">SUGGESTED TAGS</h2>
@@ -83,10 +85,39 @@ class NewTag extends React.Component {
             </div>
 
             {/*custom tags*/}
-            <div>
-              <h2 className="font-bold mt-3">ADD A CUSTOM TAG</h2>
 
-              
+            <div>
+              <h2 className="font-bold mt-5 mb-3">ADD A CUSTOM TAG</h2>
+            </div>
+            <div className="mt-2">
+              <div className="flex bg-gray-400">
+                <button
+                    name="emoji"
+                    value={this.state.customTag.emoji}
+                    onChange={this.handleInputChange}
+                    className="w-full text-black text-left text-bold rounded border bg-gray-400 h-9 p-1"
+                    onClick={()=> this.openEmoji()}
+                >{emoji}</button>
+              </div>
+              <div>
+                {this.state.showEmojiSelection ?
+                    <div>
+                      <Picker onEmojiClick={this.onEmojiClick} pickerStyle={{ width: '70%' }}/>
+                    </div> : null}
+              </div>
+
+              <input
+                  placeholder="Tag name ..."
+                  name="name"
+                  value={this.state.customTag.name}
+                  onChange={this.handleInputChange}
+                  className="w-full placeholder-grey rounded border h-9 p-2 mt-3"
+              />
+              <button
+                  className="inline-block p-2 mt-2 mr-2 bg-gray-400 text-white font-semibold text-s rounded-md cursor-pointer"
+                  onClick={this.addCustomTag}
+              >Add</button>
+
 
 
             </div>
@@ -134,12 +165,23 @@ class NewTag extends React.Component {
     this.redirectToProfile()
   }
 
+  addCustomTag(){
+    if (this.state.customTag.name && this.state.customTag.emoji){
+      let newtag = "";
+      newtag += this.state.customTag.emoji;
+      newtag += " ";
+      newtag += this.state.customTag.name;
+      console.log(newtag)
+      this.addTag(newtag)
+    }
+  }
+
   addTag(tagToAdd) {
-    console.log(!(this.state.tagsAdded.indexOf(tagToAdd) > -1))
     if (!(this.state.tagsAdded.indexOf(tagToAdd) > -1)) {
       this.setState({
         tagsAdded: this.state.tagsAdded.concat([tagToAdd])
       })
+      this.setState({customTag : {name : "", emoji : ""}})
     } else {
       alert("you already added this tag. Please add other tags or save the changes")
     }
@@ -152,11 +194,26 @@ class NewTag extends React.Component {
     delete tags[index];
   }
 
-  onEmojiClick(event, emojiObject) {
-    this.setChosenEmoji(emojiObject);
+  handleInputChange(event){
+    this.setState(prevState => {
+      let customTag = Object.assign({}, prevState.customTag);
+      customTag[event.target.name] = event.target.value;
+      return { customTag };
+    })
   }
 
-  setChosenEmoji(emoji) {
+  onEmojiClick(event, emojiObject) {
+    this.setState(prevState => {
+      let customTag = Object.assign({}, prevState.customTag);
+      customTag["emoji"] = emojiObject.emoji;
+      this.setState({showEmojiSelection : false})
+      return { customTag };
+    })
   }
+
+  openEmoji(){
+    this.setState({showEmojiSelection : true})
+  }
+
 }
 export default withRouter(NewTag);
