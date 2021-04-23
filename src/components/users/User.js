@@ -327,7 +327,7 @@ class User extends React.Component {
             <div className=" w-full text-center p-2 mr-2 bg-gray-600 text-white font-semibold rounded-md cursor-pointer"
                  onClick={this.redirectToChat}>💬 Chat</div>
           </div>
-          <TabBar active="profile" />
+          <TabBar active="map" />
         </div>
       </div>
   )
