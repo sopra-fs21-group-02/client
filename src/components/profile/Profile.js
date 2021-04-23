@@ -160,7 +160,8 @@ class Profile extends React.Component {
                   )
                 }
               })}
-              <div className="flex mb-4 cursor-pointer w-18 h-10 mt-2 place-items-center inline-block p-2 bg-gray-300 rounded-md" onClick={() => this.redirectToAddTag()}>
+              <div className="flex mb-4 cursor-pointer w-18 h-10 mt-2 place-items-center inline-block p-2 bg-gray-300 rounded-md"
+                   onClick={() => this.redirectToAddTag("offering")}>
                 <div className="flex-none mr-2">
                   <svg width="12" height="28" viewBox="0 0 18 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M11.373 7.67383H17.7188V12.2617H11.373V19.4336H6.53906V12.2617H0.175781V7.67383H6.53906V0.800781H11.373V7.67383Z" fill="black" />
@@ -184,7 +185,8 @@ class Profile extends React.Component {
                   )
                 }
               })}
-              <div className="flex mb-4 cursor-pointer w-18 h-10 mt-2 place-items-center inline-block p-2 bg-gray-300 rounded-md" onClick={() => this.redirectToAddTag()}>
+              <div className="flex mb-4 cursor-pointer w-18 h-10 mt-2 place-items-center inline-block p-2 bg-gray-300 rounded-md"
+                   onClick={() => this.redirectToAddTag("looking")}>
                 <div className="flex-none mr-2">
                   <svg width="12" height="28" viewBox="0 0 18 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M11.373 7.67383H17.7188V12.2617H11.373V19.4336H6.53906V12.2617H0.175781V7.67383H6.53906V0.800781H11.373V7.67383Z" fill="black" /></svg>
@@ -210,8 +212,8 @@ class Profile extends React.Component {
   redirectToEditDog(dogId) {
     this.props.history.push("/profile/dog/" + dogId.toString());
   }
-  redirectToAddTag() {
-    this.props.history.push("/profile/tag/new");
+  redirectToAddTag(tagType) {
+    this.props.history.push("/profile/tag/" + tagType.toString());
   }
 
   //TODO adapt method once API is integrated
