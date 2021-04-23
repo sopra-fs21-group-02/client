@@ -90,7 +90,7 @@ class NewTag extends React.Component {
               <h2 className="font-bold mt-5 mb-3">ADD A CUSTOM TAG</h2>
             </div>
             <div className="mt-2">
-              <div className="flex bg-gray-400">
+              <div className="flex">
                 <button
                     name="emoji"
                     value={this.state.customTag.emoji}
