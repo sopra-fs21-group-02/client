@@ -108,7 +108,7 @@ const ALL_USERS = [
         name: "👀 Petsitting",
         tagType: "OFFERING"
       }
-      ]
+    ]
   },
   {
     id: 3,
@@ -167,7 +167,7 @@ const ALL_USERS = [
 
 const FAKE_FETCH_USER = (id) => {
   for (let i = 0; i < ALL_USERS.length; i++) {
-    if(ALL_USERS[i].id === id) {
+    if (ALL_USERS[i].id === id) {
       return ALL_USERS[i];
     }
   }
@@ -236,35 +236,35 @@ class User extends React.Component {
 
 
   render() {
-  let distance = GeoCoordinateHelper.getDistanceFromLatLonInKm(this.state.ownLocation.latitude, this.state.ownLocation.longitude,
+    let distance = GeoCoordinateHelper.getDistanceFromLatLonInKm(this.state.ownLocation.latitude, this.state.ownLocation.longitude,
       this.state.user.latestLocation.latitude, this.state.user.latestLocation.longitude);
 
-  // Cloaks the distance string while own location has not been loaded
-  let distanceString = () => {
-    if(this.state.ownLocation.latitude > 0 && this.state.ownLocation.longitude > 0) {
-      return Math.round(distance).toString() + "KM AWAY";
-    } else {
-      return "...";
+    // Cloaks the distance string while own location has not been loaded
+    let distanceString = () => {
+      if (this.state.ownLocation.latitude > 0 && this.state.ownLocation.longitude > 0) {
+        return Math.round(distance).toString() + "KM AWAY";
+      } else {
+        return "...";
+      }
     }
-  }
 
-  let googleMapsPosition = {
-    lat: this.state.user.latestLocation.latitude,
-    lng: this.state.user.latestLocation.longitude
-  }
+    let googleMapsPosition = {
+      lat: this.state.user.latestLocation.latitude,
+      lng: this.state.user.latestLocation.longitude
+    }
 
-  return (
+    return (
       <div className="h-screen w-full flex flex-col">
         <div className="flex-1 overflow-auto p-4">
           <div className="flex">
 
             <div className="absolute top-9 -left-4 cursor-pointer" onClick={() => this.redirectBackToMapUser()}>
-                <Back></Back>
-              </div>
+              <Back></Back>
+            </div>
 
-              <div className="flex-none mr-3 ml-3">
-                <img src={this.state.user.profilePicture} className="h-24 w-24 rounded-full bg-gray-400"></img>
-              </div>
+            <div className="flex-none mr-3 ml-3">
+              <img src={this.state.user.profilePicture} className="h-24 w-24 rounded-full bg-gray-400"></img>
+            </div>
 
             <div className="ml-3">
               <div>
@@ -285,9 +285,9 @@ class User extends React.Component {
               {this.state.user.dogs.map(dog => {
                 let ageString = DateHelper.getAgeStringFromDateOfBirth(dog.dateOfBirth);
                 return (
-                    <div key={dog.id} className="w-1/2">
-                      <Dog name={dog.name} sex={dog.sex} breed={dog.breed} age={ageString} imageUrl={dog.imageUrl}></Dog>
-                    </div>
+                  <div key={dog.id} className="w-1/2">
+                    <Dog name={dog.name} sex={dog.sex} breed={dog.breed} age={ageString} imageUrl={dog.imageUrl}></Dog>
+                  </div>
                 )
               })}
             </div>
@@ -298,9 +298,9 @@ class User extends React.Component {
               {this.state.user.tags.map(tag => {
                 if (tag.tagType === "OFFERING") {
                   return (
-                      <div key={tag.id} className="w-flex mt-2">
-                        <Tag name={tag.name}></Tag>
-                      </div>
+                    <div key={tag.id} className="w-flex mt-2">
+                      <Tag name={tag.name}></Tag>
+                    </div>
                   )
                 }
               })}
@@ -312,9 +312,9 @@ class User extends React.Component {
               {this.state.user.tags.map(tag => {
                 if (tag.tagType === "LOOKING") {
                   return (
-                      <div key={tag.id} className="w-flex mt-2 ">
-                        <Tag name={tag.name}></Tag>
-                      </div>
+                    <div key={tag.id} className="w-flex mt-2 ">
+                      <Tag name={tag.name}></Tag>
+                    </div>
                   )
                 }
               })}
@@ -325,13 +325,13 @@ class User extends React.Component {
         <div className="flex-none mt-14">
           <div className="absolute inset-x-0 bottom-20 mr-5 ml-5" >
             <div className=" w-full text-center p-2 mr-2 bg-gray-600 text-white font-semibold rounded-md cursor-pointer"
-                 onClick={this.redirectToChat}>💬 Chat</div>
+              onClick={this.redirectToChat}>💬 Chat</div>
           </div>
           <TabBar active="map" />
         </div>
       </div>
-  )
-}
+    )
+  }
 
   redirectBackToMapUser() {
     this.props.history.push("/map/users/" + this.state.user.id.toString());
