@@ -69,7 +69,7 @@ class NewTag extends React.Component {
           </div>
 
           {/*adding tags*/}
-          <div className="flex-1 overflow-auto ml-3 mt-3">
+          <div className="flex-1 overflow-auto p-3">
             {/*suggested tags*/}
             <div>
               <h2 className="font-bold">SUGGESTED TAGS</h2>
@@ -105,7 +105,6 @@ class NewTag extends React.Component {
                       <Picker onEmojiClick={this.onEmojiClick} pickerStyle={{ width: '70%' }}/>
                     </div> : null}
               </div>
-
               <input
                   placeholder="Tag name ..."
                   name="name"
@@ -128,7 +127,7 @@ class NewTag extends React.Component {
               <div className="flex flex-wrap">
                 {this.state.tagsAdded.map(tag => {
                   return (
-                      <div className="w-flex mt-2 text-xs">
+                      <div key={tag} className="w-flex mt-2 text-xs">
                         <Tag name={tag} onRemoveClick={() => this.deleteTag(tag)} removable={true}></Tag>
                       </div>
                   )
@@ -187,11 +186,11 @@ class NewTag extends React.Component {
     }
   }
 
-  //TODO the pace of deletion is not as fast as I want it to be
   deleteTag(tag) {
-    let tags = this.state.tagsAdded;
-    let index = tags.indexOf(tag); // Let's say it's Bob.
-    delete tags[index];
+    let tags = [...this.state.tagsAdded];
+    let index = tags.indexOf(tag);
+    tags.splice(index,1)
+    this.setState({tagsAdded : tags})
   }
 
   handleInputChange(event){
