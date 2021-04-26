@@ -9,6 +9,8 @@ import moment from 'moment';
 
 import GeoCoordinateHelper from '../../helpers/GeoCoordinateHelper';
 import DateHelper from '../../helpers/DateHelper';
+import { ApiClient, UsersApi } from 'sopra-fs21-group-02-dogs-api';
+import GetApiClient from '../../helpers/ApiClientFactory';
 
 const ALL_USERS = [
   {
@@ -117,6 +119,9 @@ const mapStyles = {
 class MapUser extends React.Component {
   constructor(props) {
     super(props);
+    const client = GetApiClient();
+    this.UsersApi = new UsersApi(client);
+    
     this.state = {
       user: {
         name: "",
@@ -138,15 +143,25 @@ class MapUser extends React.Component {
     this.redirectToChat = this.redirectToChat.bind(this);
     this.redirectToProfile = this.redirectToProfile.bind(this);
     this.saveOwnLocation = this.saveOwnLocation.bind(this);
+    this.getUserCallback = this.getUserCallback.bind(this);
   }
 
-  componentDidMount() {
-    // TODO: Fetch correct user from API
-    let user = FAKE_FETCH_USER(parseInt(this.props.match.params.id));
-    this.setState({
-      user: user
-    });
+  getUserCallback(error, data, response) {
+    console.log(response);
 
+    if(error) {
+      console.error(error);
+      return;
+    }
+
+    this.setState({
+      user: response.body
+    });
+  }
+
+  async componentDidMount() {
+    let userId = this.props.match.params.id;
+    this.UsersApi.usersUserIdGet(userId, this.getUserCallback);
     GeoCoordinateHelper.getCurrentLocation(this.saveOwnLocation);
   }
 
@@ -177,12 +192,15 @@ class MapUser extends React.Component {
       iconUrl = "/images/map/marker-offline.png";
     }
 
-    let distance = GeoCoordinateHelper.getDistanceFromLatLonInKm(this.state.ownLocation.latitude, this.state.ownLocation.longitude,
-                                                                 this.state.user.latestLocation.latitude, this.state.user.latestLocation.longitude);
+    let ownLocation = this.state.ownLocation || {latitude: undefined, longitude: undefined};
+    let userLocation = this.state.user.latestLocation || {latitude: undefined, longitude: undefined};
+
+    let distance = GeoCoordinateHelper.getDistanceFromLatLonInKm(ownLocation.latitude, ownLocation.longitude,
+                                                                 userLocation.latitude, userLocation.longitude);
     
     // Cloaks the distance string while own location has not been loaded
     let distanceString = () => {
-      if(this.state.ownLocation.latitude > 0 && this.state.ownLocation.longitude > 0) {
+      if(ownLocation.latitude > 0 && ownLocation.longitude > 0) {
         return Math.round(distance).toString() + "KM AWAY";
       } else {
         return "...";
@@ -190,8 +208,8 @@ class MapUser extends React.Component {
     }
 
     let googleMapsPosition = {
-      lat: this.state.user.latestLocation.latitude, 
-      lng: this.state.user.latestLocation.longitude
+      lat: userLocation.latitude, 
+      lng: userLocation.longitude
     }
 
     // TODO: Fix map alignment (oversheets screen bottom atm.)
