@@ -94,7 +94,7 @@ class Contacts extends React.Component {
             <Back></Back>
           </div>
         </div>
-        <div className="flex-non bg-gray-200 p-2">
+        <div className="flex-none bg-gray-200 p-2">
           <input 
             type="text"
             className="w-full bg-white p-2 rounded-md"
