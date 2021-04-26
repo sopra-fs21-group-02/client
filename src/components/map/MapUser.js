@@ -119,6 +119,8 @@ const mapStyles = {
 class MapUser extends React.Component {
   constructor(props) {
     super(props);
+
+    // TODO: This might keep an old, expired token around, do this on ever request instead...
     const client = GetApiClient();
     this.UsersApi = new UsersApi(client);
     
@@ -147,8 +149,6 @@ class MapUser extends React.Component {
   }
 
   getUserCallback(error, data, response) {
-    console.log(response);
-
     if(error) {
       console.error(error);
       return;
