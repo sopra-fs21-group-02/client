@@ -40,7 +40,7 @@ class Login extends React.Component {
     this.onLogin = this.onLogin.bind(this);
   }
 
-  async onLogin(response) {
+  onLogin(response) {
     const requestBody = JSON.stringify({
       tokenId: response.tokenId,
       emailId: response.profileObj.email
