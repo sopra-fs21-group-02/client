@@ -323,7 +323,7 @@ class User extends React.Component {
         </div>
 
         <div className="flex-none mt-14">
-          <div className="absolute inset-x-0 bottom-20 mr-5 ml-5" >
+          <div className="absolute inset-x-0 bottom-20 p-4" >
             <div className=" w-full text-center p-2 mr-2 bg-gray-600 text-white font-semibold rounded-md cursor-pointer"
               onClick={this.redirectToChat}>💬 Chat</div>
           </div>
