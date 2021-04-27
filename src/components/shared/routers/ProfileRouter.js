@@ -25,7 +25,7 @@ class ProfileRouter extends React.Component {
                 {/* / */}
                 <Route
                     exact
-                    path={`${this.props.base}/tag/new`}
+                    path={`${this.props.base}/tag/:tagType`}
                     render={() => <NewTag />}
                 />
 

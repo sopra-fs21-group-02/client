@@ -1,5 +1,4 @@
 import React from 'react';
-import Profile from "../../components/profile/Profile";
 
 class Tag extends React.Component {
   render() {
@@ -12,6 +11,11 @@ class Tag extends React.Component {
               onClick={this.props.onRemoveClick}> x
                         </span>
             : null}
+            {this.props.addable ?
+                <span className="cursor-pointer text-gray-700 ml-1"
+                      onClick={this.props.onClick}> +
+                        </span>
+                : null}
         </h3>
       </div>
     )

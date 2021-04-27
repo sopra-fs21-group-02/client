@@ -6,6 +6,7 @@
     "@craco/craco": "^6.1.1",
     "@tailwindcss/line-clamp": "^0.2.0",
     "axios": "^0.21.1",
+    "emoji-picker-react": "^3.4.4",
     "google-maps-react": "^2.0.6",
     "moment": "^2.29.1",
     "react": "^17.0.1",
