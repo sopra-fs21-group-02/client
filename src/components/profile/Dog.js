@@ -3,7 +3,8 @@ import { withRouter } from 'react-router';
 import styled from "styled-components";
 import { RefObject } from "react";
 import moment from "moment";
-
+import GetApiClient from "../../helpers/ApiClientFactory";
+import {DogsApi} from "sopra-fs21-group-02-dogs-api";
 
 
 const ALL_DOGS = [
@@ -51,10 +52,13 @@ class Dog extends React.Component {
     this.handleInputChange = this.handleInputChange.bind(this);
     this.saveSex = this.saveSex.bind(this);
     this.saveDog = this.saveDog.bind(this);
-    this.saveImage = this.saveImage.bind(this);
-    this.redirectToProfile = this.redirectToProfile.bind(this);
     this.deleteDog = this.deleteDog.bind(this);
     this.checkDate = this.checkDate.bind(this);
+    this.editDog = this.editDog.bind(this);
+    this.addDog = this.addDog.bind(this);
+    this.apiCallback = this.apiCallback.bind(this);
+    this.setFile = this.setFile.bind(this);
+
     this.inputRef = React.createRef();
     this.state = {
       active: false,
@@ -64,33 +68,126 @@ class Dog extends React.Component {
         name: "",
         imageUrl: "https://www.pdsa.org.uk/media/7888/dalmatian-gallery-outdoors-8-min.jpg",
         dateOfBirth: "",
-        id: 0
+        id: -1
       }
     }
   }
 
-  async componentDidMount() {
+  componentDidMount() {
     this.inputRef.current.focus();
     let routeId = this.props.match.params.dogId;
     console.log(routeId)
     if (routeId === "new") { // New dog
-      await this.setState({
+      this.setState({
         dog: {
           breed: "",
           sex: "",
           name: "",
           imageUrl: "https://thumbs.dreamstime.com/z/puppy-vector-illustration-isolated-white-background-dog-line-art-puppy-vector-illustration-cute-cartoon-dog-140539394.jpg",
           dateOfBirth: "",
-          id: this.props.match.params.dogId
+          id: -1
         }
       });
     } else { // Editing dog
       let dogServer = FAKE_FETCH_DOGS(parseInt(routeId));
-      await this.setState({
+      this.setState({
         dog: dogServer,
         active: dogServer.sex
       });
     }
+  }
+
+  setFile = (file) => {
+    this.inputRef.current.click()
+    this.setState({
+      newImage: file[0]
+    })
+  }
+
+  //TODO adapt method once API is integrated
+  saveDog() {
+    if (!this.state.dog.sex || !this.state.dog.name || !this.state.dog.breed || !this.state.dog.dateOfBirth) {
+      alert("please enter all attributes of your dog. Name, breed, date of birth and sex")
+      return;
+    }
+    if (!this.checkDate()) {
+      alert("please enter a correct birth date (format JJJJ-MM-DD)")
+      return;
+    }
+    if (this.state.dog.id === -1){
+      console.log("adding new dog")
+      this.addDog()
+    }
+    else{
+      console.log("editing dog")
+      this.editDog()
+    }
+  }
+
+  addDog(){
+    console.log("add dog has been called")
+    const reader = new FileReader();
+    let image = reader.readAsBinaryString(this.state.newImage);
+
+    //TODO userId of current logged in user
+    const userId = 1;
+
+    const client = GetApiClient()
+    const api = new DogsApi(client)
+    let dogFormData = new FormData();
+    for (var key in this.state.dog) {
+      dogFormData.append(key, this.state.dog[key]);
+    }
+
+    let imageFormData = new FormData();
+    imageFormData.append('profilePicture', this.state.newImage);
+    //api.addDog(userId, this.state.dog, {profilePicture: this.state.newImage}, this.apiCallback)
+    api.addDog(userId, dogFormData, {profilePicture: imageFormData}, this.apiCallback)
+
+  }
+
+  editDog(){
+
+  }
+
+  deleteDog() {
+
+  }
+
+  apiCallback(error, data, response){
+    console.log("callback has been called")
+    if(error){
+      console.error(error);
+      return;
+    }
+    this.props.history.push("/profile");
+  }
+
+  checkDate() {
+    let date = moment(this.state.dog.dateOfBirth)
+    return date.isValid()
+  }
+
+  //TODO adapt method once API is integrated
+  handleInputChange(event) {
+    this.setState(prevState => {
+      let dog = Object.assign({}, prevState.dog);
+      dog[event.target.name] = event.target.value;
+      console.log(this.state.dog)
+      return { dog };
+    })
+  }
+
+  //TODO adapt method once API is integrated
+  saveSex(sex) {
+    this.setState(prevState => {
+      let dog = Object.assign({}, prevState.dog);
+      dog.sex = sex;
+      console.log(this.state.dog)
+      return { dog };
+    })
+    this.setState({ active: sex })
+    console.log(this.state.dog)
   }
 
   render() {
@@ -116,6 +213,10 @@ class Dog extends React.Component {
       saveContainer += "h-12 font-bold text-xl align-middle pt-2.5 w-1/2 hover:bg-gray-400 cursor-pointer hover:font-bold"
     }
 
+    let imageUrl = this.state.dog.imageUrl;
+    if (this.state.newImage){
+      imageUrl = URL.createObjectURL(this.state.newImage);
+    }
     return (
       <div className="h-screen w-full flex-col flex">
         <div className="flex-none z-50">
@@ -186,7 +287,7 @@ class Dog extends React.Component {
           {/* adding image here */}
           <div className="flex m-2">
             <div className="bg-cover bg-no-repeat bg-center h-20 w-20 rounded-full" style={{
-              backgroundImage: `url(${this.state.dog.imageUrl})`,
+              backgroundImage: `url(${imageUrl})`,
             }}>
               <div className="group-hover:opacity-100 group-hover: cursor-pointer">
                 <div className="hover:bg-gray-300 cursor-pointer h-20 w-20 rounded-full flex flex-col opacity-80">
@@ -230,70 +331,6 @@ class Dog extends React.Component {
         </div>
       </div>
     );
-  }
-
-  setFile = (file) => {
-    this.inputRef.current.click()
-    this.saveImage(file[0]["name"])
-  }
-
-  //TODO adapt method once API is integrated
-  redirectToProfile() {
-    this.props.history.push("/profile");
-  }
-
-  //TODO adapt method once API is integrated
-  saveDog() {
-    if (!this.state.dog.sex || !this.state.dog.name || !this.state.dog.breed || !this.state.dog.dateOfBirth) {
-      alert("please enter all attributes of your dog. Name, breed, date of birth and sex")
-    }
-    if (!this.checkDate()) {
-      alert("please enter a correct birth date (format JJJJ-MM-DD)")
-    }
-    else { this.redirectToProfile() }
-  }
-
-  checkDate() {
-    let date = moment(this.state.dog.dateOfBirth)
-    return date.isValid()
-  }
-
-  //TODO adapt method once API is integrated
-  handleInputChange(event) {
-    this.setState(prevState => {
-      let dog = Object.assign({}, prevState.dog);
-      dog[event.target.name] = event.target.value;
-      //dog.event.target.name = event.target.value
-      console.log(this.state.dog)
-      return { dog };
-    })
-  }
-
-  //TODO adapt method once API is integrated
-  saveSex(sex) {
-    this.setState(prevState => {
-      let dog = Object.assign({}, prevState.dog);
-      dog.sex = sex;
-      console.log(this.state.dog)
-      return { dog };
-    })
-    this.setState({ active: sex })
-    console.log(this.state.dog)
-  }
-
-  saveImage(image) {
-    this.setState(prevState => {
-      let dog = Object.assign({}, prevState.dog);
-      dog.imageUrl = image;
-      console.log(this.state.dog)
-      return { dog };
-    })
-    console.log(this.state.dog)
-  }
-
-  deleteDog(e) {
-    delete this.state.dog;
-    this.redirectToProfile()
   }
 }
 
