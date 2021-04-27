@@ -6,6 +6,73 @@ import DateHelper from "../../helpers/DateHelper";
 import Dog from "../../views/profile/Dog";
 import Tag from "../../views/profile/Tag";
 
+const PROFILE = {
+  name: "Cruella de Vil",
+  bio: "Short description about you",
+  id: 1,
+  profilePicture: "https://upload.wikimedia.org/wikipedia/en/6/64/Cruella_de_Vil.png",
+  latestLocation: {
+    latitude: 0,
+    longitude: 0
+  },
+  status: "ONLINE",
+  tags: [
+    {
+      id: 1,
+      name: "💬 Chat",
+      tagType: "OFFERING"
+    },
+    {
+      id: 2,
+      name: "🏇🏻 Training",
+      tagType: "LOOKING"
+    },
+    {
+      id: 3,
+      name: "👀 Petsitting",
+      tagType: "OFFERING"
+    },
+    {
+      id: 4,
+      name: "💬 Chat",
+      tagType: "LOOKING"
+    },
+    {
+      id: 5,
+      name: "🍽️ Shared Food Orders",
+      tagType: "OFFERING"
+    },
+    {
+      id: 6,
+      name: "🐾 Walking Buddies",
+      tagType: "OFFERING"
+    },
+  ],
+  dogs: [
+    {
+      id: 1,
+      name: "Bello",
+      sex: "MALE",
+      breed: "Dalmatian",
+      dateOfBirth: "2020-10-01",
+      imageUrl: "https://www.pdsa.org.uk/media/7888/dalmatian-gallery-outdoors-8-min.jpg"
+    },
+    {
+      id: 2,
+      name: "Winston",
+      sex: "MALE",
+      breed: "Dalmatian",
+      dateOfBirth: "2018-04-01",
+      imageUrl: "https://vetstreet-brightspot.s3.amazonaws.com/ee/140380a73111e0a0d50050568d634f/file/Dalmatian-2-645mk062311.jpg"
+    },
+    {
+      id: 3,
+      name: "Fifi",
+      sex: "FEMALE",
+      breed: "Dalmatian",
+      dateOfBirth: "2017-04-01",
+      imageUrl: "http://azure.wgp-cdn.co.uk/app-yourdog/posts/dalmatian.jpg"
+    }]}
 
 class Profile extends React.Component {
   constructor(props) {
@@ -15,85 +82,7 @@ class Profile extends React.Component {
 
     // TODO: Remove mock data once API is integrated
     this.state = {
-      user: {
-        name: "Cruella de Vil",
-        bio: "Short description about you",
-        id: 1,
-        profilePicture: "https://upload.wikimedia.org/wikipedia/en/6/64/Cruella_de_Vil.png",
-        latestLocation: {
-          latitude: 0,
-          longitude: 0
-        },
-        status: "ONLINE",
-        tags: [
-          {
-            id: 1,
-            name: "💬 Chat",
-            tagType: "OFFERING"
-          },
-          {
-            id: 2,
-            name: "🏇🏻 Training",
-            tagType: "LOOKING"
-          },
-          {
-            id: 3,
-            name: "👀 Petsitting",
-            tagType: "OFFERING"
-          },
-          {
-            id: 4,
-            name: "💬 Chat",
-            tagType: "LOOKING"
-          },
-          {
-            id: 5,
-            name: "🍽️ Shared Food Orders",
-            tagType: "OFFERING"
-          },
-          {
-            id: 6,
-            name: "🐾 Walking Buddies",
-            tagType: "OFFERING"
-          },
-        ],
-        dogs: [
-          {
-            id: 1,
-            name: "Bello",
-            sex: "MALE",
-            breed: "Dalmatian",
-            dateOfBirth: "2020-10-01",
-            imageUrl: "https://www.pdsa.org.uk/media/7888/dalmatian-gallery-outdoors-8-min.jpg"
-          },
-          {
-            id: 2,
-            name: "Winston",
-            sex: "MALE",
-            breed: "Dalmatian",
-            dateOfBirth: "2018-04-01",
-            imageUrl: "https://vetstreet-brightspot.s3.amazonaws.com/ee/140380a73111e0a0d50050568d634f/file/Dalmatian-2-645mk062311.jpg"
-          },
-          {
-            id: 3,
-            name: "Fifi",
-            sex: "FEMALE",
-            breed: "Dalmatian",
-            dateOfBirth: "2017-04-01",
-            imageUrl: "http://azure.wgp-cdn.co.uk/app-yourdog/posts/dalmatian.jpg"
-          },
-          /*{
-              id: 4,
-              name: "Jumper",
-              sex: "MALE",
-              breed: "Dalmatian",
-              dateOfBirth: "2020-03-01",
-              imageUrl: "https://dogtime.com/assets/uploads/gallery/dalmatian-dog-breed-pictures/10-water.jpg"
-          }
-
-           */
-        ]
-      },
+      user: PROFILE
     }
   }
   render() {
@@ -197,6 +186,20 @@ class Profile extends React.Component {
               </div>
             </div>
           </div>
+
+          {/*logout & delete account*/}
+          <div className="flex-none mt-14">
+            <div className="p-1" >
+              <div className=" w-full text-center p-2 mr-2 bg-gray-600 text-white font-semibold rounded-md cursor-pointer"
+                   onClick={(e) => this.logout(e)}>Logout</div>
+            </div>
+            <div className="p-1" >
+              <div className=" w-full text-center p-2 mr-2 bg-red-600 text-white font-semibold rounded-md cursor-pointer"
+                   onClick={(e) => {
+                     if (window.confirm('Are you sure you want to delete your account?')) this.deleteAccount(e)
+                   }}>Delete Account</div>
+            </div>
+          </div>
         </div>
         <div className="flex-none">
           <TabBar active="profile" />
@@ -205,6 +208,21 @@ class Profile extends React.Component {
     );
   }
 
+  //TODO adapt method once API is integrated
+  logout(){
+    //logout in server
+    console.log("logout clicked")
+    this.props.history.push("/sign-in");
+  }
+
+
+  //TODO adapt method once API is integrated
+  deleteAccount(){
+    //delete account in server
+    this.logout()
+    alert("your Account is deleted.")
+
+  }
   redirectToAddDog() {
     this.props.history.push("/profile/dog/new");
   }
@@ -225,26 +243,16 @@ class Profile extends React.Component {
   }
 
   //TODO adapt method once API is integrated
-  deleteTag(tagId) {
-    let tag;
-    let tags = this.state.user.tags;
-    let key;
-    let index = 0;
-    for (tag in tags) {
-      for (key in tags[tag]) {
-        if (tags[tag][key] === tagId) {
-          if (tags[tag][key] === tagId) {
-            console.log("The following tag is deleted")
-            console.log(tags[index])
-            delete tags[index];
-            break
-          }
-        }
-      }
-      index++;
-    }
+  deleteTag(tag) {
+      let tags = [...this.state.user.tags];
+      let index = tags.indexOf(tag);
+      tags.splice(index,1)
+      this.setState(prevState => {
+        let user = Object.assign({}, prevState.user);
+        user[tags] = tags;
+        return { tags };
+      })
   }
-
 }
 
 export default withRouter(Profile)
