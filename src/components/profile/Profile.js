@@ -5,87 +5,138 @@ import StatusIndicator from "../../views/design/StatusIndicator";
 import DateHelper from "../../helpers/DateHelper";
 import Dog from "../../views/profile/Dog";
 import Tag from "../../views/profile/Tag";
+import GetApiClient from "../../helpers/ApiClientFactory";
+import {UsersApi} from "sopra-fs21-group-02-dogs-api";
 
-const PROFILE = {
-  name: "Cruella de Vil",
-  bio: "Short description about you",
-  id: 1,
-  profilePicture: "https://upload.wikimedia.org/wikipedia/en/6/64/Cruella_de_Vil.png",
-  latestLocation: {
-    latitude: 0,
-    longitude: 0
-  },
-  status: "ONLINE",
-  tags: [
-    {
-      id: 1,
-      name: "💬 Chat",
-      tagType: "OFFERING"
-    },
-    {
-      id: 2,
-      name: "🏇🏻 Training",
-      tagType: "LOOKING"
-    },
-    {
-      id: 3,
-      name: "👀 Petsitting",
-      tagType: "OFFERING"
-    },
-    {
-      id: 4,
-      name: "💬 Chat",
-      tagType: "LOOKING"
-    },
-    {
-      id: 5,
-      name: "🍽️ Shared Food Orders",
-      tagType: "OFFERING"
-    },
-    {
-      id: 6,
-      name: "🐾 Walking Buddies",
-      tagType: "OFFERING"
-    },
-  ],
-  dogs: [
-    {
-      id: 1,
-      name: "Bello",
-      sex: "MALE",
-      breed: "Dalmatian",
-      dateOfBirth: "2020-10-01",
-      imageUrl: "https://www.pdsa.org.uk/media/7888/dalmatian-gallery-outdoors-8-min.jpg"
-    },
-    {
-      id: 2,
-      name: "Winston",
-      sex: "MALE",
-      breed: "Dalmatian",
-      dateOfBirth: "2018-04-01",
-      imageUrl: "https://vetstreet-brightspot.s3.amazonaws.com/ee/140380a73111e0a0d50050568d634f/file/Dalmatian-2-645mk062311.jpg"
-    },
-    {
-      id: 3,
-      name: "Fifi",
-      sex: "FEMALE",
-      breed: "Dalmatian",
-      dateOfBirth: "2017-04-01",
-      imageUrl: "http://azure.wgp-cdn.co.uk/app-yourdog/posts/dalmatian.jpg"
-    }]}
 
 class Profile extends React.Component {
   constructor(props) {
     super(props);
     this.handleBioChange = this.handleBioChange.bind(this);
     this.deleteTag = this.deleteTag.bind(this);
+    this.getProfileCallback = this.getProfileCallback.bind(this);
+    this.putProfileCallback = this.putProfileCallback.bind(this);
+    this.putLogoutCallback = this.putLogoutCallback.bind(this);
+    this.saveBio = this.saveBio.bind(this);
+    this.deleteAccountCallback = this.deleteAccountCallback.bind(this);
 
-    // TODO: Remove mock data once API is integrated
     this.state = {
-      user: PROFILE
+      user: undefined,
+      bioChanged: false
     }
   }
+
+  componentDidMount(){ //request profile data from server
+    const client = GetApiClient();
+    const api = new UsersApi(client);
+
+    //TODO change userId to logged in user
+    const userId = 1;
+    api.usersUserIdGet(userId, this.getProfileCallback);
+  }
+
+  getProfileCallback(error, data, response){ //info us response im state  andere funktion ruft callback auf sobald etwas erhalten wird
+    if(error){
+      console.error(error);
+      return;
+    }
+    this.setState({
+      user : response.body
+    })
+  }
+
+  //TODO adapt method once API is integrated
+  logout(){
+    const client = GetApiClient();
+    const api = new UsersApi(client);
+    api.usersUserIdLogoutPut(this.state.user.id, this.putLogoutCallback)
+  }
+
+  putLogoutCallback(error, data, response){
+    if(error){
+      console.error(error);
+      return;
+    }
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('accessTokenExpiry');
+
+    this.props.history.push("/sign-in");
+  }
+
+  //TODO adapt method once API is integrated
+  deleteAccount(){
+    const client = GetApiClient();
+    const api = new UsersApi(client);
+    api.usersUserIdDelete(this.state.user.id, this.deleteAccountCallback);
+  }
+
+  deleteAccountCallback(error, data, response){
+    if(error){
+      console.error(error);
+      return;
+    }
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('accessTokenExpiry');
+    this.props.history.push("/sign-in");
+  }
+
+  redirectToAddDog() {
+    this.props.history.push("/profile/dog/new");
+  }
+
+  redirectToEditDog(dogId) {
+    this.props.history.push("/profile/dog/" + dogId.toString());
+  }
+
+  redirectToAddTag(tagType) {
+    this.props.history.push("/profile/tag/" + tagType.toString());
+  }
+
+  //TODO adapt method once API is integrated
+  handleBioChange(event) {
+    let newUser = Object.assign({}, this.state.user);
+    newUser.bio = event.target.value;
+    this.setState({
+      user: newUser,
+      bioChanged: true
+    });
+  }
+
+  saveBio(){
+    const client = GetApiClient();
+    const api = new UsersApi(client);
+    api.usersUserIdPut(this.state.user.id, this.state.user, this.putProfileCallback)
+  }
+
+  putProfileCallback(error, data, response){
+    if(error){
+      console.error(error);
+      return;
+    }
+    alert("saved")
+    this.setState({
+      bioChanged: false
+    })
+  }
+
+  //TODO adapt method once API is integrated
+  deleteTag(tag) {
+    let tags = [...this.state.user.tags];
+    let index = tags.indexOf(tag);
+    tags.splice(index,1)
+    this.setState(prevState => {
+      let user = Object.assign({}, prevState.user);
+      user[tags] = tags;
+      return { tags };
+    })
+  }
+
   render() {
+    if (this.state.user === undefined){
+      return(
+        <h2>Loading ...</h2>
+      )
+    }
     return (
       <div className="h-screen w-full flex flex-col">
         <div className="flex-none z-50">
@@ -106,9 +157,16 @@ class Profile extends React.Component {
                 <StatusIndicator status={this.state.user.status} />
               </div>
               <div className="w-full select-text text-black mr-0">
-                <textarea value={this.state.user.bio}
+                <textarea
+                  value={this.state.user.bio}
+                  placeholder="Enter a bio about you here"
                   onChange={this.handleBioChange}
                   className="w-full p-2 bg-white" />
+                {this.state.bioChanged &&
+                  <button
+                    className="w-full text-center p-2 mr-2 bg-gray-600 text-white font-semibold rounded-md cursor-pointer"
+                    onClick={this.saveBio}>Save Bio</button>
+                }
               </div>
             </div>
           </div>
@@ -206,52 +264,6 @@ class Profile extends React.Component {
         </div>
       </div>
     );
-  }
-
-  //TODO adapt method once API is integrated
-  logout(){
-    //logout in server
-    console.log("logout clicked")
-    this.props.history.push("/sign-in");
-  }
-
-
-  //TODO adapt method once API is integrated
-  deleteAccount(){
-    //delete account in server
-    this.logout()
-    alert("your Account is deleted.")
-
-  }
-  redirectToAddDog() {
-    this.props.history.push("/profile/dog/new");
-  }
-
-  redirectToEditDog(dogId) {
-    this.props.history.push("/profile/dog/" + dogId.toString());
-  }
-  redirectToAddTag(tagType) {
-    this.props.history.push("/profile/tag/" + tagType.toString());
-  }
-
-  //TODO adapt method once API is integrated
-  handleBioChange(event) {
-    this.setState({ user: { bio: event.target.value } });
-    let newUser = Object.assign({}, this.state.user);
-    newUser.bio = event.target.value;
-    this.setState({ user: newUser });
-  }
-
-  //TODO adapt method once API is integrated
-  deleteTag(tag) {
-      let tags = [...this.state.user.tags];
-      let index = tags.indexOf(tag);
-      tags.splice(index,1)
-      this.setState(prevState => {
-        let user = Object.assign({}, prevState.user);
-        user[tags] = tags;
-        return { tags };
-      })
   }
 }
 
