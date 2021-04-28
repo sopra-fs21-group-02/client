@@ -250,14 +250,14 @@ class Profile extends React.Component {
           {/*logout & delete account*/}
           <div className="flex-none mt-14">
             <div className="p-1" >
-              <div className=" w-full text-center p-2 mr-2 bg-gray-600 text-white font-semibold rounded-md cursor-pointer"
-                   onClick={(e) => this.logout(e)}>Logout</div>
+              <button className=" w-full text-center p-2 mr-2 bg-gray-600 text-white font-semibold rounded-md cursor-pointer"
+                   onClick={(e) => this.logout(e)}>Logout</button>
             </div>
             <div className="p-1" >
-              <div className=" w-full text-center p-2 mr-2 bg-red-600 text-white font-semibold rounded-md cursor-pointer"
+              <button className=" w-full text-center p-2 mr-2 bg-red-600 text-white font-semibold rounded-md cursor-pointer"
                    onClick={(e) => {
                      if (window.confirm('Are you sure you want to delete your account?')) this.deleteAccount(e)
-                   }}>Delete Account</div>
+                   }}>Delete Account</button>
             </div>
           </div>
         </div>
