@@ -195,6 +195,8 @@ class Profile extends React.Component {
               </div>
             </div>
           </div>
+
+          {/* //TODO comment in as soon as Api is ready
           <div>
             <h2 className="font-bold text-lg mt-2">OFFERING</h2>
             <div className="flex flex-wrap">
@@ -220,30 +222,30 @@ class Profile extends React.Component {
               </div>
             </div>
 
-            {/*add tag for which a user is looking for*/}
-            <h2 className="ml-0 font-bold text-lg mt-4">LOOKING FOR</h2>
-            <div className="flex flex-wrap">
-              {this.state.user.tags.map(tag => {
-                if (tag.tagType === "LOOKING") {
-                  return (
-                    <div key={tag.id} className="w-flex mt-2 ">
-                      <Tag name={tag.name} onRemoveClick={() => this.deleteTag(tag.id)} removable={true}></Tag>
-                    </div>
-                  )
-                }
-              })}
-              <div className="flex mb-4 cursor-pointer w-18 h-10 mt-2 place-items-center inline-block p-2 bg-gray-300 rounded-md"
-                   onClick={() => this.redirectToAddTag("looking")}>
-                <div className="flex-none mr-2">
-                  <svg width="12" height="28" viewBox="0 0 18 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M11.373 7.67383H17.7188V12.2617H11.373V19.4336H6.53906V12.2617H0.175781V7.67383H6.53906V0.800781H11.373V7.67383Z" fill="black" /></svg>
-                </div>
-                <div className="flex-grow">
-                  <h3 className="font-bold leading-none">Add</h3>
-                </div>
+          <h2 className="ml-0 font-bold text-lg mt-4">LOOKING FOR</h2>
+          <div className="flex flex-wrap">
+            {this.state.user.tags.map(tag => {
+              if (tag.tagType === "LOOKING") {
+                return (
+                  <div key={tag.id} className="w-flex mt-2 ">
+                    <Tag name={tag.name} onRemoveClick={() => this.deleteTag(tag.id)} removable={true}></Tag>
+                  </div>
+                )
+              }
+            })}
+            <div className="flex mb-4 cursor-pointer w-18 h-10 mt-2 place-items-center inline-block p-2 bg-gray-300 rounded-md"
+                 onClick={() => this.redirectToAddTag("looking")}>
+              <div className="flex-none mr-2">
+                <svg width="12" height="28" viewBox="0 0 18 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M11.373 7.67383H17.7188V12.2617H11.373V19.4336H6.53906V12.2617H0.175781V7.67383H6.53906V0.800781H11.373V7.67383Z" fill="black" /></svg>
+              </div>
+              <div className="flex-grow">
+                <h3 className="font-bold leading-none">Add</h3>
               </div>
             </div>
           </div>
+        </div>
+          */}
 
           {/*logout & delete account*/}
           <div className="flex-none mt-14">

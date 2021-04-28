@@ -292,6 +292,8 @@ class User extends React.Component {
               })}
             </div>
           </div>
+
+          {/* //TODO comment in as soon as API is ready
           <div>
             <h2 className="font-bold text-lg mt-2">OFFERING</h2>
             <div className="flex flex-wrap">
@@ -320,8 +322,8 @@ class User extends React.Component {
               })}
             </div>
           </div>
+        */}
         </div>
-
         <div className="flex-none mt-14">
           <div className="absolute inset-x-0 bottom-20 p-4" >
             <div className=" w-full text-center p-2 mr-2 bg-gray-600 text-white font-semibold rounded-md cursor-pointer"
