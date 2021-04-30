@@ -1,8 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import { BaseContainer } from '../../helpers/layout';
 import { api, handleError } from '../../helpers/api';
-import User from '../shared/models/User';
 import { withRouter } from 'react-router-dom';
 import { Button } from '../../views/design/Button';
 import GoogleLogin from 'react-google-login';
@@ -10,10 +8,6 @@ import { getClientId } from '../../helpers/getClientId';
 
 const FormContainer = styled.div`
   margin-top: 2em;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-height: 300px;
   justify-content: center;
 `;
 
@@ -54,12 +48,7 @@ class Login extends React.Component {
       const errMessage = handleError(error);
       this.setState({errorMessage:errMessage});
     };
-
-
-
   }
-
-
 
   render() {
     const clientId = "1057742566572-4ufig26uc1s8tiggp6ja3tf13s4iuo87.apps.googleusercontent.com";
@@ -67,19 +56,28 @@ class Login extends React.Component {
       this.onLogin(response);
     }
     return (
-        <BaseContainer>
-          <FormContainer>
+        <div className="flex flex-col h-screen w-full">
 
-            <GoogleLogin
-                clientId={getClientId()}
-                buttonText="Login with Google"
-                onSuccess={responseGoogle}
-                onFailure={responseGoogle}
-                cookiePolicy={'single_host_origin'}
-            />
-            <ErrorMessage>{this.state.errorMessage}</ErrorMessage>
-          </FormContainer>
-        </BaseContainer>
+          <div className="flex-1 mt-10 z-50">
+            <div>
+              <h1 className="font-bold text-4xl text-center mt-10">🐕 </h1>
+              <h2 className="font-bold text-2xl text-center mt-3">Friendly Fetch</h2>
+              <h3 className=" text-l text-center mt-3">Welcome! Please sign in below to use the app.</h3>
+            </div>
+            <div className="flex-1 ml-auto mr-auto mt-10">
+              <div className="flex-col items-center flex justify-center">
+                <GoogleLogin
+                  clientId={getClientId()}
+                  buttonText="Sign in with Google"
+                  onSuccess={responseGoogle}
+                  onFailure={responseGoogle}
+                  cookiePolicy={'single_host_origin'}
+                />
+                <ErrorMessage>{this.state.errorMessage}</ErrorMessage>
+              </div>
+            </div>
+          </div>
+        </div>
 
     );
   }
