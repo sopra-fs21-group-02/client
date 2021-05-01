@@ -24,19 +24,19 @@ class AppRouter extends React.Component {
           <Route
             path="/sign-in"
             render={() => (
-              <SignedInGuard>
+              <SignedOutGuard>
                 <Login />
-              </SignedInGuard>
+              </SignedOutGuard>
             )}
           />
           <Route
             path="/sign-out"
             render={() => (
-              <SignedOutGuard>
+              <SignedInGuard>
                 {/* TODO: Log out the user here! */}
                 {alert("Logged out!")}
                 <Redirect to={"/"}></Redirect>
-              </SignedOutGuard>
+              </SignedInGuard>
             )}
           />
 

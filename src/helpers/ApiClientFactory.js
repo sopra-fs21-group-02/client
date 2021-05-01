@@ -7,6 +7,7 @@ const GetApiClient = () => {
   let basePath = getDomain() + '/v1';
   
   client.basePath = basePath;
+  client.enableCookies = true;
   if (token !== null && token !== undefined && token.length > 0) {
     client.defaultHeaders['Authorization'] = 'Bearer ' + token;
   }

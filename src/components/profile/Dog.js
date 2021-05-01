@@ -142,7 +142,7 @@ class Dog extends React.Component {
     let imageFormData = new FormData();
     imageFormData.append('profilePicture', this.state.newImage);
     //api.addDog(userId, this.state.dog, {profilePicture: this.state.newImage}, this.apiCallback)
-    api.addDog(userId, dogFormData, {profilePicture: imageFormData}, this.apiCallback)
+    api.addDog(userId, dogFormData, imageFormData, this.apiCallback)
 
   }
 

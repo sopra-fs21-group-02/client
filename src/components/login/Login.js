@@ -8,6 +8,7 @@ import GoogleLogin from 'react-google-login';
 import { getClientId } from '../../helpers/getClientId';
 import { ApiClient, UsersApi } from 'sopra-fs21-group-02-dogs-api';
 import GetApiClient from '../../helpers/ApiClientFactory';
+import AuthHelper from '../../helpers/AuthHelper';
 
 const FormContainer = styled.div`
   margin-top: 2em;
@@ -56,12 +57,8 @@ class Login extends React.Component {
       return;
     }
 
-    // Store token in localStorage
-    localStorage.setItem('accessToken', response.body.accessToken);
-    localStorage.setItem('accessTokenExpiry', response.body.accessTokenExpiry);
-
-    // TODO start silent refresh timeout here?
-
+    AuthHelper.afterLogin(response.body.userId, response.body.accessToken, response.body.accessTokenExpiry);
+    
     // Redirect logged-in user
     if (response.body.isNewUser) {
       this.props.history.push('/profile');
