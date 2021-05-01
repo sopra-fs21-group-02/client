@@ -21,10 +21,6 @@ const mapStyles = {
 class MapUser extends React.Component {
   constructor(props) {
     super(props);
-
-    // TODO: This might keep an old, expired token around, do this on ever request instead...
-    const client = GetApiClient();
-    this.UsersApi = new UsersApi(client);
     
     this.state = {
       user: {
@@ -62,8 +58,11 @@ class MapUser extends React.Component {
   }
 
   async componentDidMount() {
+    const client = GetApiClient();
+    const api = new UsersApi(client);
     let userId = this.props.match.params.id;
-    this.UsersApi.usersUserIdGet(userId, this.getUserCallback);
+    api.usersUserIdGet(userId, this.getUserCallback);
+
     GeoCoordinateHelper.getCurrentLocation(this.saveOwnLocation);
   }
 
@@ -140,9 +139,10 @@ class MapUser extends React.Component {
             <div className="flex flex-wrap">
               {this.state.user.dogs.map(dog => {
                 let ageString = DateHelper.getAgeStringFromDateOfBirth(dog.dateOfBirth);
+                let imageUrl = `${getDomain()}/v1/users/${this.state.user.id}/dogs/${dog.id}/image`;
                 return (
                   <div key={dog.id} className="w-1/2">
-                    <Dog name={dog.name} sex={dog.sex} breed={dog.breed} age={ageString} imageUrl={dog.imageUrl}></Dog>
+                    <Dog name={dog.name} sex={dog.sex} breed={dog.breed} age={ageString} imageUrl={imageUrl}></Dog>
                   </div>   
                 )
               })}
