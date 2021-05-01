@@ -17,7 +17,6 @@ class AuthHelper {
   }
 
   static afterLogin(userId, accessToken, accessTokenExpiry) {
-    console.log("Executing afterLogin...");
     this.storeLoggedInUser(userId, accessToken, accessTokenExpiry);
     this.setRefreshInterval();
   }
@@ -40,28 +39,23 @@ class AuthHelper {
   }
 
   static setRefreshInterval() {
-    console.log("Setting refresh interval...");
     if (this.refreshInterval) {
       clearInterval(this.refreshInterval);
     }
 
-    // let interval = 1800000 / 2; // Refresh after half the access token expiry time on the server
-    let interval = 2000; // Testing...
+    let interval = 1800000 / 2; // Refresh after half the access token expiry time on the server
     this.refreshInterval = setInterval(() => {this.refreshAccessToken()}, interval);
   }
 
   static refreshAccessToken() {
-    console.log("Calling refresh endpoint...");
     let client = GetApiClient();
     let api = new UsersApi(client);
     let token = this.getCookie('refresh_token');
-    console.log("Using refresh token: " + token);
 
     api.usersRefreshTokenPut(token, (e, d, r) => {this.refreshTokenCallback(e, d, r)});
   }
 
   static refreshTokenCallback(error, data, response) {
-    console.log("Reached refresh token callback...");
     if (error) {
       // If we couldn't refresh the token, sign out the user
       this.clearLoggedInUser();
