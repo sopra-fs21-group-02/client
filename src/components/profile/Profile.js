@@ -7,6 +7,7 @@ import Dog from "../../views/profile/Dog";
 import Tag from "../../views/profile/Tag";
 import GetApiClient from "../../helpers/ApiClientFactory";
 import {UsersApi} from "sopra-fs21-group-02-dogs-api";
+import { getDomain } from "../../helpers/getDomain";
 
 
 class Profile extends React.Component {
@@ -29,9 +30,7 @@ class Profile extends React.Component {
   componentDidMount(){ //request profile data from server
     const client = GetApiClient();
     const api = new UsersApi(client);
-
-    //TODO change userId to logged in user
-    const userId = 1;
+    const userId = localStorage.getItem('loggedInUserId');
     api.usersUserIdGet(userId, this.getProfileCallback);
   }
 
@@ -175,10 +174,11 @@ class Profile extends React.Component {
             <div className="flex flex-wrap">
               {this.state.user.dogs.map(dog => {
                 let ageString = DateHelper.getAgeStringFromDateOfBirth(dog.dateOfBirth);
+                let imageUrl = `${getDomain()}/v1/users/${this.state.user.id}/dogs/${dog.id}/image`;
                 return (
                   <div key={dog.id} className="w-1/2 "
                     onClick={() => this.redirectToEditDog(dog.id)}>
-                    <Dog name={dog.name} sex={dog.sex} breed={dog.breed} age={ageString} imageUrl={dog.imageUrl} editable={true}></Dog>
+                    <Dog name={dog.name} sex={dog.sex} breed={dog.breed} age={ageString} imageUrl={imageUrl} editable={true}></Dog>
                   </div>
                 )
               })}
