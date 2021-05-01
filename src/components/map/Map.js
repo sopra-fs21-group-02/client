@@ -7,6 +7,9 @@ import ReactDOM from "react-dom";
 import styled from "styled-components";
 import {Button} from "../../views/design/Button";
 import RecenterMap from "../../views/design/icons/RecenterMap";
+import { ApiClient, Coordinate, UsersApi } from 'sopra-fs21-group-02-dogs-api';
+import GetApiClient from '../../helpers/ApiClientFactory';
+import Users from '../../views/design/icons/Users';
 
 
 const style = {
@@ -24,6 +27,7 @@ class Map extends React.Component {
     this.centerMoved = this.centerMoved.bind(this);
     this._mapLoaded = this._mapLoaded.bind(this);
     this.handlePositionError = this.handlePositionError.bind(this);
+    this.getUsersCallback = this.getUsersCallback.bind(this);
 
     this.updatePosition = undefined;
     
@@ -61,6 +65,21 @@ class Map extends React.Component {
     
     if (this.state.isMapDragged === false){
       this.map.panTo(this.state.currentLocation);
+    }
+
+    let client = GetApiClient();
+    let api = new UsersApi(client);
+    let loc = {
+      latitude: position.coords.latitude, 
+      longitude: position.coords.longitude
+    };
+    let userId = localStorage.getItem('loggedInUserId');
+    api.updateLocation(userId, loc, this.locationPutCallback)
+  }
+
+  locationPutCallback(error, data, response) {
+    if (error) {
+      console.error();
     }
   }
 
@@ -117,37 +136,19 @@ class Map extends React.Component {
       PermissionStatus.onchange = () => { this.getCurrentLocation(); }
     }
 
-    // TODO: Fetch users from API
+    let client = GetApiClient();
+    let usersApi = new UsersApi(client);
+    usersApi.getUsers(undefined, this.getUsersCallback);
+  }
+
+  getUsersCallback(error, data, response) {
+    if(error) {
+      console.error(error);
+      return;
+    }
+
     this.setState({
-      users: [
-        {
-          id: 1,
-          name: "User One",
-          status: "ONLINE",
-          location: {
-            latitude: 47.38507005180391,
-            longitude: 7.944326876563231
-          }
-        },
-        {
-          id: 2,
-          name: "User Two",
-          status: "ONLINE",
-          location: {
-            latitude: 47.381019226154905,
-            longitude: 7.951315032221059
-          }
-        },
-        {
-          id: 3,
-          name: "User Three",
-          status: "OFFLINE",
-          location: {
-            latitude: 47.38275533240448,
-            longitude: 7.931205231766877
-          }
-        }
-      ]
+      users: response.body
     });
   }
 
@@ -207,7 +208,8 @@ class Map extends React.Component {
                   name={user.name}
                   id={user.id}
                   key={user.id}
-                  position={{lat: user.location.latitude, lng: user.location.longitude}}
+                  // TODO: Handle case where user doesn't have a latestLocation (yet)...
+                  position={{lat: user.latestLocation.latitude, lng: user.latestLocation.longitude}}
                   onClick={this.onMarkerClick}
                   icon={iconUrl} />
               )
