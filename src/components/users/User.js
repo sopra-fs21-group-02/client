@@ -8,170 +8,9 @@ import Button from "../../views/design/Button";
 import TabBar from "../../views/TabBar";
 import Tag from "../../views/profile/Tag";
 import Back from "../../views/design/icons/Back";
+import ApiClientFactory from "../../helpers/ApiClientFactory";
+import {UsersApi} from "sopra-fs21-group-02-dogs-api";
 
-const ALL_USERS = [
-  {
-    id: 1,
-    name: "User One",
-    bio: "I love all dogs, but Dalamtians are my absolute favorite! Totally open to watch your dogs while you are on holiday!",
-    profilePicture: "https://upload.wikimedia.org/wikipedia/en/6/64/Cruella_de_Vil.png",
-    status: "ONLINE",
-    latestLocation: {
-      latitude: 47.38507005180391,
-      longitude: 7.944326876563231
-    },
-    dogs: [
-      {
-        id: 1,
-        name: "Bello",
-        sex: "MALE",
-        breed: "Dalmatian",
-        dateOfBirth: "2020-10-01",
-        imageUrl: "https://www.pdsa.org.uk/media/7888/dalmatian-gallery-outdoors-8-min.jpg"
-      },
-      {
-        id: 2,
-        name: "Winston",
-        sex: "MALE",
-        breed: "Dalmatian",
-        dateOfBirth: "2018-04-01",
-        imageUrl: "https://vetstreet-brightspot.s3.amazonaws.com/ee/140380a73111e0a0d50050568d634f/file/Dalmatian-2-645mk062311.jpg"
-      },
-      {
-        id: 3,
-        name: "Fifi",
-        sex: "FEMALE",
-        breed: "Dalmatian",
-        dateOfBirth: "2017-04-01",
-        imageUrl: "http://azure.wgp-cdn.co.uk/app-yourdog/posts/dalmatian.jpg"
-      },
-      {
-        id: 4,
-        name: "Jumper",
-        sex: "MALE",
-        breed: "Dalmatian",
-        dateOfBirth: "2020-03-01",
-        imageUrl: "https://dogtime.com/assets/uploads/gallery/dalmatian-dog-breed-pictures/10-water.jpg"
-      }
-    ],
-    tags: [
-      {
-        id: 1,
-        name: "💬 Chat",
-        tagType: "LOOKING"
-      },
-      {
-        id: 2,
-        name: "🏇🏻 Training",
-        tagType: "OFFERING"
-      },
-      {
-        id: 3,
-        name: "👀 Petsitting",
-        tagType: "LOOKING"
-      }
-    ]
-  },
-  {
-    id: 2,
-    name: "User Two",
-    bio: "I'm a user and I like dogs!!!",
-    profilePicture: "https://upload.wikimedia.org/wikipedia/en/6/64/Cruella_de_Vil.png",
-    status: "ONLINE",
-    latestLocation: {
-      latitude: 47.381019226154905,
-      longitude: 7.951315032221059
-    },
-    dogs: [
-      {
-        id: 3,
-        name: "Fifi",
-        sex: "FEMALE",
-        breed: "Dalmatian",
-        dateOfBirth: "2017-04-01",
-        imageUrl: "http://azure.wgp-cdn.co.uk/app-yourdog/posts/dalmatian.jpg"
-      }
-    ],
-    tags: [
-      {
-        id: 1,
-        name: "💬 Chat",
-        tagType: "OFFERING"
-      },
-      {
-        id: 2,
-        name: "🏇🏻 Training",
-        tagType: "LOOKING"
-      },
-      {
-        id: 3,
-        name: "👀 Petsitting",
-        tagType: "OFFERING"
-      }
-    ]
-  },
-  {
-    id: 3,
-    name: "User Three",
-    bio: "Lorem ipsum dolor sit amet",
-    profilePicture: "https://upload.wikimedia.org/wikipedia/en/6/64/Cruella_de_Vil.png",
-    status: "OFFLINE",
-    latestLocation: {
-      latitude: 47.38275533240448,
-      longitude: 7.931205231766877
-    },
-    dogs: [
-      {
-        id: 2,
-        name: "Winston",
-        sex: "MALE",
-        breed: "Dalmatian",
-        dateOfBirth: "2018-04-01",
-        imageUrl: "https://vetstreet-brightspot.s3.amazonaws.com/ee/140380a73111e0a0d50050568d634f/file/Dalmatian-2-645mk062311.jpg"
-      }
-    ],
-    tags: [
-      {
-        id: 1,
-        name: "💬 Chat",
-        tagType: "OFFERING"
-      },
-      {
-        id: 2,
-        name: "🏇🏻 Training",
-        tagType: "LOOKING"
-      },
-      {
-        id: 3,
-        name: "👀 Petsitting",
-        tagType: "OFFERING"
-      },
-      {
-        id: 4,
-        name: "💬 Chat",
-        tagType: "LOOKING"
-      },
-      {
-        id: 5,
-        name: "🍽️ Shared Food Orders",
-        tagType: "OFFERING"
-      },
-      {
-        id: 6,
-        name: "🐾 Walking Buddies",
-        tagType: "LOOKING"
-      },
-    ],
-  }
-];
-
-const FAKE_FETCH_USER = (id) => {
-  for (let i = 0; i < ALL_USERS.length; i++) {
-    if (ALL_USERS[i].id === id) {
-      return ALL_USERS[i];
-    }
-  }
-}
 
 const mapStyles = {
   width: '100%',
@@ -204,15 +43,29 @@ class User extends React.Component {
     this.redirectToChat = this.redirectToChat.bind(this);
     this.redirectToProfile = this.redirectToProfile.bind(this);
     this.saveOwnLocation = this.saveOwnLocation.bind(this);
+    this.apiCallback = this.apiCallback.bind(this);
+    this.componentDidMount = this.componentDidMount.bind(this);
   }
 
   componentDidMount() {
-    // TODO: Fetch correct user from API
-    let user = FAKE_FETCH_USER(parseInt(this.props.match.params.id));
-    this.setState({
-      user: user
-    });
+    const client = ApiClientFactory();
+    const api = new UsersApi(client);
+
+    const userId = this.props.match.params.id;
+    api.usersUserIdGet(userId, this.apiCallback);
+
     GeoCoordinateHelper.getCurrentLocation(this.saveOwnLocation);
+  }
+
+  apiCallback(error, data, response){
+    if(error){
+      console.error(error);
+      return;
+    }
+
+    this.setState({
+      user: response.body
+    })
   }
 
   redirectToProfile() {
@@ -234,23 +87,25 @@ class User extends React.Component {
     });
   }
 
+  redirectBackToMapUser() {
+    this.props.history.push("/map/users/" + this.state.user.id.toString());
+  }
 
   render() {
-    let distance = GeoCoordinateHelper.getDistanceFromLatLonInKm(this.state.ownLocation.latitude, this.state.ownLocation.longitude,
-      this.state.user.latestLocation.latitude, this.state.user.latestLocation.longitude);
+    let distance = ""
+    if (this.state.ownLocation.latitude > 0 && this.state.ownLocation.longitude > 0 && this.state.latestLocation > 0 && this.state.state.latestLocation.longitude > 0) {
+      distance = GeoCoordinateHelper.getDistanceFromLatLonInKm(this.state.ownLocation.latitude, this.state.ownLocation.longitude,
+        this.state.user.latestLocation.latitude, this.state.user.latestLocation.longitude);
+    }
 
     // Cloaks the distance string while own location has not been loaded
     let distanceString = () => {
-      if (this.state.ownLocation.latitude > 0 && this.state.ownLocation.longitude > 0) {
+      if (this.state.ownLocation.latitude > 0 && this.state.ownLocation.longitude > 0 && this.state.latestLocation > 0 && this.state.state.latestLocation.longitude > 0) {
         return Math.round(distance).toString() + "KM AWAY";
-      } else {
-        return "...";
       }
-    }
-
-    let googleMapsPosition = {
-      lat: this.state.user.latestLocation.latitude,
-      lng: this.state.user.latestLocation.longitude
+      else {
+        return "No distance to user available...";
+      }
     }
 
     return (
@@ -292,6 +147,8 @@ class User extends React.Component {
               })}
             </div>
           </div>
+
+          {/* //TODO comment in as soon as API is ready
           <div>
             <h2 className="font-bold text-lg mt-2">OFFERING</h2>
             <div className="flex flex-wrap">
@@ -320,21 +177,17 @@ class User extends React.Component {
               })}
             </div>
           </div>
+        */}
         </div>
-
         <div className="flex-none mt-14">
           <div className="absolute inset-x-0 bottom-20 p-4" >
-            <div className=" w-full text-center p-2 mr-2 bg-gray-600 text-white font-semibold rounded-md cursor-pointer"
-              onClick={this.redirectToChat}>💬 Chat</div>
+            <button className=" w-full text-center p-2 mr-2 bg-gray-600 text-white font-semibold rounded-md cursor-pointer"
+              onClick={this.redirectToChat}>💬 Chat</button>
           </div>
           <TabBar active="map" />
         </div>
       </div>
     )
-  }
-
-  redirectBackToMapUser() {
-    this.props.history.push("/map/users/" + this.state.user.id.toString());
   }
 }
 

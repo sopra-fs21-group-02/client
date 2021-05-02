@@ -1,10 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
-import { api, handleError } from '../../helpers/api';
+import User from '../shared/models/User';
 import { withRouter } from 'react-router-dom';
 import { Button } from '../../views/design/Button';
 import GoogleLogin from 'react-google-login';
 import { getClientId } from '../../helpers/getClientId';
+import { ApiClient, UsersApi } from 'sopra-fs21-group-02-dogs-api';
+import GetApiClient from '../../helpers/ApiClientFactory';
+import AuthHelper from '../../helpers/AuthHelper';
 
 const FormContainer = styled.div`
   margin-top: 2em;
@@ -25,36 +28,42 @@ class Login extends React.Component {
     this.state = {
       errorMessage: null,
     };
+
+    const client = GetApiClient();
+    this.UsersApi = new UsersApi(client);
+
+    this.onApiResponse = this.onApiResponse.bind(this);
+    this.onLogin = this.onLogin.bind(this);
   }
 
-  async onLogin(response) {
+  onLogin(response) {
     const requestBody = JSON.stringify({
       tokenId: response.tokenId,
       emailId: response.profileObj.email
     });
 
-    try {
-      const res = await api.post("v1/users/login", requestBody);
+    this.UsersApi.usersLoginPost(requestBody, this.onApiResponse);
+  }
 
-      localStorage.setItem('accessToken', res.data.accessToken);
-      localStorage.setItem('accessTokenExpiry', res.data.accessTokenExpiry);
-
-      if (res.data.isNewUser) {
-        this.props.history.push('/profile');
-      } else {
-        this.props.history.push('/map');
-      }
-    } catch (error) {
-      const errMessage = handleError(error);
+  onApiResponse(error, data, response) {
+    if(error) {
+      const errMessage = "Error logging in: " + error.message;
       this.setState({ errorMessage: errMessage });
-    };
+      return;
+    }
+
+    AuthHelper.afterLogin(response.body.userId, response.body.accessToken, response.body.accessTokenExpiry);
+    
+    // Redirect logged-in user
+    if (response.body.isNewUser) {
+      this.props.history.push('/profile');
+    } else {
+      this.props.history.push('/map');
+    }
   }
 
   render() {
     const clientId = "1057742566572-4ufig26uc1s8tiggp6ja3tf13s4iuo87.apps.googleusercontent.com";
-    const responseGoogle = (response) => {
-      this.onLogin(response);
-    }
     return (
       <div className="flex flex-col h-screen w-full">
 
@@ -69,8 +78,8 @@ class Login extends React.Component {
               <GoogleLogin
                 clientId={getClientId()}
                 buttonText="Sign in with Google"
-                onSuccess={responseGoogle}
-                onFailure={responseGoogle}
+                onSuccess={this.onLogin}
+                onFailure={this.onLogin}
                 cookiePolicy={'single_host_origin'}
               />
               <ErrorMessage>{this.state.errorMessage}</ErrorMessage>
