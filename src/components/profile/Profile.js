@@ -110,7 +110,7 @@ class Profile extends React.Component {
       console.error(error);
       return;
     }
-    alert("saved")
+
     this.setState({
       bioChanged: false
     })
