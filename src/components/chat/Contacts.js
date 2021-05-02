@@ -2,37 +2,8 @@ import React from 'react';
 import { withRouter } from 'react-router';
 import Back from '../../views/design/icons/Back';
 import UserListUser from '../../views/chat/UserListUser';
-
-// TODO: Remove Mock data with API integration
-const ALL_USERS = [
-  {
-    id: 1,
-    name: "Cruella De Vil",
-    bio: "I love all dogs, but Dalamtians are my absolute favorite! Totally open to watch your dogs while you are on holiday!",
-    profilePicture: "https://upload.wikimedia.org/wikipedia/en/6/64/Cruella_de_Vil.png",
-    status: "ONLINE",
-    latestLocation: undefined, // Not needed here...
-    dogs: undefined, // Not needed here...
-  },
-  {
-    id: 2,
-    name: "Roger Radcliffe",
-    bio: "Lorem ipsum...",
-    profilePicture: "https://static.wikia.nocookie.net/disney/images/4/40/Rogerrad.png",
-    status: "OFFLINE",
-    latestLocation: undefined, // Not needed here...
-    dogs: undefined, // Not needed here...
-  },
-  {
-    id: 3,
-    name: "Anita Radcliffe",
-    bio: "Lorem ipsum...",
-    profilePicture: "https://static.wikia.nocookie.net/101dalmatians/images/e/ea/AnitaDifferent.png",
-    status: "OFFLINE",
-    latestLocation: undefined, // Not needed here...
-    dogs: undefined, // Not needed here...
-  }
-];
+import GetApiClient from '../../helpers/ApiClientFactory';
+import { UsersApi } from 'sopra-fs21-group-02-dogs-api';
 
 class Contacts extends React.Component {
   constructor(props) {
@@ -40,6 +11,7 @@ class Contacts extends React.Component {
     this.redirectBackToChat = this.redirectBackToChat.bind(this);
     this.onQueryChange = this.onQueryChange.bind(this);
     this.startConversationWithUser = this.startConversationWithUser.bind(this);
+    this.getUsersCallback = this.getUsersCallback.bind(this);
 
     this.state = {
       query: '',
@@ -48,9 +20,19 @@ class Contacts extends React.Component {
   }
 
   componentDidMount() {
-    // TODO: Replace w/ API call...
+    let client = GetApiClient();
+    let usersApi = new UsersApi(client);
+    usersApi.getAllUsers(this.getUsersCallback);
+  }
+
+  getUsersCallback(error, data, response) {
+    if(error) {
+      console.error(error);
+      return;
+    }
+
     this.setState({
-      users: ALL_USERS
+      users: response.body
     });
   }
 

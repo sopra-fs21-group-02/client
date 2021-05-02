@@ -3,139 +3,8 @@ import { withRouter } from 'react-router';
 import TabBar from '../../views/TabBar';
 import StatusIndicator from '../../views/design/StatusIndicator';
 import InboxConversationItem from '../../views/chat/InboxConversationItem';
-
-
-// TODO: Remove mock data once API is integrated
-const ME = {}; // EMPTY since we don't need the data here...
-
-// TODO: Remove mock data once API is integrated
-const CRUELLA = {
-  id: 1,
-  name: "Cruella De Vil",
-  bio: "I love all dogs, but Dalamtians are my absolute favorite! Totally open to watch your dogs while you are on holiday!",
-  profilePicture: "https://upload.wikimedia.org/wikipedia/en/6/64/Cruella_de_Vil.png",
-  status: "ONLINE",
-  latestLocation: undefined, // Not needed here...
-  dogs: undefined, // Not needed here...
-};
-
-// TODO: Remove mock data once API is integrated
-const ROGER = {
-  id: 2,
-  name: "Roger Radcliffe",
-  bio: "Lorem ipsum...",
-  profilePicture: "https://static.wikia.nocookie.net/disney/images/4/40/Rogerrad.png",
-  status: "OFFLINE",
-  latestLocation: undefined, // Not needed here...
-  dogs: undefined, // Not needed here...
-};
-
-// TODO: Remove mock data once API is integrated
-const ANITA = {
-  id: 3,
-  name: "Anita Radcliffe",
-  bio: "Lorem ipsum...",
-  profilePicture: "https://static.wikia.nocookie.net/101dalmatians/images/e/ea/AnitaDifferent.png",
-  status: "OFFLINE",
-  latestLocation: undefined, // Not needed here...
-  dogs: undefined, // Not needed here...
-};
-
-// TODO: Remove mock data once API is integrated
-function GET_CONVERSATIONS() {
-  return [
-    {
-      id: 1,
-      participant: CRUELLA,
-      messages: [
-        {
-          id: 0,
-          sender: CRUELLA,
-          receiver: ME,
-          message: "What's up? 😀",
-          timeStamp: "2021-04-11T16:24:44.036Z",
-          unread: false
-        },
-        {
-          id: 0,
-          sender: ME,
-          receiver: CRUELLA,
-          message: "Going on holiday soon. Could you maybe watch our dalmatians? 🥺",
-          timeStamp: "2021-04-11T16:24:44.036Z",
-          unread: false
-        },
-        {
-          id: 0,
-          sender: CRUELLA,
-          receiver: ME,
-          message: "Haha yes I can watch them for you! 😉 Can't wait to meet my doggos again, you know how much I love them! 🤗",
-          timeStamp: "2021-04-11T16:24:44.036Z",
-          unread: true
-        }
-      ]
-    },
-    {
-      id: 2,
-      participant: ROGER,
-      messages: [
-        {
-          id: 0,
-          sender: ROGER,
-          receiver: ME,
-          message: "How about that dog playdate in the park? 🐶🐾",
-          timeStamp: "2021-04-11T16:24:44.036Z",
-          unread: false
-        },
-        {
-          id: 0,
-          sender: ME,
-          receiver: ROGER,
-          message: "Sunday? 🤔",
-          timeStamp: "2021-04-11T16:24:44.036Z",
-          unread: false
-        },
-        {
-          id: 0,
-          sender: ROGER,
-          receiver: ME,
-          message: "Sunday sounds good! 👍",
-          timeStamp: "2021-04-11T16:24:44.036Z",
-          unread: false
-        }
-      ]
-    },
-    {
-      id: 3,
-      participant: ANITA,
-      messages: [
-        {
-          id: 0,
-          sender: ANITA,
-          receiver: ME,
-          message: "It's on Sunday, right?",
-          timeStamp: "2021-04-11T16:24:44.036Z",
-          unread: false
-        },
-        {
-          id: 0,
-          sender: ME,
-          receiver: ANITA,
-          message: "I'll text you later 😊",
-          timeStamp: "2021-04-11T16:24:44.036Z",
-          unread: false
-        },
-        {
-          id: 0,
-          sender: ME,
-          receiver: ANITA,
-          message: "Yup, Roger's also coming! Can't wait! 🐾",
-          timeStamp: "2021-04-11T16:24:44.036Z",
-          unread: false
-        }
-      ]
-    }
-  ];
-}
+import GetApiClient from '../../helpers/ApiClientFactory';
+import { ConversationsApi } from 'sopra-fs21-group-02-dogs-api';
 
 class Inbox extends React.Component {
   constructor(props) {
@@ -143,13 +12,28 @@ class Inbox extends React.Component {
     this.state = {
       conversations: []
     };
+
+    this.getConversationsCallback = this.getConversationsCallback.bind(this);
+    this.redirectToConversation = this.redirectToConversation.bind(this);
+    this.redirectToUserList = this.redirectToUserList.bind(this);
   }
 
   componentDidMount() {
-    let convos = GET_CONVERSATIONS();
+    const client = GetApiClient();
+    const api = new ConversationsApi(client);
+    let userId = localStorage.getItem('loggedInUserId');
+    api.getAllConversations(userId, this.getConversationsCallback);
+  }
+
+  getConversationsCallback(error, data, response) {
+    if (error) {
+      console.error(error);
+      return;
+    }
+
     this.setState({
-      conversations: convos
-    })
+      conversations: response.body
+    });
   }
 
   redirectToConversation(participantUserId) {
@@ -173,17 +57,21 @@ class Inbox extends React.Component {
         </div>
 
         {this.state.conversations.map((conversation) => {
-          let lastMessage = conversation.messages[conversation.messages.length - 1];
+          let lastMessage = conversation.lastMessage;
+          let userId = localStorage.getItem('loggedInUserId');
+          let otherUser = conversation.lastMessage.sender.id == userId ?
+                            conversation.lastMessage.receiver :
+                            conversation.lastMessage.sender;
           return (
             <InboxConversationItem 
-              key={conversation.participant.id}
-              userImageURL={conversation.participant.profilePicture}
-              userName={conversation.participant.name}
-              userStatus={conversation.participant.status}
+              key={otherUser.id}
+              userImageURL={otherUser.profilePicture}
+              userName={otherUser.name}
+              userStatus={otherUser.status}
               lastMessageText={lastMessage.message}
               lastMessageTimestamp={lastMessage.timeStamp}
-              unread={lastMessage.unread}
-              onClick={() => this.redirectToConversation(conversation.participant.id)}
+              unread={lastMessage.unread && lastMessage.sender.id != userId}
+              onClick={() => this.redirectToConversation(otherUser.id)}
             />
           )
         })}

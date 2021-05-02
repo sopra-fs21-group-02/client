@@ -9,104 +9,9 @@ import moment from 'moment';
 
 import GeoCoordinateHelper from '../../helpers/GeoCoordinateHelper';
 import DateHelper from '../../helpers/DateHelper';
-
-const ALL_USERS = [
-  {
-    id: 1,
-    name: "User One",
-    bio: "I love all dogs, but Dalamtians are my absolute favorite! Totally open to watch your dogs while you are on holiday!",
-    profilePicture: "https://upload.wikimedia.org/wikipedia/en/6/64/Cruella_de_Vil.png",
-    status: "ONLINE",
-    latestLocation: {
-      latitude: 47.38507005180391,
-      longitude: 7.944326876563231
-    },
-    dogs: [
-      {
-        id: 1,
-        name: "Bello",
-        sex: "MALE",
-        breed: "Dalmatian",
-        dateOfBirth: "2020-10-01",
-        imageUrl: "https://www.pdsa.org.uk/media/7888/dalmatian-gallery-outdoors-8-min.jpg"
-      },
-      {
-        id: 2,
-        name: "Winston",
-        sex: "MALE",
-        breed: "Dalmatian",
-        dateOfBirth: "2018-04-01",
-        imageUrl: "https://vetstreet-brightspot.s3.amazonaws.com/ee/140380a73111e0a0d50050568d634f/file/Dalmatian-2-645mk062311.jpg"
-      },
-      {
-        id: 3,
-        name: "Fifi",
-        sex: "FEMALE",
-        breed: "Dalmatian",
-        dateOfBirth: "2017-04-01",
-        imageUrl: "http://azure.wgp-cdn.co.uk/app-yourdog/posts/dalmatian.jpg"
-      },
-      {
-        id: 4,
-        name: "Jumper",
-        sex: "MALE",
-        breed: "Dalmatian",
-        dateOfBirth: "2020-03-01",
-        imageUrl: "https://dogtime.com/assets/uploads/gallery/dalmatian-dog-breed-pictures/10-water.jpg"
-      }
-    ]
-  },
-  {
-    id: 2,
-    name: "User Two",
-    bio: "I'm a user and I like dogs!!!",
-    profilePicture: "https://upload.wikimedia.org/wikipedia/en/6/64/Cruella_de_Vil.png",
-    status: "ONLINE",
-    latestLocation: {
-      latitude: 47.381019226154905, 
-      longitude: 7.951315032221059
-    },
-    dogs: [
-      {
-        id: 3,
-        name: "Fifi",
-        sex: "FEMALE",
-        breed: "Dalmatian",
-        dateOfBirth: "2017-04-01",
-        imageUrl: "http://azure.wgp-cdn.co.uk/app-yourdog/posts/dalmatian.jpg"
-      }
-    ]
-  },
-  {
-    id: 3,
-    name: "User Three",
-    bio: "Lorem ipsum dolor sit amet",
-    profilePicture: "https://upload.wikimedia.org/wikipedia/en/6/64/Cruella_de_Vil.png",
-    status: "OFFLINE",
-    latestLocation: {
-      latitude: 47.38275533240448,
-      longitude: 7.931205231766877
-    },
-    dogs: [
-      {
-        id: 2,
-        name: "Winston",
-        sex: "MALE",
-        breed: "Dalmatian",
-        dateOfBirth: "2018-04-01",
-        imageUrl: "https://vetstreet-brightspot.s3.amazonaws.com/ee/140380a73111e0a0d50050568d634f/file/Dalmatian-2-645mk062311.jpg"
-      }
-    ]
-  }
-];
-
-const FAKE_FETCH_USER = (id) => {
-  for (let i = 0; i < ALL_USERS.length; i++) {
-    if(ALL_USERS[i].id === id) {
-      return ALL_USERS[i];
-    }
-  }
-}
+import { ApiClient, UsersApi } from 'sopra-fs21-group-02-dogs-api';
+import GetApiClient from '../../helpers/ApiClientFactory';
+import { getDomain } from '../../helpers/getDomain';
 
 const mapStyles = {
   width: '100%',
@@ -117,6 +22,7 @@ const mapStyles = {
 class MapUser extends React.Component {
   constructor(props) {
     super(props);
+    
     this.state = {
       user: {
         name: "",
@@ -138,14 +44,25 @@ class MapUser extends React.Component {
     this.redirectToChat = this.redirectToChat.bind(this);
     this.redirectToProfile = this.redirectToProfile.bind(this);
     this.saveOwnLocation = this.saveOwnLocation.bind(this);
+    this.getUserCallback = this.getUserCallback.bind(this);
   }
 
-  componentDidMount() {
-    // TODO: Fetch correct user from API
-    let user = FAKE_FETCH_USER(parseInt(this.props.match.params.id));
+  getUserCallback(error, data, response) {
+    if(error) {
+      console.error(error);
+      return;
+    }
+
     this.setState({
-      user: user
+      user: response.body
     });
+  }
+
+  async componentDidMount() {
+    const client = GetApiClient();
+    const api = new UsersApi(client);
+    let userId = this.props.match.params.id;
+    api.usersUserIdGet(userId, this.getUserCallback);
 
     GeoCoordinateHelper.getCurrentLocation(this.saveOwnLocation);
   }
@@ -177,12 +94,15 @@ class MapUser extends React.Component {
       iconUrl = "/images/map/marker-offline.png";
     }
 
-    let distance = GeoCoordinateHelper.getDistanceFromLatLonInKm(this.state.ownLocation.latitude, this.state.ownLocation.longitude,
-                                                                 this.state.user.latestLocation.latitude, this.state.user.latestLocation.longitude);
+    let ownLocation = this.state.ownLocation || {latitude: undefined, longitude: undefined};
+    let userLocation = this.state.user.latestLocation || {latitude: undefined, longitude: undefined};
+
+    let distance = GeoCoordinateHelper.getDistanceFromLatLonInKm(ownLocation.latitude, ownLocation.longitude,
+                                                                 userLocation.latitude, userLocation.longitude);
     
     // Cloaks the distance string while own location has not been loaded
     let distanceString = () => {
-      if(this.state.ownLocation.latitude > 0 && this.state.ownLocation.longitude > 0) {
+      if(ownLocation.latitude > 0 && ownLocation.longitude > 0) {
         return Math.round(distance).toString() + "KM AWAY";
       } else {
         return "...";
@@ -190,8 +110,8 @@ class MapUser extends React.Component {
     }
 
     let googleMapsPosition = {
-      lat: this.state.user.latestLocation.latitude, 
-      lng: this.state.user.latestLocation.longitude
+      lat: userLocation.latitude, 
+      lng: userLocation.longitude
     }
 
     // TODO: Fix map alignment (oversheets screen bottom atm.)
@@ -220,9 +140,10 @@ class MapUser extends React.Component {
             <div className="flex flex-wrap">
               {this.state.user.dogs.map(dog => {
                 let ageString = DateHelper.getAgeStringFromDateOfBirth(dog.dateOfBirth);
+                let imageUrl = `${getDomain()}/v1/users/${this.state.user.id}/dogs/${dog.id}/image`;
                 return (
                   <div key={dog.id} className="w-1/2">
-                    <Dog name={dog.name} sex={dog.sex} breed={dog.breed} age={ageString} imageUrl={dog.imageUrl}></Dog>
+                    <Dog name={dog.name} sex={dog.sex} breed={dog.breed} age={ageString} imageUrl={imageUrl}></Dog>
                   </div>   
                 )
               })}
