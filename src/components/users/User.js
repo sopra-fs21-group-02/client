@@ -10,6 +10,7 @@ import Tag from "../../views/profile/Tag";
 import Back from "../../views/design/icons/Back";
 import ApiClientFactory from "../../helpers/ApiClientFactory";
 import {UsersApi} from "sopra-fs21-group-02-dogs-api";
+import { getDomain } from '../../helpers/getDomain';
 
 
 const mapStyles = {
