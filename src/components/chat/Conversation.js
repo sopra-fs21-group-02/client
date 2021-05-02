@@ -168,7 +168,8 @@ class Conversation extends React.Component {
 
         <div className="bg-gray-200 p-2 flex flex-none">
           <div className="flex-grow">
-            <input className="p-2 w-full rounded-md" 
+            <input className="p-2 w-full rounded-md"
+                    maxLength="255"
                     onChange={(e) => this.onMessageDraftChange(e.target.value)}
                     onKeyPress={this.inputKeyPress}
                     value={this.state.messageDraft}></input>
