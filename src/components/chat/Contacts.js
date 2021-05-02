@@ -51,7 +51,7 @@ class Contacts extends React.Component {
   }
 
   getFilteredUsers() {
-    let query = this.state.query;
+    let query = this.state.query.toLowerCase();
     if (query === undefined || query.trim() === '') { 
       return this.state.users; 
     }
@@ -59,7 +59,7 @@ class Contacts extends React.Component {
     let resultSet = [];
 
     this.state.users.forEach(user => {
-      if (user.name.indexOf(query) !== -1) { 
+      if (user.name.toLowerCase().indexOf(query) !== -1) { 
         resultSet.push(user); 
       }
     });
