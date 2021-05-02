@@ -38,21 +38,24 @@ class AuthHelper {
     localStorage.removeItem('accessTokenExpiry');
   }
 
-  static setRefreshInterval() {
+  static setRefreshInterval(triggerImmediateRefresh) {
     if (this.refreshInterval) {
       clearInterval(this.refreshInterval);
     }
 
     let interval = 1800000 / 2; // Refresh after half the access token expiry time on the server
     this.refreshInterval = setInterval(() => {this.refreshAccessToken()}, interval);
+
+    if (triggerImmediateRefresh) {
+      this.refreshAccessToken();
+    }
   }
 
   static refreshAccessToken() {
     let client = GetApiClient();
     let api = new UsersApi(client);
-    let token = this.getCookie('refresh_token');
 
-    api.usersRefreshTokenPut(token, (e, d, r) => {this.refreshTokenCallback(e, d, r)});
+    api.usersRefreshTokenPut('', (e, d, r) => {this.refreshTokenCallback(e, d, r)});
   }
 
   static refreshTokenCallback(error, data, response) {
@@ -61,27 +64,16 @@ class AuthHelper {
       this.clearLoggedInUser();
       this.afterLogout();
       console.error(error);
+
+      if (window.location.href.indexOf('/sign-in') === -1) {
+        window.location.href = '/sign-in';
+      }
+      
       return;
     }
 
     localStorage.setItem('accessToken', response.body.accessToken);
     localStorage.setItem('accessTokenExpiry', response.body.accessTokenExpiry);
-  }
-
-  static getCookie(cname) {
-    var name = cname + "=";
-    var decodedCookie = decodeURIComponent(document.cookie);
-    var ca = decodedCookie.split(';');
-    for (var i = 0; i < ca.length; i++) {
-      var c = ca[i];
-      while (c.charAt(0) == ' ') {
-        c = c.substring(1);
-      }
-      if (c.indexOf(name) == 0) {
-        return c.substring(name.length, c.length);
-      }
-    }
-    return "";
   }
 }
 
