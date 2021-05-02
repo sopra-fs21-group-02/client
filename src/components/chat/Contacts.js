@@ -22,7 +22,7 @@ class Contacts extends React.Component {
   componentDidMount() {
     let client = GetApiClient();
     let usersApi = new UsersApi(client);
-    usersApi.getUsers(undefined, this.getUsersCallback);
+    usersApi.getAllUsers(this.getUsersCallback);
   }
 
   getUsersCallback(error, data, response) {
