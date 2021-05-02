@@ -12,6 +12,7 @@ import DateHelper from '../../helpers/DateHelper';
 import { ApiClient, UsersApi } from 'sopra-fs21-group-02-dogs-api';
 import GetApiClient from '../../helpers/ApiClientFactory';
 import { getDomain } from '../../helpers/getDomain';
+import Back from '../../views/design/icons/Back';
 
 const mapStyles = {
   width: '100%',
@@ -119,7 +120,11 @@ class MapUser extends React.Component {
       <div className="h-screen flex flex-col">
         <div className="p-4 bg-gray-100">
           <div className="flex">
-            <div className="flex-none mr-4">
+            <div className="absolute top-9 -left-4 cursor-pointer" onClick={() => this.props.history.goBack()}>
+              <Back></Back>
+            </div>
+
+            <div className="flex-none ml-3 mr-4">
               <img src={this.state.user.profilePicture} className="h-24 w-24 rounded-full bg-gray-400"></img>
             </div>
             <div>
