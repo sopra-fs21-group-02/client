@@ -87,14 +87,14 @@ class Inbox extends React.Component {
                             conversation.lastMessage.sender;
           return (
             <InboxConversationItem 
-              key={otherUser.id}
-              userImageURL={otherUser.profilePicture}
-              userName={otherUser.name}
-              userStatus={otherUser.status}
+              key={otherUser ? otherUser.id : Math.random().toString}
+              userImageURL={otherUser ? otherUser.profilePicture : ""}
+              userName={otherUser ? otherUser.name : "Deleted User"}
+              userStatus={otherUser ? otherUser.status : "OFFLINE"}
               lastMessageText={lastMessage.message}
               lastMessageTimestamp={lastMessage.timeStamp}
-              unread={lastMessage.unread && lastMessage.sender.id != userId}
-              onClick={() => this.redirectToConversation(otherUser.id)}
+              unread={lastMessage.unread && (lastMessage.sender && lastMessage.sender.id != userId)}
+              onClick={otherUser ? () => this.redirectToConversation(otherUser.id) : () => {alert('Conversation is no longer available')}}
             />
           )
         })}
