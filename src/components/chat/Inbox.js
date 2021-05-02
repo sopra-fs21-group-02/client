@@ -31,6 +31,13 @@ class Inbox extends React.Component {
       return;
     }
 
+    let conversations = response.body;
+    conversations.sort((a, b) => {
+      let aDate = new Date(a.lastMessage.timeStamp);
+      let bDate = new Date(b.lastMessage.timeStamp);
+      return bDate - aDate;
+    })
+
     this.setState({
       conversations: response.body
     });
