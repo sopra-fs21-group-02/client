@@ -135,7 +135,7 @@ class Map extends React.Component {
       this.updatePosition = navigator.geolocation.watchPosition(this.saveLatestPosition, this.handlePositionError);
 
       // Listen for permission changes to re-load location
-      if (PermissionStatus) {
+      if (typeof PermissionStatus !== 'undefined') {
         PermissionStatus.onchange = () => { this.getCurrentLocation(); }
       }
     }
