@@ -213,6 +213,18 @@ class Dog extends React.Component {
     if (this.state.newImage){
       imageUrl = URL.createObjectURL(this.state.newImage);
     }
+
+    var dtToday = new Date();
+    var month = dtToday.getMonth() + 1;
+    var day = dtToday.getDate();
+    var year = dtToday.getFullYear();
+    if(month < 10)
+        month = '0' + month.toString();
+    if(day < 10)
+        day = '0' + day.toString();
+    
+    var maxDate = year + '-' + month + '-' + day;
+
     return (
       <div className="h-screen w-full flex-col flex">
         <div className="flex-none z-50">
@@ -249,6 +261,7 @@ class Dog extends React.Component {
               placeholder="Enter the date of birth of your dog here (e.g. 2018-04-01)."
               name="dateOfBirth"
               type="date"
+              max={maxDate}
               value={this.state.dog.dateOfBirth}
               onChange={this.handleInputChange}
               className="w-full placeholder-grey rounded border h-9 p-2"
