@@ -64,7 +64,9 @@ class Map extends React.Component {
     });
     
     if (this.state.isMapDragged === false){
-      this.map.panTo(this.state.currentLocation);
+      if (this.map) {
+        this.map.panTo(this.state.currentLocation);
+      }
     }
 
     let client = GetApiClient();
@@ -202,6 +204,7 @@ class Map extends React.Component {
               } else {
                 iconUrl = "/images/map/marker-offline.png";
               }
+              let userLocation = user.latestLocation || {latitude: undefined, longitude: undefined};
               return (
                 <Marker
                   title={user.name}
@@ -209,7 +212,7 @@ class Map extends React.Component {
                   id={user.id}
                   key={user.id}
                   // TODO: Handle case where user doesn't have a latestLocation (yet)...
-                  position={{lat: user.latestLocation.latitude, lng: user.latestLocation.longitude}}
+                  position={{lat: userLocation.latitude, lng: userLocation.longitude}}
                   onClick={this.onMarkerClick}
                   icon={iconUrl} />
               )
