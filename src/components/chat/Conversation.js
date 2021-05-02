@@ -87,10 +87,6 @@ class Conversation extends React.Component {
     // Don't send empty messages
     if (message.length === 0) { return; }
 
-    // TODO: Append message to local conversation object
-
-    // TODO: Send message to API
-
     let messageObj = {
       senderId: this.state.user.id,
       receiverId: this.state.participant.id,
@@ -139,7 +135,7 @@ class Conversation extends React.Component {
       <div className="flex flex-col h-screen">
         <div className="bg-gray-200 flex-none">
           <div className="flex p-2">
-            <div className="-ml-4 -mr-2 cursor-pointer" onClick={this.redirectBackToInbox}>
+            <div className="-ml-4 -mr-2 cursor-pointer" onClick={() => this.props.history.goBack()}>
               <Back></Back>
             </div>
             <div className="flex-none">
