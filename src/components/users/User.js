@@ -94,14 +94,14 @@ class User extends React.Component {
 
   render() {
     let distance = ""
-    if (this.state.ownLocation.latitude > 0 && this.state.ownLocation.longitude > 0 && this.state.latestLocation > 0 && this.state.latestLocation.longitude > 0) {
+    if (this.state.ownLocation.latitude > 0 && this.state.ownLocation.longitude > 0 && this.state.user.latestLocation.latitude > 0 && this.state.user.latestLocation.longitude > 0) {
       distance = GeoCoordinateHelper.getDistanceFromLatLonInKm(this.state.ownLocation.latitude, this.state.ownLocation.longitude,
         this.state.user.latestLocation.latitude, this.state.user.latestLocation.longitude);
     }
 
     // Cloaks the distance string while own location has not been loaded
     let distanceString = () => {
-      if (this.state.ownLocation.latitude > 0 && this.state.ownLocation.longitude > 0 && this.state.user.latestLocation > 0 && this.state.user.latestLocation.longitude > 0) {
+      if (this.state.ownLocation.latitude > 0 && this.state.ownLocation.longitude > 0 && this.state.user.latestLocation.latitude > 0 && this.state.user.latestLocation.longitude > 0) {
         return Math.round(distance).toString() + "KM AWAY";
       }
       else {
