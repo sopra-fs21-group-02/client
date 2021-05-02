@@ -120,7 +120,7 @@ class MapUser extends React.Component {
       <div className="h-screen flex flex-col">
         <div className="p-4 bg-gray-100">
           <div className="flex">
-            <div className="absolute top-9 -left-4 cursor-pointer" onClick={() => this.props.history.goBack()}>
+            <div className="absolute top-9 -left-4 cursor-pointer" onClick={() => this.props.history.push('/map')}>
               <Back></Back>
             </div>
 
