@@ -16,7 +16,6 @@ class TabBar extends React.Component {
   render() {
     return (
       <div className="flex">
-        <NavigationTab onClick={() => this.onTabClick('/users')} type="users" active={this.props.active === 'users'} />
         <NavigationTab onClick={() => this.onTabClick('/map')} type="map" active={this.props.active === 'map'} />
         <NavigationTab onClick={() => this.onTabClick('/chat')} type="chat" active={this.props.active === 'chat'} />
         <NavigationTab onClick={() => this.onTabClick('/profile')} type="profile" active={this.props.active === 'profile'} />
