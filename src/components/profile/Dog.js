@@ -282,13 +282,13 @@ class Dog extends React.Component {
             {(this.state.dog.id !== -1) ?
               <h2 className="font-bold text-black mt-5">REMOVE FROM PROFILE?</h2> : null}
             {(this.state.dog.id !== -1) ?
-              <div className={container}>
-                <h3 className="font-bold leading-none">
-                  Delete Dog
-                  <span className="cursor-pointer text-gray-700 ml-1"
+              <div className={container + ' cursor-pointer'}
                     onClick={(e) => {
                       if (window.confirm('Are you sure you want to remove this dog from your profile?')) this.deleteDog(e)
-                    }}> x</span>
+                    }}>
+                <h3 className="font-bold leading-none">
+                  Delete Dog
+                  <span className="text-gray-700 ml-1"> x</span>
                 </h3>
               </div>
               : null}
