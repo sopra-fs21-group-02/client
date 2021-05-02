@@ -5,6 +5,7 @@ import StatusIndicator from '../../views/design/StatusIndicator';
 import InboxConversationItem from '../../views/chat/InboxConversationItem';
 import GetApiClient from '../../helpers/ApiClientFactory';
 import { ConversationsApi } from 'sopra-fs21-group-02-dogs-api';
+import EmojiPicker from 'emoji-picker-react';
 
 class Inbox extends React.Component {
   constructor(props) {
@@ -16,9 +17,24 @@ class Inbox extends React.Component {
     this.getConversationsCallback = this.getConversationsCallback.bind(this);
     this.redirectToConversation = this.redirectToConversation.bind(this);
     this.redirectToUserList = this.redirectToUserList.bind(this);
+    this.updateMessages = this.updateMessages.bind(this);
   }
 
   componentDidMount() {
+    const client = GetApiClient();
+    const api = new ConversationsApi(client);
+    let userId = localStorage.getItem('loggedInUserId');
+    api.getAllConversations(userId, this.getConversationsCallback);
+    this.refreshInboxInterval = setInterval(() => this.updateMessages(), 1000);
+  }
+
+  componentWillUnmount() {
+    if (this.refreshInboxInterval) {
+      clearInterval(this.refreshInboxInterval);
+    }
+  }
+
+  updateMessages() {
     const client = GetApiClient();
     const api = new ConversationsApi(client);
     let userId = localStorage.getItem('loggedInUserId');

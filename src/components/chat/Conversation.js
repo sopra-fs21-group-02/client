@@ -24,6 +24,7 @@ class Conversation extends React.Component {
     this.inputKeyPress = this.inputKeyPress.bind(this);
     this.handleError = this.handleError.bind(this);
     this.setStateFromResponse = this.setStateFromResponse.bind(this);
+    this.updateMessages = this.updateMessages.bind(this);
   }
 
   componentDidMount() {
@@ -50,6 +51,26 @@ class Conversation extends React.Component {
           });
         });
       });
+    });
+
+    this.updateMessagesInterval = setInterval(this.updateMessages, 1000);
+  }
+
+  componentWillUnmount() {
+    if (this.updateMessagesInterval) {
+      clearInterval(this.updateMessagesInterval);
+    }
+  }
+
+  updateMessages() {
+    const client = GetApiClient();
+    const conversationsApi = new ConversationsApi(client);
+    conversationsApi.getAllMessages(this.state.user.id, this.state.participant.id, (error, data, response) => {
+      this.handleError(error);
+      if (error == null) {
+        response.body.reverse();
+        this.setStateFromResponse(response, 'messages');
+      }
     });
   }
 
