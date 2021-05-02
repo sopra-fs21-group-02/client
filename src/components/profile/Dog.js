@@ -19,6 +19,7 @@ class Dog extends React.Component {
     this.saveDog = this.saveDog.bind(this);
     this.deleteDog = this.deleteDog.bind(this);
     this.checkDate = this.checkDate.bind(this);
+    this.checkImage = this.checkImage.bind(this);
     this.editDog = this.editDog.bind(this);
     this.addDog = this.addDog.bind(this);
     this.apiCallback = this.apiCallback.bind(this);
@@ -89,13 +90,18 @@ class Dog extends React.Component {
 
   saveDog() {
     if (!this.state.dog.sex || !this.state.dog.name || !this.state.dog.breed || !this.state.dog.dateOfBirth) {
-      alert("please enter all attributes of your dog. Name, breed, date of birth and sex")
+      alert("please enter all attributes of your dog. Name, breed, date of birth and sex");
       return;
     }
     if (!this.checkDate()) {
-      alert("please enter a correct birth date (format JJJJ-MM-DD)")
+      alert("please enter a correct birth date (format JJJJ-MM-DD)");
       return;
     }
+    if (!this.checkImage()) {
+      alert("Please select a valid picture (jpg, gif, tif, or png)");
+      return;
+    }
+
     if (this.state.dog.id === -1){
       this.addDog()
     }
@@ -147,6 +153,15 @@ class Dog extends React.Component {
   checkDate() {
     let date = moment(this.state.dog.dateOfBirth)
     return date.isValid()
+  }
+
+  checkImage() {
+    let image = this.state.newImage;
+    if (!image) return true;
+
+    // Check image type image/png,image/jpeg,image/gif,image/tiff
+    let allowedTypes = ['image/png', 'image/jpeg', 'image/gif', 'image/tiff'];
+    return allowedTypes.indexOf(image.type) !== -1;
   }
 
   //TODO adapt method once API is integrated
@@ -233,6 +248,7 @@ class Dog extends React.Component {
             <input
               placeholder="Enter the date of birth of your dog here (e.g. 2018-04-01)."
               name="dateOfBirth"
+              type="date"
               value={this.state.dog.dateOfBirth}
               onChange={this.handleInputChange}
               className="w-full placeholder-grey rounded border h-9 p-2"
@@ -250,9 +266,9 @@ class Dog extends React.Component {
             </div>
 
             {/* delete button "remove dog" */}
-            {(this.state.dog.sex || this.state.dog.name || this.state.dog.breed || this.state.dog.dateOfBirth) ?
+            {(this.state.dog.id !== -1) ?
               <h2 className="font-bold text-black mt-5">REMOVE FROM PROFILE?</h2> : null}
-            {(this.state.dog.sex || this.state.dog.name || this.state.dog.breed || this.state.dog.dateOfBirth) ?
+            {(this.state.dog.id !== -1) ?
               <div className={container}>
                 <h3 className="font-bold leading-none">
                   Delete Dog
@@ -285,7 +301,7 @@ class Dog extends React.Component {
                     <input hidden
                       id="fileUpload"
                       type="file"
-                      accept="image/*"
+                      accept="image/png,image/jpeg,image/gif,image/tiff"
                       ref={this.inputRef}
                       style={{ display: 'none' }}
                       onChange={e => { this.setFile(e.target.files) }}
