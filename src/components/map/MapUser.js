@@ -11,6 +11,7 @@ import GeoCoordinateHelper from '../../helpers/GeoCoordinateHelper';
 import DateHelper from '../../helpers/DateHelper';
 import { ApiClient, UsersApi } from 'sopra-fs21-group-02-dogs-api';
 import GetApiClient from '../../helpers/ApiClientFactory';
+import { getDomain } from '../../helpers/getDomain';
 
 const mapStyles = {
   width: '100%',

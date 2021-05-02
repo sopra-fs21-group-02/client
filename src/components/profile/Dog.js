@@ -4,45 +4,10 @@ import styled from "styled-components";
 import { RefObject } from "react";
 import moment from "moment";
 import GetApiClient from "../../helpers/ApiClientFactory";
-import {DogsApi} from "sopra-fs21-group-02-dogs-api";
+import {DogsApi, UsersApi} from "sopra-fs21-group-02-dogs-api";
+import { getDomain } from '../../helpers/getDomain';
+import Users from '../../views/design/icons/Users';
 
-
-const ALL_DOGS = [
-  {
-
-    id: 1,
-    name: "Bello",
-    sex: "MALE",
-    breed: "Dalmatian",
-    dateOfBirth: "2020-10-01",
-    imageUrl: "https://www.pdsa.org.uk/media/7888/dalmatian-gallery-outdoors-8-min.jpg"
-  },
-  {
-    id: 2,
-    name: "Winston",
-    sex: "MALE",
-    breed: "Dalmatian",
-    dateOfBirth: "2018-04-01",
-    imageUrl: "https://vetstreet-brightspot.s3.amazonaws.com/ee/140380a73111e0a0d50050568d634f/file/Dalmatian-2-645mk062311.jpg"
-  },
-  {
-    id: 3,
-    name: "Fifi",
-    sex: "FEMALE",
-    breed: "Dalmatian",
-    dateOfBirth: "2017-04-01",
-    imageUrl: "http://azure.wgp-cdn.co.uk/app-yourdog/posts/dalmatian.jpg"
-  },
-
-];
-
-const FAKE_FETCH_DOGS = (id) => {
-  for (let i = 0; i < ALL_DOGS.length; i++) {
-    if (ALL_DOGS[i].id === id) {
-      return ALL_DOGS[i];
-    }
-  }
-}
 
 class Dog extends React.Component {
   inputRef: RefObject<HTMLInputElement>
@@ -58,6 +23,7 @@ class Dog extends React.Component {
     this.addDog = this.addDog.bind(this);
     this.apiCallback = this.apiCallback.bind(this);
     this.setFile = this.setFile.bind(this);
+    this.userGetCallback = this.userGetCallback.bind(this);
 
     this.inputRef = React.createRef();
     this.state = {
@@ -89,12 +55,29 @@ class Dog extends React.Component {
         }
       });
     } else { // Editing dog
-      let dogServer = FAKE_FETCH_DOGS(parseInt(routeId));
-      this.setState({
-        dog: dogServer,
-        active: dogServer.sex
-      });
+      let client = GetApiClient();
+      let api = new UsersApi(client);
+      let userId = localStorage.getItem('loggedInUserId');
+      api.usersUserIdGet(userId, this.userGetCallback);
     }
+  }
+
+  userGetCallback(error, data, response) {
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    let allDogs = response.body.dogs;
+    allDogs.forEach((dog) => {
+      if (dog.id == this.props.match.params.dogId) {
+        dog.imageUrl = `${getDomain()}/v1/users/${localStorage.getItem('loggedInUserId')}/dogs/${dog.id}/image`;
+        this.setState({
+          dog: dog,
+          active: dog.sex
+        });
+      }
+    });
   }
 
   setFile = (file) => {
@@ -104,7 +87,6 @@ class Dog extends React.Component {
     })
   }
 
-  //TODO adapt method once API is integrated
   saveDog() {
     if (!this.state.dog.sex || !this.state.dog.name || !this.state.dog.breed || !this.state.dog.dateOfBirth) {
       alert("please enter all attributes of your dog. Name, breed, date of birth and sex")
@@ -115,43 +97,42 @@ class Dog extends React.Component {
       return;
     }
     if (this.state.dog.id === -1){
-      console.log("adding new dog")
       this.addDog()
     }
     else{
-      console.log("editing dog")
       this.editDog()
     }
   }
 
   addDog(){
-    console.log("add dog has been called")
-    const reader = new FileReader();
-    let image = reader.readAsBinaryString(this.state.newImage);
-
-    //TODO userId of current logged in user
-    const userId = 1;
+    const userId = localStorage.getItem('loggedInUserId');
 
     const client = GetApiClient()
     const api = new DogsApi(client)
-    let dogFormData = new FormData();
-    for (var key in this.state.dog) {
-      dogFormData.append(key, this.state.dog[key]);
-    }
 
-    let imageFormData = new FormData();
-    imageFormData.append('profilePicture', this.state.newImage);
-    //api.addDog(userId, this.state.dog, {profilePicture: this.state.newImage}, this.apiCallback)
-    api.addDog(userId, dogFormData, imageFormData, this.apiCallback)
+    let dog = Object.assign({}, this.state.dog);
+    delete dog.id;
 
+    api.addDog(userId, new Blob([JSON.stringify(dog)], { type: 'application/json' }), {profilePicture: this.state.newImage}, this.apiCallback)
   }
 
   editDog(){
+    const userId = localStorage.getItem('loggedInUserId');
+    const client = GetApiClient()
+    const api = new DogsApi(client)
 
+    let dog = Object.assign({}, this.state.dog);
+    
+    let picture = this.state.newImage ? { profilePicture: this.state.newImage } : {};
+    api.editDog(userId, dog.id, new Blob([JSON.stringify(dog)], { type: 'application/json'}), picture, this.apiCallback);
   }
 
   deleteDog() {
+    const userId = localStorage.getItem('loggedInUserId');
+    const client = GetApiClient();
+    const api = new DogsApi(client);
 
+    api.deleteDog(userId, this.state.dog.id, this.apiCallback);
   }
 
   apiCallback(error, data, response){

@@ -54,7 +54,6 @@ class User extends React.Component {
     const userId = this.props.match.params.id;
     api.usersUserIdGet(userId, this.apiCallback);
 
-    //TODO save location
     GeoCoordinateHelper.getCurrentLocation(this.saveOwnLocation);
   }
 

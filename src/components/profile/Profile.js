@@ -44,7 +44,6 @@ class Profile extends React.Component {
     })
   }
 
-  //TODO adapt method once API is integrated
   logout(){
     const client = GetApiClient();
     const api = new UsersApi(client);
@@ -62,7 +61,6 @@ class Profile extends React.Component {
     this.props.history.push("/sign-in");
   }
 
-  //TODO adapt method once API is integrated
   deleteAccount(){
     const client = GetApiClient();
     const api = new UsersApi(client);
