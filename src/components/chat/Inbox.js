@@ -84,9 +84,9 @@ class Inbox extends React.Component {
           let userId = localStorage.getItem('loggedInUserId');
           let otherUser = null;
           if (lastMessage.sender && lastMessage.receiver) {
-            let otherUser = conversation.lastMessage.sender.id == userId ?
-                              conversation.lastMessage.receiver :
-                              conversation.lastMessage.sender;
+            otherUser = conversation.lastMessage.sender.id == userId ?
+                          conversation.lastMessage.receiver :
+                          conversation.lastMessage.sender;
           }
           
           return (
