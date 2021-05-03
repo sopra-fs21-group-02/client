@@ -82,9 +82,13 @@ class Inbox extends React.Component {
         {this.state.conversations.map((conversation) => {
           let lastMessage = conversation.lastMessage;
           let userId = localStorage.getItem('loggedInUserId');
-          let otherUser = conversation.lastMessage.sender.id == userId ?
-                            conversation.lastMessage.receiver :
-                            conversation.lastMessage.sender;
+          let otherUser = null;
+          if (lastMessage.sender && lastMessage.receiver) {
+            let otherUser = conversation.lastMessage.sender.id == userId ?
+                              conversation.lastMessage.receiver :
+                              conversation.lastMessage.sender;
+          }
+          
           return (
             <InboxConversationItem 
               key={otherUser ? otherUser.id : Math.random().toString}
