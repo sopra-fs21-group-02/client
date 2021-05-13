@@ -2,7 +2,7 @@ import React from 'react';
 import { withRouter } from 'react-router';
 import TabBar from '../../views/TabBar';
 
-import { Map as GoogleMap, GoogleApiWrapper, Marker } from 'google-maps-react';
+import { Map as GoogleMap, GoogleApiWrapper, Marker, Polyline } from 'google-maps-react';
 import ReactDOM from "react-dom";
 import styled from "styled-components";
 import {Button} from "../../views/design/Button";
@@ -10,6 +10,7 @@ import RecenterMap from "../../views/design/icons/RecenterMap";
 import { ApiClient, Coordinate, UsersApi } from 'sopra-fs21-group-02-dogs-api';
 import GetApiClient from '../../helpers/ApiClientFactory';
 import Users from '../../views/design/icons/Users';
+import DrawingControlBar from '../../views/map/DrawingControlBar';
 
 
 const style = {
@@ -28,6 +29,9 @@ class Map extends React.Component {
     this._mapLoaded = this._mapLoaded.bind(this);
     this.handlePositionError = this.handlePositionError.bind(this);
     this.getUsersCallback = this.getUsersCallback.bind(this);
+    this.mapClick = this.mapClick.bind(this);
+    this.enterDrawingMode = this.enterDrawingMode.bind(this);
+    this.exitDrawingMode = this.exitDrawingMode.bind(this);
 
     this.updatePosition = undefined;
     
@@ -40,7 +44,11 @@ class Map extends React.Component {
       centerAroundCurrentLocation: true,
       isMapDragged: false,
       isLocationAvailable: true,
-      isLocationDenied: false
+      isLocationDenied: false,
+      isInDrawingMode: false,
+      drawingModeEntityType: undefined,
+      drawnParkLocation: undefined,
+      drawnPathPoints: undefined
     };
   }
 
@@ -161,6 +169,60 @@ class Map extends React.Component {
     navigator.geolocation.clearWatch(this.updatePosition);
   }
 
+  enterDrawingMode(entity) {
+    this.setState({
+      isInDrawingMode: true,
+      drawingModeEntityType: entity,
+      drawnParkLocation: undefined,
+      drawnPathPoints: []
+    });
+    this.map.setOptions({
+      draggableCursor: 'crosshair'
+    });
+  }
+
+  exitDrawingMode() {
+    this.setState({
+      isInDrawingMode: false,
+      drawingModeEntityType: undefined,
+      drawnParkLocation: undefined,
+      drawnPathPoints: undefined
+    });
+    this.map.setOptions({
+      draggableCursor: 'grab'
+    });
+  }
+
+  mapClick(e, map) {
+    let location = {
+      latitude: e.latLng.lat(),
+      longitude: e.latLng.lng()
+    }
+
+    if (this.state.drawingModeEntityType === "PARK") {
+      this.setState({drawnParkLocation: location});
+    } else if (this.state.drawingModeEntityType === "PATH") {
+      let newPathPoints = [...this.state.drawnPathPoints];
+      newPathPoints.push(location);
+      this.setState({drawnPathPoints: newPathPoints});
+    }
+  }
+
+  saveDrawingEntity() {
+    if (this.state.drawingModeEntityType === "PARK") {
+      alert("TODO: Save Park!");
+    } else if (this.state.drawingModeEntityType === "PATH") {
+      alert("TODO: Save Path!");
+    } else {
+      throw("Can't save drawn entity of type " + this.state.drawingModeEntityType);
+    }
+    
+    this.setState({
+      isInDrawingMode: false,
+      drawingModeEntityType: undefined
+    });
+  }
+
   render() {
     let showOverlay = this.state.currentLocation.lat === null || 
                       this.state.currentLocation.lng === null ||
@@ -176,6 +238,17 @@ class Map extends React.Component {
       overlayText = "Your browser does not support location tracking."
     }
     
+    if (this.state.isInDrawingMode) {
+      style.height = 'calc(100% - 48px)';
+    }
+
+    let drawnPathCoords = undefined;
+    if (this.state.drawnPathPoints !== undefined) {
+      drawnPathCoords = this.state.drawnPathPoints.map((p) => {
+        return {lat: p.latitude, lng: p.longitude};
+      })
+    }
+
     return (
         <div>
           
@@ -193,6 +266,7 @@ class Map extends React.Component {
           fullscreenControl={false}
           mapTypeControl={false}
           onReady={(mapProps, map) => this._mapLoaded(mapProps, map)}
+          onClick={(t, map, e) => this.mapClick(e, map)}
           onDragstart={this.centerMoved}
           onZoomChanged={this.centerMoved}
           streetViewControl={false}
@@ -227,17 +301,60 @@ class Map extends React.Component {
                 position={{lat: this.state.currentLocation.lat, lng: this.state.currentLocation.lng}}
                 icon={"/images/map/marker-own.png"}/>
 
-            <div className="absolute inset-x-0 bottom-15 right-0  w-12 max-w-1/4 paddingBottom: 20">
-              <RecenterMap
-                  active={this.state.isMapDragged}
-                  onClick={() => this.redirectToCurrentLocation()}
-              />
-            </div>
+            {this.state.isInDrawingMode && this.state.drawingModeEntityType === "PARK" && this.state.drawnParkLocation !== undefined && 
+              <Marker
+                title={"New Park"}
+                position={{lat: this.state.drawnParkLocation.latitude, lng: this.state.drawnParkLocation.longitude}}
+                icon={"/images/map/park.png"}/>
+            }
+
+            {this.state.isInDrawingMode && this.state.drawingModeEntityType === "PATH" && this.state.drawnPathPoints !== undefined && this.state.drawnPathPoints.length > 0 &&
+              <Polyline
+                path={drawnPathCoords}
+                strokeColor="#27AE60"
+                strokeOpacity={0.8}
+                strokeWeight={3}
+                 />
+            }
+
+            {!this.state.isInDrawingMode &&
+              <div>
+                <div className="absolute inset-x-0 bottom-15 right-0  w-12 max-w-1/4 paddingBottom: 20">
+                  <RecenterMap
+                      active={this.state.isMapDragged}
+                      onClick={() => this.redirectToCurrentLocation()}
+                  />
+                </div>
+
+                <div className="absolute top-4 right-4">
+                  <DrawingControlBar
+                    parkClick={() => this.enterDrawingMode("PARK")}
+                    pathClick={() => this.enterDrawingMode("PATH")}></DrawingControlBar>
+                </div>
+              </div>
+            }
           </GoogleMap>
           
-          <div className="absolute inset-x-0 bottom-0">
-            <TabBar active="map"/>
-          </div>
+          {!this.state.isInDrawingMode &&
+            <div className="absolute inset-x-0 bottom-0">
+              <TabBar active="map"/>
+            </div>
+          }
+
+          {this.state.isInDrawingMode &&
+            <div className="h-12 bg-gray-300 absolute inset-x-0 bottom-0 text-center flex">
+              <h1
+                className="cursor-pointer hover:font-bold text-xl align-middle pt-2.5 w-1/2"
+                onClick={() => this.exitDrawingMode()}>
+                Cancel
+              </h1>
+              <h1
+                className="cursor-pointer hover:font-bold text-xl align-middle pt-2.5 w-1/2 font-semibold"
+                onClick={() => this.saveDrawingEntity()}>
+                Save
+              </h1>
+            </div>
+          }
         </div>
     )
   }
