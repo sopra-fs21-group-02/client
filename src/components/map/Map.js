@@ -35,6 +35,10 @@ class Map extends React.Component {
     this.exitDrawingMode = this.exitDrawingMode.bind(this);
     this.saveDrawingEntity = this.saveDrawingEntity.bind(this);
     this.saveDrawingEntityCallback = this.saveDrawingEntityCallback.bind(this);
+    this.onParkClick = this.onParkClick.bind(this);
+    this.onPathClick = this.onPathClick.bind(this);
+    this.getParksCallback = this.getParksCallback.bind(this);
+    this.getPathsCallback = this.getPathsCallback.bind(this);
 
     this.updatePosition = undefined;
 
@@ -69,6 +73,14 @@ class Map extends React.Component {
     let url = "/map/users/" + marker.id.toString();
     this.props.history.push(url);
   };
+
+  onPathClick = (props, path, e) => {
+    // TODO: Redirect to path detail view...
+  }
+
+  onParkClick = (props, park, e) => {
+    // TODO: redirect to park detail view...
+  }
 
   saveLatestPosition(position) {
     this.setState({
@@ -156,7 +168,22 @@ class Map extends React.Component {
 
     let client = GetApiClient();
     let usersApi = new UsersApi(client);
+    let pathsApi = new PathsApi(client);
+    let parksApi = new ParksApi(client);
+
+    // TODO: Remove area filters?
+    let visibleAreaFilter = {
+      visibleArea: [
+        { latitude: -180, longitude: -90 },
+        { latitude: 180, longitude: -90 },
+        { latitude: 180, longitude: 90 },
+        { latitude: -180, longitude: 90 }
+      ]
+    };
+    
     usersApi.getAllUsers(this.getUsersCallback);
+    parksApi.getParks(visibleAreaFilter, this.getParksCallback);
+    pathsApi.pathsGet(visibleAreaFilter, this.getPathsCallback);
   }
 
   getUsersCallback(error, data, response) {
@@ -167,6 +194,28 @@ class Map extends React.Component {
 
     this.setState({
       users: response.body
+    });
+  }
+
+  getParksCallback(error, data, response) {
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    this.setState({
+      parks: response.body
+    });
+  }
+
+  getPathsCallback(error, data, response) {
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    this.setState({
+      paths: response.body
     });
   }
 
@@ -255,9 +304,17 @@ class Map extends React.Component {
     // TODO: re-load corresponding entities? 
     // -> Add entity to state is probably the cleaner solution
     if (this.state.drawingModeEntityType === "PARK") {
-      // TODO...
+      let parks = [...this.state.parks];
+      parks.push(response.body);
+      this.setState({
+        parks: parks
+      });
     } else if (this.state.drawingModeEntityType === "PATH") {
-      // TODO...
+      let paths = [...this.state.paths];
+      paths.push(response.body);
+      this.setState({
+        paths: paths
+      });
     } else {
       throw ("Can't process drawn entity of type " + this.state.drawingModeEntityType);
     }
@@ -335,6 +392,31 @@ class Map extends React.Component {
                 onClick={this.onMarkerClick}
                 icon={iconUrl} />
             )
+          })}
+
+          {/* Show parks */}
+          {this.state.parks.map((park, id) => {
+            let iconUrl = '/images/map/park.png';
+            return (
+              <Marker 
+                id={park.id}
+                key={park.id}
+                position={park.coordinate}
+                onClick={this.onParkClick}
+                icon={iconUrl}/>
+            )
+          })}
+
+          {/* Show paths */}
+          {this.state.paths.map((path, id) => {
+            <Polyline
+              id={path.id}
+              key={path.id}
+              path={path.listOfCoordinates}
+              strokeColor="#27AE60"
+              strokeOpacity={0.8}
+              strokeWeight={3}
+              onClick={this.onPathClick}/>
           })}
 
           {/* Users Current Location */}
