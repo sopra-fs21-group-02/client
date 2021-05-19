@@ -6,7 +6,7 @@ import DateHelper from "../../helpers/DateHelper";
 import Dog from "../../views/profile/Dog";
 import Tag from "../../views/profile/Tag";
 import GetApiClient from "../../helpers/ApiClientFactory";
-import {UsersApi} from "sopra-fs21-group-02-dogs-api";
+import {DogsApi, UsersApi, TagsApi} from "sopra-fs21-group-02-dogs-api";
 import { getDomain } from "../../helpers/getDomain";
 
 
@@ -18,6 +18,7 @@ class Profile extends React.Component {
     this.getProfileCallback = this.getProfileCallback.bind(this);
     this.putProfileCallback = this.putProfileCallback.bind(this);
     this.putLogoutCallback = this.putLogoutCallback.bind(this);
+    this.deleteTagCallback = this.deleteTagCallback.bind(this);
     this.saveBio = this.saveBio.bind(this);
     this.deleteAccountCallback = this.deleteAccountCallback.bind(this);
 
@@ -89,7 +90,6 @@ class Profile extends React.Component {
     this.props.history.push("/profile/tag/" + tagType.toString());
   }
 
-  //TODO adapt method once API is integrated
   handleBioChange(event) {
     let newUser = Object.assign({}, this.state.user);
     newUser.bio = event.target.value;
@@ -110,22 +110,26 @@ class Profile extends React.Component {
       console.error(error);
       return;
     }
-
     this.setState({
       bioChanged: false
     })
   }
 
   //TODO adapt method once API is integrated
-  deleteTag(tag) {
-    let tags = [...this.state.user.tags];
-    let index = tags.indexOf(tag);
-    tags.splice(index,1)
-    this.setState(prevState => {
-      let user = Object.assign({}, prevState.user);
-      user[tags] = tags;
-      return { tags };
-    })
+  deleteTag(tagId) {
+    const userId = localStorage.getItem('loggedInUserId');
+    const client = GetApiClient();
+    const api = new TagsApi(client);
+
+    //TODO adapt delete – tagId!
+    api.deleteTag(userId, tagId, this.deleteTagCallback);
+  }
+
+  deleteTagCallback(error, data, response){
+    if(error){
+      console.error(error);
+      return;
+    }
   }
 
   render() {
@@ -174,7 +178,7 @@ class Profile extends React.Component {
                 let ageString = DateHelper.getAgeStringFromDateOfBirth(dog.dateOfBirth);
                 let imageUrl = `${getDomain()}/v1/users/${this.state.user.id}/dogs/${dog.id}/image`;
                 return (
-                  <div key={dog.id} className="w-1/2 "
+                  <div key={dog.id} className="w-1/2 " dog={dog}
                     onClick={() => this.redirectToEditDog(dog.id)}>
                     <Dog name={dog.name} sex={dog.sex} breed={dog.breed} age={ageString} imageUrl={imageUrl} editable={true}></Dog>
                   </div>
@@ -194,14 +198,14 @@ class Profile extends React.Component {
             </div>
           </div>
 
-          {/* //TODO comment in as soon as Api is ready
+
           <div>
             <h2 className="font-bold text-lg mt-2">OFFERING</h2>
             <div className="flex flex-wrap">
               {this.state.user.tags.map(tag => {
                 if (tag.tagType === "OFFERING") {
                   return (
-                    <div key={tag.id} className="w-flex mt-2">
+                    <div key={tag.id} tag={tag} className="w-flex mt-2">
                       <Tag name={tag.name} onRemoveClick={() => this.deleteTag(tag.id)} removable={true}></Tag>
                     </div>
                   )
@@ -223,9 +227,9 @@ class Profile extends React.Component {
           <h2 className="ml-0 font-bold text-lg mt-4">LOOKING FOR</h2>
           <div className="flex flex-wrap">
             {this.state.user.tags.map(tag => {
-              if (tag.tagType === "LOOKING") {
+              if (tag.tagType === "LOOKINGFOR") {
                 return (
-                  <div key={tag.id} className="w-flex mt-2 ">
+                  <div key={tag.id} tag={tag} className="w-flex mt-2 ">
                     <Tag name={tag.name} onRemoveClick={() => this.deleteTag(tag.id)} removable={true}></Tag>
                   </div>
                 )
@@ -243,7 +247,7 @@ class Profile extends React.Component {
             </div>
           </div>
         </div>
-          */}
+
 
           {/*logout & delete account*/}
           <div className="flex-none mt-14">
