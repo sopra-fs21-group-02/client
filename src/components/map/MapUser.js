@@ -87,6 +87,13 @@ class MapUser extends React.Component {
     });
   }
 
+  _mapLoaded(mapProps, map) {
+    this.map = map;
+    map.setOptions({
+      styles: mapStyle
+    })
+  }
+
   render() {
     let iconUrl = "";
     if (this.state.user.status === "ONLINE") {
@@ -115,52 +122,49 @@ class MapUser extends React.Component {
       lng: userLocation.longitude
     }
 
-    // TODO: Fix map alignment (oversheets screen bottom atm.)
     return (
       <div className="h-screen flex flex-col">
-        <div className="p-4 bg-gray-100">
-          <div className="flex">
-            <div className="absolute top-9 -left-4 cursor-pointer" onClick={() => this.props.history.push('/map')}>
-              <Back></Back>
-            </div>
-
-            <div className="flex-none ml-3 mr-4">
-              <img src={this.state.user.profilePicture} className="h-24 w-24 rounded-full bg-gray-400"></img>
+        <div className="flex-1 overflow-auto p-4 bg-gray-100">
+            <div className="flex-none overflow-auto">
+              <div className="absolute top-9 -left-4 cursor-pointer" onClick={() => this.props.history.push('/map')}>
+                <Back></Back>
+              </div>
+              <div className="flex-none ml-3 mr-4">
+                <img src={this.state.user.profilePicture} className="h-24 w-24 rounded-full bg-gray-400"></img>
+              </div>
+              <div>
+                <div>
+                  <h2 className="font-bold text-2xl">{this.state.user.name}</h2>
+                </div>
+                <div>
+                  <StatusIndicator status={this.state.user.status} />
+                  <span className="text-xs font-bold text-gray-500 ml-2">{distanceString()}</span>
+                </div>
+                <div>
+                  <p>{this.state.user.bio}</p>
+                </div>
+              </div>
             </div>
             <div>
-              <div>
-                <h2 className="font-bold text-2xl">{this.state.user.name}</h2>
-              </div>
-              <div>
-                <StatusIndicator status={this.state.user.status} />
-                <span className="text-xs font-bold text-gray-500 ml-2">{distanceString()}</span>
-              </div>
-              <div>
-                <p>{this.state.user.bio}</p>
+              <h2 className="font-bold text-lg mb-2 mt-4">DOGS</h2>
+              <div className="flex flex-wrap">
+                {this.state.user.dogs.map(dog => {
+                  let ageString = DateHelper.getAgeStringFromDateOfBirth(dog.dateOfBirth);
+                  let imageUrl = `${getDomain()}/v1/users/${this.state.user.id}/dogs/${dog.id}/image`;
+                  return (
+                    <div key={dog.id} className="w-1/2">
+                      <Dog name={dog.name} sex={dog.sex} breed={dog.breed} age={ageString} imageUrl={imageUrl}></Dog>
+                    </div>
+                  )
+                })}
               </div>
             </div>
-          </div>
-          <div>
-            <h2 className="font-bold text-lg mb-2 mt-4">DOGS</h2>
-            <div className="flex flex-wrap">
-              {this.state.user.dogs.map(dog => {
-                let ageString = DateHelper.getAgeStringFromDateOfBirth(dog.dateOfBirth);
-                let imageUrl = `${getDomain()}/v1/users/${this.state.user.id}/dogs/${dog.id}/image`;
-                return (
-                  <div key={dog.id} className="w-1/2">
-                    <Dog name={dog.name} sex={dog.sex} breed={dog.breed} age={ageString} imageUrl={imageUrl}></Dog>
-                  </div>   
-                )
-              })}
+            <div>
+              <Button onClick={this.redirectToChat}>💬 Chat</Button>
+              <Button onClick={this.redirectToProfile}>View Full Profile</Button>
             </div>
           </div>
-          <div>
-            <Button onClick={this.redirectToChat}>💬 Chat</Button>
-            <Button onClick={this.redirectToProfile}>View Full Profile</Button>
-          </div>
-        </div>
-      
-        <div className="flex-grow">
+          <div className="flex-1 overflow-auto mb-12">
           <GoogleMap
               google={this.props.google}
               zoom={18}
@@ -168,6 +172,9 @@ class MapUser extends React.Component {
               center={googleMapsPosition}
               fullscreenControl={false}
               mapTypeControl={false}
+              streetViewControl={false}
+              onReady={(mapProps, map) => this._mapLoaded(mapProps, map)}
+              style={mapStyle}
           >
 
             <Marker
@@ -188,6 +195,238 @@ class MapUser extends React.Component {
     )
   }
 }
+const mapStyle = [
+  {
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#f5f5f5"
+      }
+    ]
+  },
+  {
+    "elementType": "labels.icon",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#616161"
+      }
+    ]
+  },
+  {
+    "elementType": "labels.text.stroke",
+    "stylers": [
+      {
+        "color": "#f5f5f5"
+      }
+    ]
+  },
+  {
+    "featureType": "administrative.land_parcel",
+    "elementType": "labels",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "administrative.land_parcel",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#bdbdbd"
+      }
+    ]
+  },
+  {
+    "featureType": "landscape.man_made",
+    "elementType": "labels.icon",
+    "stylers": [
+      {
+        "color": "#0433ff"
+      },
+      {
+        "visibility": "on"
+      }
+    ]
+  },
+  {
+    "featureType": "poi",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#eeeeee"
+      }
+    ]
+  },
+  {
+    "featureType": "poi",
+    "elementType": "labels.text",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "poi",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#757575"
+      }
+    ]
+  },
+  {
+    "featureType": "poi.business",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "poi.park",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#e5e5e5"
+      }
+    ]
+  },
+  {
+    "featureType": "poi.park",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#9e9e9e"
+      }
+    ]
+  },
+  {
+    "featureType": "road",
+    "stylers": [
+      {
+        "visibility": "simplified"
+      }
+    ]
+  },
+  {
+    "featureType": "road",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#ffffff"
+      }
+    ]
+  },
+  {
+    "featureType": "road",
+    "elementType": "labels.icon",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "road.arterial",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#757575"
+      }
+    ]
+  },
+  {
+    "featureType": "road.highway",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#dadada"
+      }
+    ]
+  },
+  {
+    "featureType": "road.highway",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#616161"
+      }
+    ]
+  },
+  {
+    "featureType": "road.local",
+    "elementType": "labels",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "road.local",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#9e9e9e"
+      }
+    ]
+  },
+  {
+    "featureType": "transit",
+    "stylers": [
+      {
+        "visibility": "off"
+      }
+    ]
+  },
+  {
+    "featureType": "transit.line",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#e5e5e5"
+      }
+    ]
+  },
+  {
+    "featureType": "transit.station",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#eeeeee"
+      }
+    ]
+  },
+  {
+    "featureType": "water",
+    "elementType": "geometry",
+    "stylers": [
+      {
+        "color": "#c9c9c9"
+      }
+    ]
+  },
+  {
+    "featureType": "water",
+    "elementType": "labels.text.fill",
+    "stylers": [
+      {
+        "color": "#9e9e9e"
+      }
+    ]
+  }
+]
 
 export default withRouter(
   GoogleApiWrapper({
