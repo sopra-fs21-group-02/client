@@ -184,7 +184,9 @@ class User extends React.Component {
             <button className=" w-full text-center p-2 mr-2 bg-gray-600 text-white font-semibold rounded-md cursor-pointer"
               onClick={this.redirectToChat}>💬 Chat</button>
           </div>
-          <TabBar active="map" />
+          {(this.props.match.path === "/users/chat/:id")?
+            <TabBar active="chat" /> :
+            <TabBar active="map" />}
         </div>
       </div>
     )
