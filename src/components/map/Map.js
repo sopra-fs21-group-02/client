@@ -49,6 +49,8 @@ class Map extends React.Component {
     map.setOptions({
       styles: mapStyle
     })
+    map.mapTypes.set("styled_map", mapStyle);
+    map.setMapTypeId("styled_map");
   }
 
   onMarkerClick = (props, marker, e) => {
@@ -177,25 +179,28 @@ class Map extends React.Component {
     }
     
     return (
-        <div>
-          
+        <div className="flex flex-col h-screen  w-full">
           {showOverlay ?
-            <div className="bg-yellow-400 w-screen p-4 z-10 absolute top-0 inset-x-0 text-center font-semibold text-gray-900">
+            <div className="bg-yellow-400 w-screen flex-none p-4 z-10 text-center font-semibold text-gray-900">
               <p>{overlayText}</p>
             </div>
           : null}
 
           <GoogleMap
+          className="flex-1 overflow-auto"
           google={this.props.google}
           style={style}
           center={this.state.mapCenter}
           zoom={this.state.mapZoom}
           fullscreenControl={false}
-          mapTypeControl={false}
+          mapTypeControl={true}
           onReady={(mapProps, map) => this._mapLoaded(mapProps, map)}
           onDragstart={this.centerMoved}
           onZoomChanged={this.centerMoved}
           streetViewControl={false}
+          mapTypeControlOptions = {
+            ["styled_map", "satellite", "hybrid", "terrain"]
+          }
           >
 
             {/* Other Users */}
@@ -227,15 +232,15 @@ class Map extends React.Component {
                 position={{lat: this.state.currentLocation.lat, lng: this.state.currentLocation.lng}}
                 icon={"/images/map/marker-own.png"}/>
 
-            <div className="absolute inset-x-0 bottom-15 right-0  w-12 max-w-1/4 paddingBottom: 20">
+            <div className="bg-gray-300 hover:bg-gray-400 p-2.5 cursor-pointer absolute bottom-48 right-2.5 ">
               <RecenterMap
                   active={this.state.isMapDragged}
                   onClick={() => this.redirectToCurrentLocation()}
               />
             </div>
           </GoogleMap>
-          
-          <div className="absolute inset-x-0 bottom-0">
+
+          <div className="absolute inset-x-0 bottom-0 flex-none">
             <TabBar active="map"/>
           </div>
         </div>
