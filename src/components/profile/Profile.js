@@ -24,7 +24,8 @@ class Profile extends React.Component {
 
     this.state = {
       user: undefined,
-      bioChanged: false
+      bioChanged: false,
+      tagToDelete : null
     }
   }
 
@@ -115,13 +116,12 @@ class Profile extends React.Component {
     })
   }
 
-  //TODO adapt method once API is integrated
-  deleteTag(tagId) {
+  deleteTag(tag, tagId) {
+    this.setState({tagToDelete : tag})
     const userId = localStorage.getItem('loggedInUserId');
     const client = GetApiClient();
     const api = new TagsApi(client);
 
-    //TODO adapt delete – tagId!
     api.deleteTag(userId, tagId, this.deleteTagCallback);
   }
 
@@ -130,6 +130,15 @@ class Profile extends React.Component {
       console.error(error);
       return;
     }
+    let newUser = Object.assign({}, this.state.user);
+    let tags = [...this.state.user.tags];
+    let index = tags.indexOf(this.state.tagToDelete);
+    tags.splice(index,1)
+    newUser.tags = tags;
+    this.setState({
+      user: newUser,
+    });
+    this.setState({tagToDelete : null})
   }
 
   render() {
@@ -206,7 +215,7 @@ class Profile extends React.Component {
                 if (tag.tagType === "OFFERING") {
                   return (
                     <div key={tag.id} tag={tag} className="w-flex mt-2">
-                      <Tag name={tag.name} onRemoveClick={() => this.deleteTag(tag.id)} removable={true}></Tag>
+                      <Tag name={tag.name} onRemoveClick={() => this.deleteTag(tag, tag.id)} removable={true}></Tag>
                     </div>
                   )
                 }
@@ -230,7 +239,7 @@ class Profile extends React.Component {
               if (tag.tagType === "LOOKINGFOR") {
                 return (
                   <div key={tag.id} tag={tag} className="w-flex mt-2 ">
-                    <Tag name={tag.name} onRemoveClick={() => this.deleteTag(tag.id)} removable={true}></Tag>
+                    <Tag name={tag.name} onRemoveClick={() => this.deleteTag(tag, tag.id)} removable={true}></Tag>
                   </div>
                 )
               }

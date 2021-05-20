@@ -5,11 +5,6 @@ import Tag from "../../views/profile/Tag";
 import Picker from 'emoji-picker-react';
 import GetApiClient from "../../helpers/ApiClientFactory";
 import {TagsApi, UsersApi} from "sopra-fs21-group-02-dogs-api";
-import {getDomain} from "../../helpers/getDomain";
-
-//TODO delete "SAVE and Cancel"
-//as soon as a Tag is added => redirect to profile
-//api => alert am afang
 
 const suggestedTags = [
     "💬 Chat",
@@ -29,6 +24,7 @@ class NewTag extends React.Component {
     this.addTag = this.addTag.bind(this);
     this.userGetCallback = this.userGetCallback.bind(this);
     this.saveTag = this.saveTag.bind(this);
+    this.checkTag = this.checkTag.bind(this);
 
     this.state = {
       tagToAdd: {
@@ -72,24 +68,31 @@ class NewTag extends React.Component {
   }
 
   async addTag(tagToAdd) {
-    {/*
-    let t;
-    for (t in this.state.allTags){
-      console.log(t)
-      if (t.name === tagToAdd.name && t.tagType === tagToAdd.tagType){
-        alert("You already added this tag to your profile.")
-        return;
-      }
-    }*/
-    }
     await this.setState({
       tagToAdd: {
         tagType: this.state.tagType,
         name: tagToAdd
       }
     })
-    console.log(this.state.tagToAdd)
-    this.saveTag()
+    if (this.checkTag()){
+      this.redirectToProfile();
+      return;
+    }
+    if (!this.checkTag()){
+      this.saveTag()
+    }}
+
+  checkTag(){
+    let tagName = this.state.tagToAdd.name.toString();
+    let tagType = this.state.tagToAdd.tagType.toString();
+    let doubleTag = false;
+    this.state.allTags.forEach(function (element, index) {
+      if (element.name.toString() === tagName && element.tagType.toString() === tagType){
+        alert("this tag is already added")
+        doubleTag = true;
+      }
+    })
+    return doubleTag;
   }
 
   saveTag(){
