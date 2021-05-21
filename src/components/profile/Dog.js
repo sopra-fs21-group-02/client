@@ -7,6 +7,7 @@ import GetApiClient from "../../helpers/ApiClientFactory";
 import {DogsApi, UsersApi} from "sopra-fs21-group-02-dogs-api";
 import { getDomain } from '../../helpers/getDomain';
 import Users from '../../views/design/icons/Users';
+import Button from "../../views/design/Button";
 
 
 class Dog extends React.Component {
@@ -53,7 +54,8 @@ class Dog extends React.Component {
           imageUrl: "https://thumbs.dreamstime.com/z/puppy-vector-illustration-isolated-white-background-dog-line-art-puppy-vector-illustration-cute-cartoon-dog-140539394.jpg",
           dateOfBirth: "",
           id: -1
-        }
+        },
+        alreadyClicked : false
       });
     } else { // Editing dog
       let client = GetApiClient();
@@ -89,12 +91,18 @@ class Dog extends React.Component {
   }
 
   saveDog() {
+    console.log("clicked")
+    if (this.state.alreadyClicked === true){
+      alert("You already clicked the save button.")
+      return;
+    }
+    this.setState({alreadyClicked: true})
     if (!this.state.dog.sex || !this.state.dog.name || !this.state.dog.breed || !this.state.dog.dateOfBirth) {
-      alert("please enter all attributes of your dog. Name, breed, date of birth and sex");
+      alert("Please enter all attributes of your dog. Name, breed, date of birth and sex");
       return;
     }
     if (!this.checkDate()) {
-      alert("please enter a correct birth date (format JJJJ-MM-DD)");
+      alert("Please enter a correct birth date (format JJJJ-MM-DD)");
       return;
     }
     if (!this.checkImage()) {
@@ -147,6 +155,7 @@ class Dog extends React.Component {
       console.error(error);
       return;
     }
+    this.setState({alreadyClicked : false})
     this.props.history.push("/profile");
   }
 
@@ -164,7 +173,6 @@ class Dog extends React.Component {
     return allowedTypes.indexOf(image.type) !== -1;
   }
 
-  //TODO adapt method once API is integrated
   handleInputChange(event) {
     this.setState(prevState => {
       let dog = Object.assign({}, prevState.dog);
@@ -202,7 +210,7 @@ class Dog extends React.Component {
     }
 
     let saveContainer = "";
-    if (!this.state.dog.sex || !this.state.dog.name || !this.state.dog.breed || !this.state.dog.dateOfBirth) {
+    if (!this.state.dog.sex || !this.state.dog.name || !this.state.dog.breed || !this.state.dog.dateOfBirth || this.state.alreadyClicked) {
       saveContainer += "h-12 font-bold text-xl align-middle pt-2.5 w-1/2 opacity-20 cursor-not-allowed"
     }
     else {
@@ -335,7 +343,9 @@ class Dog extends React.Component {
                 onClick={() => this.props.history.push('/profile')}
               >Cancel</h1>
               <h1 className={saveContainer}
-                onClick={() => this.saveDog()}>Save</h1>
+                onClick={() => this.saveDog()}
+                disabled={this.state.alreadyClicked}
+                >Save</h1>
             </div>
           </div>
         </div>
