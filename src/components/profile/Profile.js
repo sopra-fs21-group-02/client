@@ -193,14 +193,14 @@ class Profile extends React.Component {
                   </div>
                 )
               })}
-              <div className="bg-gray-300 cursor-pointer h-16 w-16 rounded-full flex flex-col"
+              <button className="bg-gray-300 cursor-pointer h-16 w-16 rounded-full flex flex-col"
                 onClick={() => this.redirectToAddDog()}>
                 <div className="flex-initial mx-auto mt-0">
                   {<svg width="18" height="60" viewBox="0 0 18 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M11.373 7.67383H17.7188V12.2617H11.373V19.4336H6.53906V12.2617H0.175781V7.67383H6.53906V0.800781H11.373V7.67383Z" fill="black" />
                   </svg>}
                 </div>
-              </div>
+              </button>
               <div className="flex-grow mt-5 ml-3">
                 <span className="font-bold text-m leading-none">Add Dog…</span>
               </div>
@@ -209,18 +209,18 @@ class Profile extends React.Component {
 
 
           <div>
-            <h2 className="font-bold text-lg mt-2">OFFERING</h2>
+            <h2 className="font-bold text-lg mt-4">OFFERING</h2>
             <div className="flex flex-wrap">
               {this.state.user.tags.map(tag => {
                 if (tag.tagType === "OFFERING") {
                   return (
-                    <div key={tag.id} tag={tag} className="w-flex mt-2">
+                    <div key={tag.id} tag={tag} className="w-flex mt-1">
                       <Tag name={tag.name} onRemoveClick={() => this.deleteTag(tag, tag.id)} removable={true}></Tag>
                     </div>
                   )
                 }
               })}
-              <div className="flex mb-4 cursor-pointer w-18 h-10 mt-2 place-items-center inline-block p-2 bg-gray-300 rounded-md"
+              <button className="flex mb-4 cursor-pointer w-18 h-10 mt-2 place-items-center inline-block p-2 bg-gray-300 rounded-md"
                    onClick={() => this.redirectToAddTag("offering")}>
                 <div className="flex-none mr-2">
                   <svg width="12" height="28" viewBox="0 0 18 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -230,15 +230,15 @@ class Profile extends React.Component {
                 <div className="flex-grow">
                   <h3 className="font-bold leading-none">Add</h3>
                 </div>
-              </div>
+              </button>
             </div>
 
-          <h2 className="ml-0 font-bold text-lg mt-4">LOOKING FOR</h2>
+          <h2 className="ml-0 font-bold text-lg mt-2">LOOKING FOR</h2>
           <div className="flex flex-wrap">
             {this.state.user.tags.map(tag => {
               if (tag.tagType === "LOOKINGFOR") {
                 return (
-                  <div key={tag.id} tag={tag} className="w-flex mt-2 ">
+                  <div key={tag.id} tag={tag} className="w-flex mt-1">
                     <Tag name={tag.name} onRemoveClick={() => this.deleteTag(tag, tag.id)} removable={true}></Tag>
                   </div>
                 )

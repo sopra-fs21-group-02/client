@@ -10,6 +10,7 @@ import RecenterMap from "../../views/design/icons/RecenterMap";
 import { ApiClient, Coordinate, UsersApi } from 'sopra-fs21-group-02-dogs-api';
 import GetApiClient from '../../helpers/ApiClientFactory';
 import Users from '../../views/design/icons/Users';
+import {Spinner} from "../../views/design/Spinner";
 
 
 const style = {
@@ -33,7 +34,7 @@ class Map extends React.Component {
     
     this.state = {
       mapZoom: 14,
-      mapCenter: {lat: 47.497215999999995, lng: 8.71956479999999},
+      center: {lat: 47.497215999999995, lng: 8.71956479999999},
       currentLocation: {lat: null, lng: null},
       activeMarker: {},          // Shows the active marker upon click
       users: [],
@@ -49,8 +50,6 @@ class Map extends React.Component {
     map.setOptions({
       styles: mapStyle
     })
-    map.mapTypes.set("styled_map", mapStyle);
-    map.setMapTypeId("styled_map");
   }
 
   onMarkerClick = (props, marker, e) => {
@@ -180,67 +179,75 @@ class Map extends React.Component {
     
     return (
         <div className="flex flex-col h-screen  w-full">
-          {showOverlay ?
-            <div className="bg-yellow-400 w-screen flex-none p-4 z-10 text-center font-semibold text-gray-900">
-              <p>{overlayText}</p>
-            </div>
-          : null}
+          <div className="flex-1 overflow-auto">
+            {showOverlay ?
+              <div
+                className="z-50 bg-yellow-400 w-screen h-full flex-1 overflow-auto p-4 z-10 text-center font-semibold text-gray-900">
+                <Spinner animation="border"/>
+                <p>{overlayText}</p>
+              </div>
+              :
+              <div className="z-50 w-screen flex-1 overflow-auto">
+                <GoogleMap
+                  google={this.props.google}
+                  style={style}
+                  center={this.state.center}
+                  initialCenter={{ // Zurich
+                      lat: 47.380391912642196,
+                      lng: 8.536707613815768
+                    }}
+                  zoom={this.state.mapZoom}
+                  fullscreenControl={false}
+                  mapTypeControl={true}
+                  onReady={(mapProps, map) => this._mapLoaded(mapProps, map)}
+                  onDragstart={this.centerMoved}
+                  onZoomChanged={this.centerMoved}
+                  streetViewControl={false}
+                  mapTypeControlOptions={
+                    ["styled_map", "satellite", "hybrid", "terrain"]
+                  }
+                >
 
-          <GoogleMap
-          className="flex-1 overflow-auto"
-          google={this.props.google}
-          style={style}
-          center={this.state.mapCenter}
-          zoom={this.state.mapZoom}
-          fullscreenControl={false}
-          mapTypeControl={true}
-          onReady={(mapProps, map) => this._mapLoaded(mapProps, map)}
-          onDragstart={this.centerMoved}
-          onZoomChanged={this.centerMoved}
-          streetViewControl={false}
-          mapTypeControlOptions = {
-            ["styled_map", "satellite", "hybrid", "terrain"]
-          }
-          >
+                  {/* Other Users */}
+                  {this.state.users.map((user, id) => {
+                    let iconUrl = "";
+                    if (user.status === "ONLINE") {
+                      iconUrl = "/images/map/marker-online.png";
+                    } else {
+                      iconUrl = "/images/map/marker-offline.png";
+                    }
+                    let userLocation = user.latestLocation || {latitude: undefined, longitude: undefined};
+                    return (
+                      <Marker
+                        title={user.name}
+                        name={user.name}
+                        id={user.id}
+                        key={user.id}
+                        // TODO: Handle case where user doesn't have a latestLocation (yet)...
+                        position={{lat: userLocation.latitude, lng: userLocation.longitude}}
+                        onClick={this.onMarkerClick}
+                        icon={iconUrl}/>
+                    )
+                  })}
 
-            {/* Other Users */}
-            {this.state.users.map((user, id) => {
-              let iconUrl = "";
-              if (user.status === "ONLINE") {
-                iconUrl = "/images/map/marker-online.png";
-              } else {
-                iconUrl = "/images/map/marker-offline.png";
-              }
-              let userLocation = user.latestLocation || {latitude: undefined, longitude: undefined};
-              return (
-                <Marker
-                  title={user.name}
-                  name={user.name}
-                  id={user.id}
-                  key={user.id}
-                  // TODO: Handle case where user doesn't have a latestLocation (yet)...
-                  position={{lat: userLocation.latitude, lng: userLocation.longitude}}
-                  onClick={this.onMarkerClick}
-                  icon={iconUrl} />
-              )
-            })}
+                  {/* Users Current Location */}
+                  <Marker
+                    title={"Your current location"}
+                    key={this.id}
+                    position={{lat: this.state.currentLocation.lat, lng: this.state.currentLocation.lng}}
+                    icon={"/images/map/marker-own.png"}/>
 
-            {/* Users Current Location */}
-            <Marker
-                title={"Your current location"}
-                key={this.id}
-                position={{lat: this.state.currentLocation.lat, lng: this.state.currentLocation.lng}}
-                icon={"/images/map/marker-own.png"}/>
-
-            <div className="bg-gray-300 hover:bg-gray-400 p-2.5 cursor-pointer absolute bottom-48 right-2.5 ">
-              <RecenterMap
-                  active={this.state.isMapDragged}
-                  onClick={() => this.redirectToCurrentLocation()}
-              />
-            </div>
-          </GoogleMap>
-
-          <div className="absolute inset-x-0 bottom-0 flex-none">
+                  <div className="bg-gray-300 hover:bg-gray-400 p-2.5 cursor-pointer absolute bottom-48 right-2.5 ">
+                    <RecenterMap
+                      active={this.state.isMapDragged}
+                      onClick={() => this.redirectToCurrentLocation()}
+                    />
+                  </div>
+                </GoogleMap>
+              </div>
+            }
+          </div>
+          <div className="flex-none">
             <TabBar active="map"/>
           </div>
         </div>
