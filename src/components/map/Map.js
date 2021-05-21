@@ -15,8 +15,14 @@ import {Spinner} from "../../views/design/Spinner";
 
 const style = {
   width: '100%',
-  height: 'calc(100% - 70px)'
+  height: '100%'
 };
+
+const containerStyle = {
+  position: 'relative',  
+  width: '100%',
+  height: '100%'
+}
 
 class Map extends React.Component {
   constructor(props) {
@@ -179,7 +185,7 @@ class Map extends React.Component {
     
     return (
         <div className="flex flex-col h-screen  w-full">
-          <div className="flex-1 overflow-auto">
+          <div className="flex-1">
             {showOverlay ?
               <div
                 className="z-50 bg-yellow-400 w-screen h-full flex-1 overflow-auto p-4 z-10 text-center font-semibold text-gray-900">
@@ -187,10 +193,11 @@ class Map extends React.Component {
                 <p>{overlayText}</p>
               </div>
               :
-              <div className="z-50 w-screen flex-1 overflow-auto">
+              <div className="z-50 w-screen h-full flex-1">
                 <GoogleMap
                   google={this.props.google}
                   style={style}
+                  containerStyle={containerStyle}
                   center={this.state.center}
                   initialCenter={{ // Zurich
                       lat: 47.380391912642196,
@@ -237,7 +244,7 @@ class Map extends React.Component {
                     position={{lat: this.state.currentLocation.lat, lng: this.state.currentLocation.lng}}
                     icon={"/images/map/marker-own.png"}/>
 
-                  <div className="bg-gray-300 hover:bg-gray-400 p-2.5 cursor-pointer absolute bottom-48 right-2.5 ">
+                  <div className="bg-gray-300 hover:bg-gray-400 p-2.5 cursor-pointer absolute bottom-28 right-2.5 ">
                     <RecenterMap
                       active={this.state.isMapDragged}
                       onClick={() => this.redirectToCurrentLocation()}
