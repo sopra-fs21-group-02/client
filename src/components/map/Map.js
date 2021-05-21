@@ -276,7 +276,7 @@ class Map extends React.Component {
         description: description
       }
 
-      parksApi.parksPost(newPark, this.saveDrawingEntityCallback);
+      parksApi.addPark(newPark, this.saveDrawingEntityCallback);
     } else if (this.state.drawingModeEntityType === "PATH") {
       let client = GetApiClient();
       let pathsApi = new PathsApi(client);
@@ -289,7 +289,7 @@ class Map extends React.Component {
         description: description
       }
 
-      pathsApi.pathsPost(newPath, this.saveDrawingEntityCallback);
+      pathsApi.addPath(newPath, this.saveDrawingEntityCallback);
     } else {
       throw ("Can't save drawn entity of type " + this.state.drawingModeEntityType);
     }
@@ -303,23 +303,26 @@ class Map extends React.Component {
 
     // TODO: re-load corresponding entities? 
     // -> Add entity to state is probably the cleaner solution
-    if (this.state.drawingModeEntityType === "PARK") {
-      let parks = [...this.state.parks];
-      parks.push(response.body);
-      this.setState({
-        parks: parks
-      });
-    } else if (this.state.drawingModeEntityType === "PATH") {
-      let paths = [...this.state.paths];
-      paths.push(response.body);
-      this.setState({
-        paths: paths
-      });
-    } else {
-      throw ("Can't process drawn entity of type " + this.state.drawingModeEntityType);
-    }
+    // if (this.state.drawingModeEntityType === "PARK") {
+    //   let parks = [...this.state.parks];
+    //   parks.push(response.body);
+    //   this.setState({
+    //     parks: parks
+    //   });
+    // } else if (this.state.drawingModeEntityType === "PATH") {
+    //   let paths = [...this.state.paths];
+    //   paths.push(response.body);
+    //   this.setState({
+    //     paths: paths
+    //   });
+    // } else {
+    //   throw ("Can't process drawn entity of type " + this.state.drawingModeEntityType);
+    // }
 
-    this.exitDrawingMode();
+    // this.exitDrawingMode();
+
+    // Re-load the map...
+    window.location.reload(false);
   }
 
   render() {
@@ -401,7 +404,7 @@ class Map extends React.Component {
               <Marker 
                 id={park.id}
                 key={park.id}
-                position={park.coordinate}
+                position={{ lat: park.coordinate.latitude, lng: park.coordinate.longitude }}
                 onClick={this.onParkClick}
                 icon={iconUrl}/>
             )
@@ -409,14 +412,18 @@ class Map extends React.Component {
 
           {/* Show paths */}
           {this.state.paths.map((path, id) => {
-            <Polyline
-              id={path.id}
-              key={path.id}
-              path={path.listOfCoordinates}
-              strokeColor="#27AE60"
-              strokeOpacity={0.8}
-              strokeWeight={3}
-              onClick={this.onPathClick}/>
+            let coords = path.listOfCoordinates.map(c => {return { lat: c.latitude, lng: c.longitude }});
+            console.log(coords);
+            return (
+              <Polyline
+                id={path.id}
+                key={path.id}
+                path={coords}
+                strokeColor="#27AE60"
+                strokeOpacity={0.8}
+                strokeWeight={3}
+                onClick={this.onPathClick}/>
+            )
           })}
 
           {/* Users Current Location */}
