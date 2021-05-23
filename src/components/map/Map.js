@@ -4,13 +4,82 @@ import TabBar from '../../views/TabBar';
 
 import { Map as GoogleMap, GoogleApiWrapper, Marker } from 'google-maps-react';
 import ReactDOM from "react-dom";
-import styled from "styled-components";
+import styled, {keyframes} from "styled-components";
 import {Button} from "../../views/design/Button";
 import RecenterMap from "../../views/design/icons/RecenterMap";
 import { ApiClient, Coordinate, UsersApi } from 'sopra-fs21-group-02-dogs-api';
 import GetApiClient from '../../helpers/ApiClientFactory';
 import Users from '../../views/design/icons/Users';
-import {Spinner} from "../../views/design/Spinner";
+
+
+const Dog1 = styled.div`
+  position: absolute;
+  left: center;
+  top: center;
+  transform: rotate(45deg) translateX(80px) rotate(-45deg);
+  animation: orbit2 3s linear infinite; 
+  animation-delay: -2s;
+  @keyframes orbit2 {
+\tfrom  {  transform: rotate(-180deg) translateX(80px) rotate(180deg); }
+\tto   {  transform: rotate(180deg) translateX(80px) rotate(-180deg); }
+`
+
+const Dog2 = styled.div`
+  position: absolute;
+  left: center;
+  top: center;
+  transform: rotate(90deg) translateX(80px) rotate(-90deg);
+  animation: orbit2 3s linear infinite; 
+  animation-delay: -1s;
+  @keyframes orbit2 {
+\tfrom  {  transform: rotate(0deg) translateX(80px) rotate(0deg); }
+\tto   {  transform: rotate(360deg) translateX(80px) rotate(-360deg); }
+`
+
+const Dog3 = styled.div`
+  position: absolute;
+  left: center;
+  top: center;
+  transform: rotate(45deg) translateX(80px) rotate(-45deg);
+  animation: orbit2 3s linear infinite; 
+  @keyframes orbit2 {
+\tfrom  {  transform: rotate(-180deg) translateX(80px) rotate(180deg); }
+\tto   {  transform: rotate(180deg) translateX(80px) rotate(-180deg); }
+`
+const Dog4 = styled.div`
+  position: absolute;
+  left: center;
+  top: center;
+  transform: rotate(90deg) translateX(80px) rotate(-90deg);
+  animation: orbit2 3s linear infinite; 
+  animation-delay: -3.5s;
+  @keyframes orbit2 {
+\tfrom  {  transform: rotate(0deg) translateX(80px) rotate(0deg); }
+\tto   {  transform: rotate(360deg) translateX(80px) rotate(-360deg); }
+`
+const Dog5 = styled.div`
+  position: absolute;
+  left: center;
+  top: center;
+  transform: rotate(90deg) translateX(80px) rotate(-90deg);
+  animation: orbit2 3s linear infinite; 
+  animation-delay: -4.5s;
+  @keyframes orbit2 {
+\tfrom  {  transform: rotate(0deg) translateX(80px) rotate(0deg); }
+\tto   {  transform: rotate(360deg) translateX(80px) rotate(-360deg); }
+`
+
+const Dog6 = styled.div`
+  position: absolute;
+  left: center;
+  top: center;
+  transform: rotate(45deg) translateX(80px) rotate(-45deg);
+  animation: orbit2 3s linear infinite; 
+  animation-delay: -5.5s;
+  @keyframes orbit2 {
+\tfrom  {  transform: rotate(-180deg) translateX(80px) rotate(180deg); }
+\tto   {  transform: rotate(180deg) translateX(80px) rotate(-180deg); }
+`
 
 
 const style = {
@@ -176,7 +245,7 @@ class Map extends React.Component {
 
     let overlayText = "";
     if (showOverlay && this.state.isLocationDenied) {
-      overlayText = "Please allow location & reload the page!";
+      overlayText = "Please allow location and reload the page!";
     } else if (showOverlay && this.state.isLocationAvailable) {
       overlayText = "Loading...";
     } else if (showOverlay) {
@@ -187,10 +256,19 @@ class Map extends React.Component {
         <div className="flex flex-col h-screen  w-full">
           <div className="flex-1">
             {showOverlay ?
-              <div
-                className="z-50 bg-yellow-400 w-screen h-full flex-1 overflow-auto p-4 z-10 text-center font-semibold text-gray-900">
-                <Spinner animation="border"/>
-                <p>{overlayText}</p>
+              <div className="space-x-4 z-50 w-screen h-full flex-1 overflow-auto p-4 z-10 bg-gray-100" disabled={true}>
+                <div className="flex h-16 mt-20 flex-col items-center flex justify-center  text-4xl" >
+                  <Dog1 >🐩</Dog1>
+                  <Dog2>🐕‍🦺</Dog2>
+                  <Dog3>🐕</Dog3>
+                  <Dog4>🦮</Dog4>
+                  <Dog5>🐆</Dog5>
+                  <Dog6>🐅</Dog6>
+
+
+                  <span className="flex">🦴 </span>
+                </div>
+                <h1 className=" p-16 mx-auto text-center font-semibold text-2xl mt-5 text-gray-900 ">{overlayText}</h1>
               </div>
               :
               <div className="z-50 w-screen h-full flex-1">
@@ -199,10 +277,7 @@ class Map extends React.Component {
                   style={style}
                   containerStyle={containerStyle}
                   center={this.state.center}
-                  initialCenter={{ // Zurich
-                      lat: 47.380391912642196,
-                      lng: 8.536707613815768
-                    }}
+                  initialCenter={{ lat: 47.380391912642196, lng: 8.536707613815768}} // Zurich
                   zoom={this.state.mapZoom}
                   fullscreenControl={false}
                   mapTypeControl={true}
