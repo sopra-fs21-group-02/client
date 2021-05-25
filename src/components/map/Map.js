@@ -39,6 +39,7 @@ class Map extends React.Component {
     this.onPathClick = this.onPathClick.bind(this);
     this.getParksCallback = this.getParksCallback.bind(this);
     this.getPathsCallback = this.getPathsCallback.bind(this);
+    this.onParkPathDetailClose = this.onParkPathDetailClose.bind(this);
 
     this.updatePosition = undefined;
 
@@ -58,7 +59,9 @@ class Map extends React.Component {
       drawingModeEntityType: undefined,
       drawnParkLocation: undefined,
       drawnPathPoints: undefined,
-      showSaveDialog: false
+      showSaveDialog: false,
+      currentClickedEntityType: undefined,
+      currentClickedEntityDescription: undefined
     };
   }
 
@@ -74,12 +77,25 @@ class Map extends React.Component {
     this.props.history.push(url);
   };
 
-  onPathClick = (props, path, e) => {
-    // TODO: Redirect to path detail view...
+  onPathClick(props, path, e) {
+    this.setState({
+      currentClickedEntityType: "PATH",
+      currentClickedEntityDescription: props.description || "No description"
+    });
   }
 
-  onParkClick = (props, park, e) => {
-    // TODO: redirect to park detail view...
+  onParkClick(props, park, e) {
+    this.setState({
+      currentClickedEntityType: "PARK",
+      currentClickedEntityDescription: props.description || "No description"
+    });
+  }
+
+  onParkPathDetailClose() {
+    this.setState({
+      currentClickedEntityType: undefined,
+      currentClickedEntityDescription: undefined
+    });
   }
 
   saveLatestPosition(position) {
@@ -203,6 +219,8 @@ class Map extends React.Component {
       return;
     }
 
+    console.log(response.body);
+
     this.setState({
       parks: response.body
     });
@@ -213,6 +231,8 @@ class Map extends React.Component {
       console.error(error);
       return;
     }
+
+    console.log(response.body);
 
     this.setState({
       paths: response.body
@@ -262,6 +282,10 @@ class Map extends React.Component {
       let newPathPoints = [...this.state.drawnPathPoints];
       newPathPoints.push(location);
       this.setState({ drawnPathPoints: newPathPoints });
+    }
+
+    if (this.state.currentClickedEntityDescription && this.state.currentClickedEntityType) {
+      this.onParkPathDetailClose();
     }
   }
 
@@ -405,6 +429,7 @@ class Map extends React.Component {
                 id={park.id}
                 key={park.id}
                 position={{ lat: park.coordinate.latitude, lng: park.coordinate.longitude }}
+                description={park.description}
                 onClick={this.onParkClick}
                 icon={iconUrl}/>
             )
@@ -413,12 +438,12 @@ class Map extends React.Component {
           {/* Show paths */}
           {this.state.paths.map((path, id) => {
             let coords = path.listOfCoordinates.map(c => {return { lat: c.latitude, lng: c.longitude }});
-            console.log(coords);
             return (
               <Polyline
                 id={path.id}
                 key={path.id}
                 path={coords}
+                description={path.description}
                 strokeColor="#27AE60"
                 strokeOpacity={0.8}
                 strokeWeight={3}
@@ -494,7 +519,15 @@ class Map extends React.Component {
         <SaveDrawingEntityDialog
           entityType={this.state.drawingModeEntityType}
           cancelCallback={() => this.exitDrawingMode()}
-          saveCallback={() => this.saveDrawingEntity()}/>
+          saveCallback={(description) => this.saveDrawingEntity(description)}/>
+      }
+
+      {this.state.currentClickedEntityType && this.state.currentClickedEntityDescription &&
+        <div className="absolute inset-x-0 bottom-0 z-50 bg-gray-300 p-4">
+          <span className="font-bold absolute right-4 top-4 cursor-pointer" onClick={this.onParkPathDetailClose}>x</span>
+          <h2 className="text-xl font-bold">{this.state.currentClickedEntityType == "PARK" ? "Park" : "Walking Route"}</h2>
+          <p className="text-md mb-8">{this.state.currentClickedEntityDescription}</p>
+        </div>
       }
       </div>
     )
