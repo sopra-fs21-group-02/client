@@ -4,7 +4,7 @@ import TabBar from '../../views/TabBar';
 
 import { Map as GoogleMap, GoogleApiWrapper, Marker } from 'google-maps-react';
 import ReactDOM from "react-dom";
-import styled from "styled-components";
+import styled, {keyframes} from "styled-components";
 import {Button} from "../../views/design/Button";
 import RecenterMap from "../../views/design/icons/RecenterMap";
 import { ApiClient, Coordinate, UsersApi } from 'sopra-fs21-group-02-dogs-api';
@@ -12,10 +12,86 @@ import GetApiClient from '../../helpers/ApiClientFactory';
 import Users from '../../views/design/icons/Users';
 
 
+const Dog1 = styled.div`
+  position: absolute;
+  left: center;
+  top: center;
+  transform: rotate(45deg) translateX(80px) rotate(-45deg);
+  animation: orbit2 3s linear infinite; 
+  animation-delay: -2s;
+  @keyframes orbit2 {
+\tfrom  {  transform: rotate(-180deg) translateX(80px) rotate(180deg); }
+\tto   {  transform: rotate(180deg) translateX(80px) rotate(-180deg); }
+`
+
+const Dog2 = styled.div`
+  position: absolute;
+  left: center;
+  top: center;
+  transform: rotate(90deg) translateX(80px) rotate(-90deg);
+  animation: orbit2 3s linear infinite; 
+  animation-delay: -1s;
+  @keyframes orbit2 {
+\tfrom  {  transform: rotate(0deg) translateX(80px) rotate(0deg); }
+\tto   {  transform: rotate(360deg) translateX(80px) rotate(-360deg); }
+`
+
+const Dog3 = styled.div`
+  position: absolute;
+  left: center;
+  top: center;
+  transform: rotate(45deg) translateX(80px) rotate(-45deg);
+  animation: orbit2 3s linear infinite; 
+  @keyframes orbit2 {
+\tfrom  {  transform: rotate(-180deg) translateX(80px) rotate(180deg); }
+\tto   {  transform: rotate(180deg) translateX(80px) rotate(-180deg); }
+`
+const Dog4 = styled.div`
+  position: absolute;
+  left: center;
+  top: center;
+  transform: rotate(90deg) translateX(80px) rotate(-90deg);
+  animation: orbit2 3s linear infinite; 
+  animation-delay: -3.5s;
+  @keyframes orbit2 {
+\tfrom  {  transform: rotate(0deg) translateX(80px) rotate(0deg); }
+\tto   {  transform: rotate(360deg) translateX(80px) rotate(-360deg); }
+`
+const Dog5 = styled.div`
+  position: absolute;
+  left: center;
+  top: center;
+  transform: rotate(90deg) translateX(80px) rotate(-90deg);
+  animation: orbit2 3s linear infinite; 
+  animation-delay: -4.5s;
+  @keyframes orbit2 {
+\tfrom  {  transform: rotate(0deg) translateX(80px) rotate(0deg); }
+\tto   {  transform: rotate(360deg) translateX(80px) rotate(-360deg); }
+`
+
+const Dog6 = styled.div`
+  position: absolute;
+  left: center;
+  top: center;
+  transform: rotate(45deg) translateX(80px) rotate(-45deg);
+  animation: orbit2 3s linear infinite; 
+  animation-delay: -5.5s;
+  @keyframes orbit2 {
+\tfrom  {  transform: rotate(-180deg) translateX(80px) rotate(180deg); }
+\tto   {  transform: rotate(180deg) translateX(80px) rotate(-180deg); }
+`
+
+
 const style = {
   width: '100%',
-  height: 'calc(100% - 70px)'
+  height: '100%'
 };
+
+const containerStyle = {
+  position: 'relative',  
+  width: '100%',
+  height: '100%'
+}
 
 class Map extends React.Component {
   constructor(props) {
@@ -33,7 +109,7 @@ class Map extends React.Component {
     
     this.state = {
       mapZoom: 14,
-      mapCenter: {lat: 47.497215999999995, lng: 8.71956479999999},
+      center: {lat: 47.497215999999995, lng: 8.71956479999999},
       currentLocation: {lat: null, lng: null},
       activeMarker: {},          // Shows the active marker upon click
       users: [],
@@ -169,7 +245,7 @@ class Map extends React.Component {
 
     let overlayText = "";
     if (showOverlay && this.state.isLocationDenied) {
-      overlayText = "Please allow location & reload the page!";
+      overlayText = "Please allow location and reload the page!";
     } else if (showOverlay && this.state.isLocationAvailable) {
       overlayText = "Loading...";
     } else if (showOverlay) {
@@ -177,65 +253,83 @@ class Map extends React.Component {
     }
     
     return (
-        <div>
-          
-          {showOverlay ?
-            <div className="bg-yellow-400 w-screen p-4 z-10 absolute top-0 inset-x-0 text-center font-semibold text-gray-900">
-              <p>{overlayText}</p>
-            </div>
-          : null}
+        <div className="flex flex-col h-screen  w-full">
+          <div className="flex-1">
+            {showOverlay ?
+              <div className="space-x-4 z-50 w-screen h-full flex-1 overflow-auto p-4 z-10 bg-gray-100" disabled={true}>
+                <div className="flex h-16 mt-20 flex-col items-center flex justify-center  text-4xl" >
+                  <Dog1 >🐩</Dog1>
+                  <Dog2>🐕‍🦺</Dog2>
+                  <Dog3>🐕</Dog3>
+                  <Dog4>🦮</Dog4>
+                  <Dog5>🐆</Dog5>
+                  <Dog6>🐅</Dog6>
 
-          <GoogleMap
-          google={this.props.google}
-          style={style}
-          center={this.state.mapCenter}
-          zoom={this.state.mapZoom}
-          fullscreenControl={false}
-          mapTypeControl={false}
-          onReady={(mapProps, map) => this._mapLoaded(mapProps, map)}
-          onDragstart={this.centerMoved}
-          onZoomChanged={this.centerMoved}
-          streetViewControl={false}
-          >
 
-            {/* Other Users */}
-            {this.state.users.map((user, id) => {
-              let iconUrl = "";
-              if (user.status === "ONLINE") {
-                iconUrl = "/images/map/marker-online.png";
-              } else {
-                iconUrl = "/images/map/marker-offline.png";
-              }
-              let userLocation = user.latestLocation || {latitude: undefined, longitude: undefined};
-              return (
-                <Marker
-                  title={user.name}
-                  name={user.name}
-                  id={user.id}
-                  key={user.id}
-                  // TODO: Handle case where user doesn't have a latestLocation (yet)...
-                  position={{lat: userLocation.latitude, lng: userLocation.longitude}}
-                  onClick={this.onMarkerClick}
-                  icon={iconUrl} />
-              )
-            })}
+                  <span className="flex">🦴 </span>
+                </div>
+                <h1 className=" p-16 mx-auto text-center font-semibold text-2xl mt-5 text-gray-900 ">{overlayText}</h1>
+              </div>
+              :
+              <div className="z-50 w-screen h-full flex-1">
+                <GoogleMap
+                  google={this.props.google}
+                  style={style}
+                  containerStyle={containerStyle}
+                  center={this.state.center}
+                  initialCenter={{ lat: 47.380391912642196, lng: 8.536707613815768}} // Zurich
+                  zoom={this.state.mapZoom}
+                  fullscreenControl={false}
+                  mapTypeControl={true}
+                  onReady={(mapProps, map) => this._mapLoaded(mapProps, map)}
+                  onDragstart={this.centerMoved}
+                  onZoomChanged={this.centerMoved}
+                  streetViewControl={false}
+                  mapTypeControlOptions={
+                    ["styled_map", "satellite", "hybrid", "terrain"]
+                  }
+                >
 
-            {/* Users Current Location */}
-            <Marker
-                title={"Your current location"}
-                key={this.id}
-                position={{lat: this.state.currentLocation.lat, lng: this.state.currentLocation.lng}}
-                icon={"/images/map/marker-own.png"}/>
+                  {/* Other Users */}
+                  {this.state.users.map((user, id) => {
+                    let iconUrl = "";
+                    if (user.status === "ONLINE") {
+                      iconUrl = "/images/map/marker-online.png";
+                    } else {
+                      iconUrl = "/images/map/marker-offline.png";
+                    }
+                    let userLocation = user.latestLocation || {latitude: undefined, longitude: undefined};
+                    return (
+                      <Marker
+                        title={user.name}
+                        name={user.name}
+                        id={user.id}
+                        key={user.id}
+                        // TODO: Handle case where user doesn't have a latestLocation (yet)...
+                        position={{lat: userLocation.latitude, lng: userLocation.longitude}}
+                        onClick={this.onMarkerClick}
+                        icon={iconUrl}/>
+                    )
+                  })}
 
-            <div className="absolute inset-x-0 bottom-15 right-0  w-12 max-w-1/4 paddingBottom: 20">
-              <RecenterMap
-                  active={this.state.isMapDragged}
-                  onClick={() => this.redirectToCurrentLocation()}
-              />
-            </div>
-          </GoogleMap>
-          
-          <div className="absolute inset-x-0 bottom-0">
+                  {/* Users Current Location */}
+                  <Marker
+                    title={"Your current location"}
+                    key={this.id}
+                    position={{lat: this.state.currentLocation.lat, lng: this.state.currentLocation.lng}}
+                    icon={"/images/map/marker-own.png"}/>
+
+                  <div className="bg-gray-300 hover:bg-gray-400 p-2.5 cursor-pointer absolute bottom-28 right-2.5 ">
+                    <RecenterMap
+                      active={this.state.isMapDragged}
+                      onClick={() => this.redirectToCurrentLocation()}
+                    />
+                  </div>
+                </GoogleMap>
+              </div>
+            }
+          </div>
+          <div className="flex-none">
             <TabBar active="map"/>
           </div>
         </div>
