@@ -6,7 +6,7 @@ import DateHelper from "../../helpers/DateHelper";
 import Dog from "../../views/profile/Dog";
 import Tag from "../../views/profile/Tag";
 import GetApiClient from "../../helpers/ApiClientFactory";
-import {UsersApi} from "sopra-fs21-group-02-dogs-api";
+import {DogsApi, UsersApi, TagsApi} from "sopra-fs21-group-02-dogs-api";
 import { getDomain } from "../../helpers/getDomain";
 
 
@@ -18,12 +18,14 @@ class Profile extends React.Component {
     this.getProfileCallback = this.getProfileCallback.bind(this);
     this.putProfileCallback = this.putProfileCallback.bind(this);
     this.putLogoutCallback = this.putLogoutCallback.bind(this);
+    this.deleteTagCallback = this.deleteTagCallback.bind(this);
     this.saveBio = this.saveBio.bind(this);
     this.deleteAccountCallback = this.deleteAccountCallback.bind(this);
 
     this.state = {
       user: undefined,
-      bioChanged: false
+      bioChanged: false,
+      tagToDelete : null
     }
   }
 
@@ -89,7 +91,6 @@ class Profile extends React.Component {
     this.props.history.push("/profile/tag/" + tagType.toString());
   }
 
-  //TODO adapt method once API is integrated
   handleBioChange(event) {
     let newUser = Object.assign({}, this.state.user);
     newUser.bio = event.target.value;
@@ -110,22 +111,34 @@ class Profile extends React.Component {
       console.error(error);
       return;
     }
-
     this.setState({
       bioChanged: false
     })
   }
 
-  //TODO adapt method once API is integrated
-  deleteTag(tag) {
+  deleteTag(tag, tagId) {
+    this.setState({tagToDelete : tag})
+    const userId = localStorage.getItem('loggedInUserId');
+    const client = GetApiClient();
+    const api = new TagsApi(client);
+
+    api.deleteTag(userId, tagId, this.deleteTagCallback);
+  }
+
+  deleteTagCallback(error, data, response){
+    if(error){
+      console.error(error);
+      return;
+    }
+    let newUser = Object.assign({}, this.state.user);
     let tags = [...this.state.user.tags];
-    let index = tags.indexOf(tag);
+    let index = tags.indexOf(this.state.tagToDelete);
     tags.splice(index,1)
-    this.setState(prevState => {
-      let user = Object.assign({}, prevState.user);
-      user[tags] = tags;
-      return { tags };
-    })
+    newUser.tags = tags;
+    this.setState({
+      user: newUser,
+    });
+    this.setState({tagToDelete : null})
   }
 
   render() {
@@ -174,40 +187,40 @@ class Profile extends React.Component {
                 let ageString = DateHelper.getAgeStringFromDateOfBirth(dog.dateOfBirth);
                 let imageUrl = `${getDomain()}/v1/users/${this.state.user.id}/dogs/${dog.id}/image`;
                 return (
-                  <div key={dog.id} className="w-1/2 "
+                  <div key={dog.id} className="w-1/2 " dog={dog}
                     onClick={() => this.redirectToEditDog(dog.id)}>
                     <Dog name={dog.name} sex={dog.sex} breed={dog.breed} age={ageString} imageUrl={imageUrl} editable={true}></Dog>
                   </div>
                 )
               })}
-              <div className="bg-gray-300 cursor-pointer h-16 w-16 rounded-full flex flex-col"
+              <button className="bg-gray-300 cursor-pointer h-16 w-16 rounded-full flex flex-col"
                 onClick={() => this.redirectToAddDog()}>
                 <div className="flex-initial mx-auto mt-0">
                   {<svg width="18" height="60" viewBox="0 0 18 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M11.373 7.67383H17.7188V12.2617H11.373V19.4336H6.53906V12.2617H0.175781V7.67383H6.53906V0.800781H11.373V7.67383Z" fill="black" />
                   </svg>}
                 </div>
-              </div>
+              </button>
               <div className="flex-grow mt-5 ml-3">
                 <span className="font-bold text-m leading-none">Add Dog…</span>
               </div>
             </div>
           </div>
 
-          {/* //TODO comment in as soon as Api is ready
+
           <div>
-            <h2 className="font-bold text-lg mt-2">OFFERING</h2>
+            <h2 className="font-bold text-lg mt-4">OFFERING</h2>
             <div className="flex flex-wrap">
               {this.state.user.tags.map(tag => {
                 if (tag.tagType === "OFFERING") {
                   return (
-                    <div key={tag.id} className="w-flex mt-2">
-                      <Tag name={tag.name} onRemoveClick={() => this.deleteTag(tag.id)} removable={true}></Tag>
+                    <div key={tag.id} tag={tag} className="w-flex mt-1">
+                      <Tag name={tag.name} onRemoveClick={() => this.deleteTag(tag, tag.id)} removable={true}></Tag>
                     </div>
                   )
                 }
               })}
-              <div className="flex mb-4 cursor-pointer w-18 h-10 mt-2 place-items-center inline-block p-2 bg-gray-300 rounded-md"
+              <button className="flex mb-4 cursor-pointer w-18 h-10 mt-2 place-items-center inline-block p-2 bg-gray-300 rounded-md"
                    onClick={() => this.redirectToAddTag("offering")}>
                 <div className="flex-none mr-2">
                   <svg width="12" height="28" viewBox="0 0 18 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -217,16 +230,16 @@ class Profile extends React.Component {
                 <div className="flex-grow">
                   <h3 className="font-bold leading-none">Add</h3>
                 </div>
-              </div>
+              </button>
             </div>
 
-          <h2 className="ml-0 font-bold text-lg mt-4">LOOKING FOR</h2>
+          <h2 className="ml-0 font-bold text-lg mt-2">LOOKING FOR</h2>
           <div className="flex flex-wrap">
             {this.state.user.tags.map(tag => {
-              if (tag.tagType === "LOOKING") {
+              if (tag.tagType === "LOOKINGFOR") {
                 return (
-                  <div key={tag.id} className="w-flex mt-2 ">
-                    <Tag name={tag.name} onRemoveClick={() => this.deleteTag(tag.id)} removable={true}></Tag>
+                  <div key={tag.id} tag={tag} className="w-flex mt-1">
+                    <Tag name={tag.name} onRemoveClick={() => this.deleteTag(tag, tag.id)} removable={true}></Tag>
                   </div>
                 )
               }
@@ -243,7 +256,7 @@ class Profile extends React.Component {
             </div>
           </div>
         </div>
-          */}
+
 
           {/*logout & delete account*/}
           <div className="flex-none mt-14">

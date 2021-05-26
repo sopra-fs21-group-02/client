@@ -4,8 +4,8 @@ import TabBar from '../../views/TabBar';
 
 import { Map as GoogleMap, GoogleApiWrapper, Marker, Polyline } from 'google-maps-react';
 import ReactDOM from "react-dom";
-import styled from "styled-components";
-import { Button } from "../../views/design/Button";
+import styled, {keyframes} from "styled-components";
+import {Button} from "../../views/design/Button";
 import RecenterMap from "../../views/design/icons/RecenterMap";
 import { ApiClient, Coordinate, ParksApi, PathsApi, UsersApi } from 'sopra-fs21-group-02-dogs-api';
 import GetApiClient from '../../helpers/ApiClientFactory';
@@ -14,10 +14,86 @@ import DrawingControlBar from '../../views/map/DrawingControlBar';
 import SaveDrawingEntityDialog from './SaveDrawingEntityDialog';
 import AuthHelper from '../../helpers/AuthHelper';
 
+const Dog1 = styled.div`
+  position: absolute;
+  left: center;
+  top: center;
+  transform: rotate(45deg) translateX(80px) rotate(-45deg);
+  animation: orbit2 3s linear infinite; 
+  animation-delay: -2s;
+  @keyframes orbit2 {
+\tfrom  {  transform: rotate(-180deg) translateX(80px) rotate(180deg); }
+\tto   {  transform: rotate(180deg) translateX(80px) rotate(-180deg); }
+`
+
+const Dog2 = styled.div`
+  position: absolute;
+  left: center;
+  top: center;
+  transform: rotate(90deg) translateX(80px) rotate(-90deg);
+  animation: orbit2 3s linear infinite; 
+  animation-delay: -1s;
+  @keyframes orbit2 {
+\tfrom  {  transform: rotate(0deg) translateX(80px) rotate(0deg); }
+\tto   {  transform: rotate(360deg) translateX(80px) rotate(-360deg); }
+`
+
+const Dog3 = styled.div`
+  position: absolute;
+  left: center;
+  top: center;
+  transform: rotate(45deg) translateX(80px) rotate(-45deg);
+  animation: orbit2 3s linear infinite; 
+  @keyframes orbit2 {
+\tfrom  {  transform: rotate(-180deg) translateX(80px) rotate(180deg); }
+\tto   {  transform: rotate(180deg) translateX(80px) rotate(-180deg); }
+`
+const Dog4 = styled.div`
+  position: absolute;
+  left: center;
+  top: center;
+  transform: rotate(90deg) translateX(80px) rotate(-90deg);
+  animation: orbit2 3s linear infinite; 
+  animation-delay: -3.5s;
+  @keyframes orbit2 {
+\tfrom  {  transform: rotate(0deg) translateX(80px) rotate(0deg); }
+\tto   {  transform: rotate(360deg) translateX(80px) rotate(-360deg); }
+`
+const Dog5 = styled.div`
+  position: absolute;
+  left: center;
+  top: center;
+  transform: rotate(90deg) translateX(80px) rotate(-90deg);
+  animation: orbit2 3s linear infinite; 
+  animation-delay: -4.5s;
+  @keyframes orbit2 {
+\tfrom  {  transform: rotate(0deg) translateX(80px) rotate(0deg); }
+\tto   {  transform: rotate(360deg) translateX(80px) rotate(-360deg); }
+`
+
+const Dog6 = styled.div`
+  position: absolute;
+  left: center;
+  top: center;
+  transform: rotate(45deg) translateX(80px) rotate(-45deg);
+  animation: orbit2 3s linear infinite; 
+  animation-delay: -5.5s;
+  @keyframes orbit2 {
+\tfrom  {  transform: rotate(-180deg) translateX(80px) rotate(180deg); }
+\tto   {  transform: rotate(180deg) translateX(80px) rotate(-180deg); }
+`
+
+
 const style = {
   width: '100%',
-  height: 'calc(100% - 70px)'
+  height: '100%'
 };
+
+const containerStyle = {
+  position: 'relative',  
+  width: '100%',
+  height: '100%'
+}
 
 class Map extends React.Component {
   constructor(props) {
@@ -325,26 +401,6 @@ class Map extends React.Component {
       return;
     }
 
-    // TODO: re-load corresponding entities? 
-    // -> Add entity to state is probably the cleaner solution
-    // if (this.state.drawingModeEntityType === "PARK") {
-    //   let parks = [...this.state.parks];
-    //   parks.push(response.body);
-    //   this.setState({
-    //     parks: parks
-    //   });
-    // } else if (this.state.drawingModeEntityType === "PATH") {
-    //   let paths = [...this.state.paths];
-    //   paths.push(response.body);
-    //   this.setState({
-    //     paths: paths
-    //   });
-    // } else {
-    //   throw ("Can't process drawn entity of type " + this.state.drawingModeEntityType);
-    // }
-
-    // this.exitDrawingMode();
-
     // Re-load the map...
     window.location.reload(false);
   }
@@ -357,7 +413,7 @@ class Map extends React.Component {
 
     let overlayText = "";
     if (showOverlay && this.state.isLocationDenied) {
-      overlayText = "Please allow location & reload the page!";
+      overlayText = "Please allow location and reload the page!";
     } else if (showOverlay && this.state.isLocationAvailable) {
       overlayText = "Loading...";
     } else if (showOverlay) {
@@ -376,159 +432,180 @@ class Map extends React.Component {
     }
 
     return (
-      <div>
-      {!this.state.showSaveDialog &&   
-        <div>
-        {showOverlay ?
-          <div className="bg-yellow-400 w-screen p-4 z-10 absolute top-0 inset-x-0 text-center font-semibold text-gray-900">
-            <p>{overlayText}</p>
-          </div>
-          : null}
+      <div className="flex flex-col h-screen  w-full">
+        {!this.state.showSaveDialog &&
+          <div className="flex flex-col h-screen w-full">
+            <div className="flex-1">
+              {showOverlay ?
+                <div className="space-x-4 z-50 w-screen h-full flex-1 overflow-auto p-4 z-10 bg-gray-100" disabled={true}>
+                  <div className="flex h-16 mt-20 flex-col items-center flex justify-center  text-4xl" >
+                    <Dog1 >🐩</Dog1>
+                    <Dog2>🐕‍🦺</Dog2>
+                    <Dog3>🐕</Dog3>
+                    <Dog4>🦮</Dog4>
+                    <Dog5>🐆</Dog5>
+                    <Dog6>🐅</Dog6>
 
-        <GoogleMap
-          google={this.props.google}
-          style={style}
-          center={this.state.mapCenter}
-          zoom={this.state.mapZoom}
-          fullscreenControl={false}
-          mapTypeControl={false}
-          onReady={(mapProps, map) => this._mapLoaded(mapProps, map)}
-          onClick={(t, map, e) => this.mapClick(e, map)}
-          onDragstart={this.centerMoved}
-          onZoomChanged={this.centerMoved}
-          streetViewControl={false}
-        >
 
-          {/* Other Users */}
-          {this.state.users.map((user, id) => {
-            let iconUrl = "";
-            if (user.status === "ONLINE") {
-              iconUrl = "/images/map/marker-online.png";
-            } else {
-              iconUrl = "/images/map/marker-offline.png";
-            }
-            let userLocation = user.latestLocation || { latitude: undefined, longitude: undefined };
-            return (
-              <Marker
-                title={user.name}
-                name={user.name}
-                id={user.id}
-                key={user.id}
-                // TODO: Handle case where user doesn't have a latestLocation (yet)...
-                position={{ lat: userLocation.latitude, lng: userLocation.longitude }}
-                onClick={this.onMarkerClick}
-                icon={iconUrl} />
-            )
-          })}
+                    <span className="flex">🦴 </span>
+                  </div>
+                  <h1 className=" p-16 mx-auto text-center font-semibold text-2xl mt-5 text-gray-900 ">{overlayText}</h1>
+                </div>
+                :
+                <div className="z-50 w-screen h-full flex-1">
+                  <GoogleMap
+                    google={this.props.google}
+                    style={style}
+                    containerStyle={containerStyle}
+                    center={this.state.center}
+                    initialCenter={{ lat: 47.380391912642196, lng: 8.536707613815768}} // Zurich
+                    zoom={this.state.mapZoom}
+                    fullscreenControl={false}
+                    mapTypeControl={true}
+                    onReady={(mapProps, map) => this._mapLoaded(mapProps, map)}
+                    onClick={(t, map, e) => this.mapClick(e, map)}
+                    onDragstart={this.centerMoved}
+                    onZoomChanged={this.centerMoved}
+                    streetViewControl={false}
+                    mapTypeControlOptions={
+                      ["styled_map", "satellite", "hybrid", "terrain"]
+                    }
+                  >
 
-          {/* Show parks */}
-          {this.state.parks.map((park, id) => {
-            let iconUrl = '/images/map/park.png';
-            return (
-              <Marker 
-                id={park.id}
-                key={park.id}
-                position={{ lat: park.coordinate.latitude, lng: park.coordinate.longitude }}
-                description={park.description}
-                onClick={this.onParkClick}
-                icon={iconUrl}/>
-            )
-          })}
+                    {/* Other Users */}
+                    {this.state.users.map((user, id) => {
+                      let iconUrl = "";
+                      if (user.status === "ONLINE") {
+                        iconUrl = "/images/map/marker-online.png";
+                      } else {
+                        iconUrl = "/images/map/marker-offline.png";
+                      }
+                      let userLocation = user.latestLocation || {latitude: undefined, longitude: undefined};
+                      return (
+                        <Marker
+                          title={user.name}
+                          name={user.name}
+                          id={user.id}
+                          key={user.id}
+                          // TODO: Handle case where user doesn't have a latestLocation (yet)...
+                          position={{lat: userLocation.latitude, lng: userLocation.longitude}}
+                          onClick={this.onMarkerClick}
+                          icon={iconUrl}/>
+                      )
+                    })}
 
-          {/* Show paths */}
-          {this.state.paths.map((path, id) => {
-            let coords = path.listOfCoordinates.map(c => {return { lat: c.latitude, lng: c.longitude }});
-            return (
-              <Polyline
-                id={path.id}
-                key={path.id}
-                path={coords}
-                description={path.description}
-                strokeColor="#27AE60"
-                strokeOpacity={0.8}
-                strokeWeight={3}
-                onClick={this.onPathClick}/>
-            )
-          })}
+                    {/* Show parks */}
+                      {this.state.parks.map((park, id) => {
+                        let iconUrl = '/images/map/park.png';
+                        return (
+                          <Marker 
+                            id={park.id}
+                            key={park.id}
+                            position={{ lat: park.coordinate.latitude, lng: park.coordinate.longitude }}
+                            description={park.description}
+                            onClick={this.onParkClick}
+                            icon={iconUrl}/>
+                        )
+                      })}
 
-          {/* Users Current Location */}
-          <Marker
-            title={"Your current location"}
-            key={this.id}
-            position={{ lat: this.state.currentLocation.lat, lng: this.state.currentLocation.lng }}
-            icon={"/images/map/marker-own.png"} />
+                      {/* Show paths */}
+                      {this.state.paths.map((path, id) => {
+                        let coords = path.listOfCoordinates.map(c => {return { lat: c.latitude, lng: c.longitude }});
+                        return (
+                          <Polyline
+                            id={path.id}
+                            key={path.id}
+                            path={coords}
+                            description={path.description}
+                            strokeColor="#27AE60"
+                            strokeOpacity={0.8}
+                            strokeWeight={3}
+                            onClick={this.onPathClick}/>
+                        )
+                      })}
 
-          {this.state.isInDrawingMode && this.state.drawingModeEntityType === "PARK" && this.state.drawnParkLocation !== undefined &&
-            <Marker
-              title={"New Park"}
-              position={{ lat: this.state.drawnParkLocation.latitude, lng: this.state.drawnParkLocation.longitude }}
-              icon={"/images/map/park.png"} />
-          }
+                      {/* Temporary drawing entites */}
+                      {this.state.isInDrawingMode && this.state.drawingModeEntityType === "PARK" && this.state.drawnParkLocation !== undefined &&
+                        <Marker
+                          title={"New Park"}
+                          position={{ lat: this.state.drawnParkLocation.latitude, lng: this.state.drawnParkLocation.longitude }}
+                          icon={"/images/map/park.png"} />
+                      }
 
-          {this.state.isInDrawingMode && this.state.drawingModeEntityType === "PATH" && this.state.drawnPathPoints !== undefined && this.state.drawnPathPoints.length > 0 &&
-            <Polyline
-              path={drawnPathCoords}
-              strokeColor="#27AE60"
-              strokeOpacity={0.8}
-              strokeWeight={3}
-            />
-          }
+                      {this.state.isInDrawingMode && this.state.drawingModeEntityType === "PATH" && this.state.drawnPathPoints !== undefined && this.state.drawnPathPoints.length > 0 &&
+                        <Polyline
+                          path={drawnPathCoords}
+                          strokeColor="#27AE60"
+                          strokeOpacity={0.8}
+                          strokeWeight={3}
+                        />
+                      }
 
-          {!this.state.isInDrawingMode &&
-            <div>
-              <div className="absolute inset-x-0 bottom-15 right-0  w-12 max-w-1/4 paddingBottom: 20">
-                <RecenterMap
-                  active={this.state.isMapDragged}
-                  onClick={() => this.redirectToCurrentLocation()}
-                />
-              </div>
+                      {/* Users Current Location */}
+                      <Marker
+                        title={"Your current location"}
+                        key={this.id}
+                        position={{lat: this.state.currentLocation.lat, lng: this.state.currentLocation.lng}}
+                        icon={"/images/map/marker-own.png"}/>
 
-              <div className="absolute top-4 right-4">
-                <DrawingControlBar
-                  parkClick={() => this.enterDrawingMode("PARK")}
-                  pathClick={() => this.enterDrawingMode("PATH")}></DrawingControlBar>
-              </div>
+                      {!this.state.isInDrawingMode &&
+                        <div>
+                          <div className="bg-gray-300 hover:bg-gray-400 p-2.5 cursor-pointer absolute bottom-28 right-2.5 ">
+                            <RecenterMap
+                              active={this.state.isMapDragged}
+                              onClick={() => this.redirectToCurrentLocation()}
+                            />
+                          </div>
+
+                          <div className="absolute top-4 right-4">
+                            <DrawingControlBar
+                              parkClick={() => this.enterDrawingMode("PARK")}
+                              pathClick={() => this.enterDrawingMode("PATH")}></DrawingControlBar>
+                          </div>
+                        </div>
+                      }
+                  </GoogleMap>
+                </div>
+              }
             </div>
-          }
-        </GoogleMap>
 
-        {!this.state.isInDrawingMode &&
-          <div className="absolute inset-x-0 bottom-0">
-            <TabBar active="map" />
+            {!this.state.isInDrawingMode &&
+              <div className="flex-none">
+                <TabBar active="map"/>
+              </div>
+            }
+
+            {this.state.isInDrawingMode &&
+              <div className="h-12 bg-gray-300 absolute inset-x-0 bottom-0 text-center flex">
+                <h1
+                  className="cursor-pointer hover:font-bold text-xl align-middle pt-2.5 w-1/2"
+                  onClick={() => this.exitDrawingMode()}>
+                  Cancel
+                  </h1>
+                <h1
+                  className="cursor-pointer hover:font-bold text-xl align-middle pt-2.5 w-1/2 font-semibold"
+                  onClick={() => this.setState({ showSaveDialog: true })}>
+                  Save
+                  </h1>
+              </div>
+            }
           </div>
         }
 
-        {this.state.isInDrawingMode &&
-          <div className="h-12 bg-gray-300 absolute inset-x-0 bottom-0 text-center flex">
-            <h1
-              className="cursor-pointer hover:font-bold text-xl align-middle pt-2.5 w-1/2"
-              onClick={() => this.exitDrawingMode()}>
-              Cancel
-              </h1>
-            <h1
-              className="cursor-pointer hover:font-bold text-xl align-middle pt-2.5 w-1/2 font-semibold"
-              onClick={() => this.setState({ showSaveDialog: true })}>
-              Save
-              </h1>
+        {this.state.showSaveDialog && 
+          <SaveDrawingEntityDialog
+            entityType={this.state.drawingModeEntityType}
+            cancelCallback={() => this.exitDrawingMode()}
+            saveCallback={(description) => this.saveDrawingEntity(description)}/>
+        }
+
+        {this.state.currentClickedEntityType && this.state.currentClickedEntityDescription &&
+          <div className="absolute inset-x-0 bottom-0 z-50 bg-gray-300 p-4">
+            <span className="font-bold absolute right-4 top-4 cursor-pointer" onClick={this.onParkPathDetailClose}>x</span>
+            <h2 className="text-xl font-bold">{this.state.currentClickedEntityType == "PARK" ? "Park" : "Walking Route"}</h2>
+            <p className="text-md mb-8">{this.state.currentClickedEntityDescription}</p>
           </div>
         }
-      </div>
-      }
-
-      {this.state.showSaveDialog && 
-        <SaveDrawingEntityDialog
-          entityType={this.state.drawingModeEntityType}
-          cancelCallback={() => this.exitDrawingMode()}
-          saveCallback={(description) => this.saveDrawingEntity(description)}/>
-      }
-
-      {this.state.currentClickedEntityType && this.state.currentClickedEntityDescription &&
-        <div className="absolute inset-x-0 bottom-0 z-50 bg-gray-300 p-4">
-          <span className="font-bold absolute right-4 top-4 cursor-pointer" onClick={this.onParkPathDetailClose}>x</span>
-          <h2 className="text-xl font-bold">{this.state.currentClickedEntityType == "PARK" ? "Park" : "Walking Route"}</h2>
-          <p className="text-md mb-8">{this.state.currentClickedEntityDescription}</p>
-        </div>
-      }
       </div>
     )
   }

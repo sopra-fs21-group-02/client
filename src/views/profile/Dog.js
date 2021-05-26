@@ -25,7 +25,7 @@ class Dog extends React.Component {
         <div className="flex-grow ml-3">
           <h3 className="font-bold leading-none">{this.props.name} <span>{sexIcon}</span></h3>
           <span className="text-sm leading-none">{this.props.breed}</span><br />
-          <span className="text-sm leading-none">{this.props.age}</span>
+          <span className="text-sm leading-none">🎂 {this.props.age}</span>
         </div>
       </div>
     )

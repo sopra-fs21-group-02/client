@@ -18,13 +18,13 @@ class Conversation extends React.Component {
       isLoaded: false
     };
 
-    this.redirectBackToInbox = this.redirectBackToInbox.bind(this);
     this.sendMessage = this.sendMessage.bind(this);
     this.onMessageDraftChange = this.onMessageDraftChange.bind(this);
     this.inputKeyPress = this.inputKeyPress.bind(this);
     this.handleError = this.handleError.bind(this);
     this.setStateFromResponse = this.setStateFromResponse.bind(this);
     this.updateMessages = this.updateMessages.bind(this);
+    this.redirectToProfile = this.redirectToProfile.bind(this);
   }
 
   componentDidMount() {
@@ -84,10 +84,6 @@ class Conversation extends React.Component {
     this.setState({
       [stateKey]: response.body
     });
-  } 
-
-  redirectBackToInbox() {
-    this.props.history.push('/chat/')
   }
 
   onMessageDraftChange(newValue) {
@@ -147,6 +143,13 @@ class Conversation extends React.Component {
     }
   }
 
+  redirectToProfile() {
+    let url = "/users/chat/" + this.state.participant.id.toString();
+    console.log(url)
+
+    this.props.history.push(url);
+  }
+
   render() {
     if (!this.state.isLoaded) {
       return (<div>Not loaded!</div>);
@@ -159,10 +162,10 @@ class Conversation extends React.Component {
             <div className="-ml-4 -mr-2 cursor-pointer" onClick={() => this.props.history.goBack()}>
               <Back></Back>
             </div>
-            <div className="flex-none">
+            <div className="flex-none cursor-pointer" onClick={this.redirectToProfile}>
               <img src={this.state.participant.profilePicture} className="h-14 w-14 rounded-full bg-gray-400"></img>
             </div>
-            <div className="flex-1 pt-2 pl-4">
+            <div className="flex-1 pt-2 pl-4 cursor-pointer" onClick={this.redirectToProfile}>
               <h2 className="font-semibold text-lg -mt-1">{this.state.participant.name}</h2>
               <StatusIndicator status={this.state.participant.status}></StatusIndicator>
             </div>

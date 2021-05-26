@@ -8,6 +8,10 @@ class UsersRouter extends React.Component {
   render() {
     return (
       <Switch>
+        <Route
+          path={`${this.props.base}/chat/:id`}
+          render={() => <User />}
+        />
         {/* /users/:id shows user's full profile by ID */}
         <Route
           path={`${this.props.base}/:id`}
