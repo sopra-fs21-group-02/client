@@ -550,10 +550,11 @@ class Map extends React.Component {
 
                       {!this.state.isInDrawingMode &&
                         <div>
-                          <div className="bg-gray-300 hover:bg-gray-400 p-2.5 cursor-pointer absolute bottom-28 right-2.5 ">
+                          <div 
+                            className="bg-gray-300 hover:bg-gray-400 p-2.5 cursor-pointer absolute bottom-28 right-2.5"
+                            onClick={() => this.redirectToCurrentLocation()}>
                             <RecenterMap
                               active={this.state.isMapDragged}
-                              onClick={() => this.redirectToCurrentLocation()}
                             />
                           </div>
 
