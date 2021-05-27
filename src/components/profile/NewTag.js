@@ -103,7 +103,6 @@ class NewTag extends React.Component {
     let tag = Object.assign({}, this.state.tagToAdd);
     delete tag.id;
 
-    console.log(tag)
     apiTag.addTag(userId, tag, this.apiCallback)
   }
 
@@ -122,7 +121,6 @@ class NewTag extends React.Component {
       newtag += this.state.customTag.emoji;
       newtag += " ";
       newtag += this.state.customTag.name;
-      console.log(newtag)
       this.addTag(newtag)
     }
   }

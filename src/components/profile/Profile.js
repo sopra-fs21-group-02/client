@@ -220,7 +220,7 @@ class Profile extends React.Component {
                   )
                 }
               })}
-              <button className="flex mb-4 cursor-pointer w-18 h-10 mt-2 place-items-center inline-block p-2 bg-gray-300 rounded-md"
+              <button className="flex mb-4 cursor-pointer w-18 h-10 mt-1 place-items-center inline-block p-2 bg-gray-300 rounded-md"
                    onClick={() => this.redirectToAddTag("offering")}>
                 <div className="flex-none mr-2">
                   <svg width="12" height="28" viewBox="0 0 18 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -244,7 +244,7 @@ class Profile extends React.Component {
                 )
               }
             })}
-            <div className="flex mb-4 cursor-pointer w-18 h-10 mt-2 place-items-center inline-block p-2 bg-gray-300 rounded-md"
+            <div className="flex mb-4 cursor-pointer w-18 h-10 mt-1 place-items-center inline-block p-2 bg-gray-300 rounded-md"
                  onClick={() => this.redirectToAddTag("looking")}>
               <div className="flex-none mr-2">
                 <svg width="12" height="28" viewBox="0 0 18 20" fill="none" xmlns="http://www.w3.org/2000/svg">

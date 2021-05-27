@@ -145,7 +145,6 @@ class Conversation extends React.Component {
 
   redirectToProfile() {
     let url = "/users/chat/" + this.state.participant.id.toString();
-    console.log(url)
 
     this.props.history.push(url);
   }

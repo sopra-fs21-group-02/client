@@ -69,7 +69,7 @@ class Contacts extends React.Component {
 
   render() {
     return (
-      <div className="flex flex-col">
+      <div className="flex flex-col h-screen">
         <div className="flex-none bg-gray-300 text-center h-12">
           <h1 className="font-bold text-xl align-middle pt-2.5">Start New Conversation</h1>
           <div className="absolute -top-1 -left-2 cursor-pointer" onClick={() => this.redirectBackToChat()}>
