@@ -1,7 +1,8 @@
 # FriendlyFetch — Client Application
 
-Software Praktikum FS 2021 — Group 2
+<img width="214" alt="CleanShot 2021-05-28 at 09 44 05@2x" src="https://user-images.githubusercontent.com/18404509/119948598-4694f200-bf99-11eb-8ce3-6d3f5cf0e2ea.png">
 
+Software Praktikum FS 2021 — Group 2
 
 ## Project Overview
 
@@ -83,25 +84,27 @@ The project is pre-configured to be deployed to [Heroku](https://heroku.com). Gi
 
 ### Loggin In
 
-TODO Screenshots
+![CleanShot 2021-05-28 at 09 35 28](https://user-images.githubusercontent.com/18404509/119947793-6b3c9a00-bf98-11eb-8e81-3846d522c4de.gif)
 
 The user logs in to the app using their google account. After the first time, they are taken to their profile to complete it. On subsequent logins, they are taken to the map.
 
 ### Adding Dogs And Tags to Profile
 
-TODO Screenshots
+![CleanShot 2021-05-28 at 09 39 03](https://user-images.githubusercontent.com/18404509/119948020-b22a8f80-bf98-11eb-8f40-9875b312f0f9.gif)
 
 From their own profile, users can add dogs as well as "looking for"- and "offering"-tags to their profile to share this information with other users of the app.
 
 ### Starting a Chat Conversation
 
-TODO Screenshots
+![CleanShot 2021-05-28 at 09 40 38](https://user-images.githubusercontent.com/18404509/119948158-d9815c80-bf98-11eb-9bfc-7596b7f493fe.gif)
 
 Users can start a chat conversation with others either from their profile or from a list of all users within the chat interface.
 
 ### Adding a Park or walking Route to The Map
 
-TODO Screenshots
+![CleanShot 2021-05-28 at 09 41 54](https://user-images.githubusercontent.com/18404509/119948416-1a797100-bf99-11eb-8862-03424ddf95e3.gif)
+
+![CleanShot 2021-05-28 at 09 43 21](https://user-images.githubusercontent.com/18404509/119948575-4137a780-bf99-11eb-93fd-2740787498f1.gif)
 
 From the map, users have the possibility of adding parks and walking routes for others to see. After entering the drawing mode, they can place the park or place multiple points to form a route. Upon saving, they have the option of adding a description which others will be able to see by clicking on the park/walking route on the map.
 
