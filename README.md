@@ -1,6 +1,50 @@
-# SoPra FS21 - Group 02 - Client
+# FriendlyFetch — Client Application
 
-## Getting started with React
+Software Praktikum FS 2021 — Group 2
+
+
+## Project Overview
+
+FriendlyFetch is a community app for dog owners. It allows them to find other dog owners nearby, share information about dog-friendly parks and walking routes on a map, and 
+
+## Technologies
+
+The client application is based on React. Additionally, the following technologies were used:
+
+- [TailwindCSS](https://tailwindcss.com) to speed up styling
+- Google was used as a login provider
+- Google Maps was integrated using the [google-maps-react](https://github.com/fullstackreact/google-maps-react) component
+- The wrapper code for the API client was generated using OpenAPI and imported as an NPM package
+
+
+## High-Level Components
+
+TODO
+
+## Launch & Deployment
+
+TODO
+
+## User Flows
+
+TODO
+
+## Roadmap
+
+TODO
+
+## Authors and Acknowledgement
+
+FriendlyFetch was developed during the course "Software Praktikum" in the spring semester 2021 at Unviersity of Zurich by Ksenia Beloturkina, Céline Salzmann, Benjamin Schneider (Team Lead) and Neha Singh.
+
+We'd also like to think our TA Alain Küng and the other groups who have provided feedback during milestone presentations and the beta testing phase.
+
+
+## License
+
+TODO
+
+
 
 Read and go through those Tutorials, It will make your life easier!
 
