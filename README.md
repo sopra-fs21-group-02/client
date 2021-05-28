@@ -19,15 +19,92 @@ The client application is based on React. Additionally, the following technologi
 
 ## High-Level Components
 
-TODO
+The applications is divided into four main areas: Login, Map, Profile, and Chat. After logging in, navigation between these areas happens through a navigation bar at the bottom of the screen, which is implemented in [TabBar.js](src/views/TabBar.js).
+
+### Login
+
+The login page is implemented in [Login.js](src/components/login/Login.js). It welcomes the user and lets them sign in using their google account.
+
+### Map
+
+After login, existing users are taken to the map. This is implemented in [Map.js](src/components/map/Map.js) and lets users find other users as well as add and find parks and walking routes.
+
+### Profile
+
+New users are taken to their own profile after logging in so they can start by completing it. This is implemented in [Profile.js](src/components/profile/Profile.js). On their profile, users can enter a short bio as well as add their dogs. Additionally, they can add tags indicating to other users what they can offer or are looking for (e.g. bulk-ordering food or going on walks together with other users, dogsitting, etc.).
+
+### Chat
+
+The chat area lets users exchange messages with other users of the application. Its main entry point is the inbox, which shows all existing chat conversations. The inbox is implemented in [Inbox.js](src/components/chat/Inbox.js).
+
+### Routers
+
+The app uses `react-router` to handle client-side routing. The main router is defined in [AppRouter.js](src/components/shared/routers/AppRouter.js), delegating routing for the separate areas of the app to sub-routers.
+
 
 ## Launch & Deployment
 
-TODO
+### Local Setup
 
-## User Flows
+#### `npm install`
 
-TODO
+This has to be done before starting the application for the first time (only once).
+
+#### `npm run dev`
+
+Runs the app in the development mode.<br>
+Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+
+The page will reload if you make edits.<br>
+You will also see any lint errors in the console (use Google Chrome!).
+
+#### `npm run test`
+
+Launches the test runner in the interactive watch mode.<br>
+See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+
+> For macOS user running into an 'fsevents' error: https://github.com/jest-community/vscode-jest/issues/423
+
+
+#### `npm run build`
+
+Builds the app for production to the `build` folder.<br>
+It correctly bundles React in production mode and optimizes the build for the best performance.
+
+The build is minified and the filenames include the hashes.
+
+
+### Deployment
+
+The project is pre-configured to be deployed to [Heroku](https://heroku.com). GitHub actions are set up such that a deployment automatically happens when new code is pushed / merged in to the `master` branch.
+
+
+## Main User Flows
+
+### Loggin In
+
+TODO Screenshots
+
+The user logs in to the app using their google account. After the first time, they are taken to their profile to complete it. On subsequent logins, they are taken to the map.
+
+### Adding Dogs And Tags to Profile
+
+TODO Screenshots
+
+From their own profile, users can add dogs as well as "looking for"- and "offering"-tags to their profile to share this information with other users of the app.
+
+### Starting a Chat Conversation
+
+TODO Screenshots
+
+Users can start a chat conversation with others either from their profile or from a list of all users within the chat interface.
+
+### Adding a Park or walking Route to The Map
+
+TODO Screenshots
+
+From the map, users have the possibility of adding parks and walking routes for others to see. After entering the drawing mode, they can place the park or place multiple points to form a route. Upon saving, they have the option of adding a description which others will be able to see by clicking on the park/walking route on the map.
+
 
 ## Roadmap
 
@@ -43,60 +120,3 @@ We'd also like to think our TA Alain Küng and the other groups who have provide
 ## License
 
 TODO
-
-
-
-Read and go through those Tutorials, It will make your life easier!
-
-- Read the React [Docs](https://reactjs.org/docs/getting-started.html)
-- Do this React [Getting Started](https://reactjs.org/tutorial/tutorial.html) Tutorial (it doesn’t assume any existing React knowledge)
-- Get an Understanding of [CSS](http://localhost:3000) and [HTML](https://www.w3schools.com/html/html_intro.asp)!
-
-Once you have done all of this, in the template there are two main external dependencies that you should look at:
-
-- [styled-components](https://www.styled-components.com/docs)
-  It removes the mapping between components and styles (i.e. external css files). This means that when you're defining your styles, you're actually creating a normal React component, that has your styles attached to it
-* [react-router-dom](https://reacttraining.com/react-router/web/guides/quick-start) Declarative routing for React being a collection of navigational components that compose declaratively with your application. 
-* [react-hooks](https://reactrouter.com/web/api/Hooks) Let's you access the state of the router and perform navigation from inside your components.
-
-
-
-## Prerequisites and Installation
-
-For your local development environment you'll need Node.js >= 8.10. You can download it [here](https://nodejs.org). All other dependencies including React get installed with:
-
-### `npm install`
-
-This has to be done before starting the application for the first time (only once).
-
-### `npm run dev`
-
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console (use Google Chrome!).
-
-### `npm run test`
-
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-> For macOS user running into an 'fsevents' error: https://github.com/jest-community/vscode-jest/issues/423
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-## Learn More
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-
->Thanks to Lucas Pelloni for the template
