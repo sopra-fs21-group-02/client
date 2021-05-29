@@ -247,14 +247,14 @@ class Dog extends React.Component {
         {/* to edit or add */}
         <div className="overflow-auto p-4 flex-1 flex flex-cols">
           {/* attributes of dog: name, breed, date of birth and sex and del dog*/}
-          <div className="flex-grow w-full">
+          <div className="flex-grow w-full ">
             <h2 className="font-bold">NAME</h2>
             <input
               placeholder="Enter the name of your dog here (e.g. Fifi)."
               name="name"
               value={this.state.dog.name}
               onChange={this.handleInputChange}
-              className="w-full placeholder-grey rounded border h-9 p-2"
+              className="w-full placeholder-grey rounded border h-9 p-2 overflow-ellipsis"
             />
             <h2 className="font-bold text-black mt-5">BREED</h2>
             <input

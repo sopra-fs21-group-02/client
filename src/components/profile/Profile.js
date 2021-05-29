@@ -161,7 +161,7 @@ class Profile extends React.Component {
             </div>
             <div className="flex-1">
               <div>
-                <h2 className="font-bold text-black text-2xl">{this.state.user.name}</h2>
+                <h2 className="font-bold text-black text-2xl overflow-ellipsis">{this.state.user.name}</h2>
               </div>
               <div className="mt-1">
                 <StatusIndicator status={this.state.user.status} />
@@ -187,9 +187,8 @@ class Profile extends React.Component {
                 let ageString = DateHelper.getAgeStringFromDateOfBirth(dog.dateOfBirth);
                 let imageUrl = `${getDomain()}/v1/users/${this.state.user.id}/dogs/${dog.id}/image`;
                 return (
-                  <div key={dog.id} className="w-1/2 cursor-pointer" dog={dog}
-                       onClick={() => this.redirectToEditDog(dog.id)}>
-                    <Dog name={dog.name} sex={dog.sex} breed={dog.breed} age={ageString} imageUrl={imageUrl} editable={true}></Dog>
+                  <div key={dog.id} className="w-1/2 truncate" dog={dog}>
+                    <Dog name={dog.name} sex={dog.sex} breed={dog.breed} age={ageString} imageUrl={imageUrl} editable={true} click={() => this.redirectToEditDog(dog.id)}></Dog>
                   </div>
                 )
               })}

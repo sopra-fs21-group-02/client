@@ -172,7 +172,7 @@ class Conversation extends React.Component {
           </div>
         </div>
 
-        <div className="overflow-auto flex-1 pb-4" id="messagesContainer">
+        <div className="overflow-auto flex-1 pb-4 truncate" id="messagesContainer">
           {this.state.messages.map(message => {
             let float = message.receiver.id === this.state.participant.id ? 
                         'float-right' : 
