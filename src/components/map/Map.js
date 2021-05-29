@@ -14,6 +14,7 @@ import DrawingControlBar from '../../views/map/DrawingControlBar';
 import SaveDrawingEntityDialog from './SaveDrawingEntityDialog';
 import LoadingContainer from "../../views/design/LoadingContainer";
 
+import GeoCoordinateHelper from '../../helpers/GeoCoordinateHelper';
 
 const style = {
   width: '100%',
@@ -421,11 +422,23 @@ class Map extends React.Component {
     }
 
     let drawnPathCoords = undefined;
-    if (this.state.drawnPathPoints !== undefined) {
+    let pathLength = 0;
+    if (this.state.drawnPathPoints !== undefined && this.state.drawnPathPoints.length > 0) {
       drawnPathCoords = this.state.drawnPathPoints.map((p) => {
         return { lat: p.latitude, lng: p.longitude };
-      })
+      });
+
+      if (drawnPathCoords.length > 1) {
+        for (let i = 1; i < drawnPathCoords.length; ++i) {
+          let a = drawnPathCoords[i-1];
+          let b = drawnPathCoords[i];
+          pathLength += GeoCoordinateHelper.getDistanceFromLatLonInKm(a.lat, a.lng, b.lat, b.lng);
+        }
+      }
     }
+
+    let isPathLengthValid = (pathLength <= 10);
+    let saveCursor = isPathLengthValid ? "cursor-pointer" : "cursor-not-allowed";
 
     return (
       <div className="flex flex-col h-screen  w-full">
@@ -570,9 +583,9 @@ class Map extends React.Component {
                   Cancel
                   </h1>
                 <h1
-                  className="cursor-pointer hover:font-bold text-xl align-middle pt-2.5 w-1/2 font-semibold"
-                  onClick={() => this.setState({ showSaveDialog: true })}>
-                  Save
+                  className={"hover:font-bold text-xl align-middle pt-2.5 w-1/2 font-semibold " + saveCursor}
+                  onClick={isPathLengthValid ? () => this.setState({ showSaveDialog: true }) : undefined}>
+                  {isPathLengthValid ? "Save" : "Path too long"}
                   </h1>
               </div>
             }

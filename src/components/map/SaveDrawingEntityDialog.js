@@ -22,6 +22,7 @@ class SaveDrawingEntityDialog extends React.Component {
     } else {
       throw("Unsupported entity type " + this.props.entityType)
     }
+
     return (
       <div className="h-screen w-full flex-col flex">
         <div className="flex-none z-50">
