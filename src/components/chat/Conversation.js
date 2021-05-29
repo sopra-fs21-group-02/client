@@ -6,6 +6,7 @@ import RecenterMap from '../../views/design/icons/RecenterMap';
 import GetApiClient from '../../helpers/ApiClientFactory';
 import { ConversationsApi, UsersApi } from 'sopra-fs21-group-02-dogs-api';
 import Users from '../../views/design/icons/Users';
+import LoadingContainer from "../../views/design/LoadingContainer";
 
 class Conversation extends React.Component {
   constructor(props) {
@@ -151,7 +152,7 @@ class Conversation extends React.Component {
 
   render() {
     if (!this.state.isLoaded) {
-      return (<div>Not loaded!</div>);
+      return (<LoadingContainer loadingtext={"Loading..."}/>);
     }
 
     return (

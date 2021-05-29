@@ -12,76 +12,7 @@ import GetApiClient from '../../helpers/ApiClientFactory';
 import Users from '../../views/design/icons/Users';
 import DrawingControlBar from '../../views/map/DrawingControlBar';
 import SaveDrawingEntityDialog from './SaveDrawingEntityDialog';
-import AuthHelper from '../../helpers/AuthHelper';
-
-const Dog1 = styled.div`
-  position: absolute;
-  left: center;
-  top: center;
-  transform: rotate(45deg) translateX(80px) rotate(-45deg);
-  animation: orbit2 3s linear infinite; 
-  animation-delay: -2s;
-  @keyframes orbit2 {
-\tfrom  {  transform: rotate(-180deg) translateX(80px) rotate(180deg); }
-\tto   {  transform: rotate(180deg) translateX(80px) rotate(-180deg); }
-`
-
-const Dog2 = styled.div`
-  position: absolute;
-  left: center;
-  top: center;
-  transform: rotate(90deg) translateX(80px) rotate(-90deg);
-  animation: orbit2 3s linear infinite; 
-  animation-delay: -1s;
-  @keyframes orbit2 {
-\tfrom  {  transform: rotate(0deg) translateX(80px) rotate(0deg); }
-\tto   {  transform: rotate(360deg) translateX(80px) rotate(-360deg); }
-`
-
-const Dog3 = styled.div`
-  position: absolute;
-  left: center;
-  top: center;
-  transform: rotate(45deg) translateX(80px) rotate(-45deg);
-  animation: orbit2 3s linear infinite; 
-  @keyframes orbit2 {
-\tfrom  {  transform: rotate(-180deg) translateX(80px) rotate(180deg); }
-\tto   {  transform: rotate(180deg) translateX(80px) rotate(-180deg); }
-`
-const Dog4 = styled.div`
-  position: absolute;
-  left: center;
-  top: center;
-  transform: rotate(90deg) translateX(80px) rotate(-90deg);
-  animation: orbit2 3s linear infinite; 
-  animation-delay: -3.5s;
-  @keyframes orbit2 {
-\tfrom  {  transform: rotate(0deg) translateX(80px) rotate(0deg); }
-\tto   {  transform: rotate(360deg) translateX(80px) rotate(-360deg); }
-`
-const Dog5 = styled.div`
-  position: absolute;
-  left: center;
-  top: center;
-  transform: rotate(90deg) translateX(80px) rotate(-90deg);
-  animation: orbit2 3s linear infinite; 
-  animation-delay: -4.5s;
-  @keyframes orbit2 {
-\tfrom  {  transform: rotate(0deg) translateX(80px) rotate(0deg); }
-\tto   {  transform: rotate(360deg) translateX(80px) rotate(-360deg); }
-`
-
-const Dog6 = styled.div`
-  position: absolute;
-  left: center;
-  top: center;
-  transform: rotate(45deg) translateX(80px) rotate(-45deg);
-  animation: orbit2 3s linear infinite; 
-  animation-delay: -5.5s;
-  @keyframes orbit2 {
-\tfrom  {  transform: rotate(-180deg) translateX(80px) rotate(180deg); }
-\tto   {  transform: rotate(180deg) translateX(80px) rotate(-180deg); }
-`
+import LoadingContainer from "../../views/design/LoadingContainer";
 
 
 const style = {
@@ -116,6 +47,10 @@ class Map extends React.Component {
     this.getParksCallback = this.getParksCallback.bind(this);
     this.getPathsCallback = this.getPathsCallback.bind(this);
     this.onParkPathDetailClose = this.onParkPathDetailClose.bind(this);
+    this.deletePark = this.deletePark.bind(this);
+    this.deleteParkCallback = this.deleteParkCallback.bind(this);
+    this.deletePathCallback = this.deletePathCallback.bind(this);
+    this.onCurrentUserClick = this.onCurrentUserClick.bind(this);
 
     this.updatePosition = undefined;
 
@@ -136,6 +71,10 @@ class Map extends React.Component {
       drawnParkLocation: undefined,
       drawnPathPoints: undefined,
       showSaveDialog: false,
+      showDeleteButton: false,
+      loggedInUserId: null,
+      creatorId: null,
+      currentClickedEntityId: null,
       currentClickedEntityType: undefined,
       currentClickedEntityDescription: undefined
     };
@@ -152,25 +91,38 @@ class Map extends React.Component {
     let url = "/map/users/" + marker.id.toString();
     this.props.history.push(url);
   };
+  onCurrentUserClick = (props, marker, e) => {
+    alert("This is you!")
+  };
 
   onPathClick(props, path, e) {
     this.setState({
       currentClickedEntityType: "PATH",
-      currentClickedEntityDescription: props.description || "No description"
+      currentClickedEntityDescription: props.description || "No description",
+      creatorId: props.creatorId,
+      currentClickedEntityId: props.id
     });
+    console.log(props.id)
   }
 
   onParkClick(props, park, e) {
     this.setState({
       currentClickedEntityType: "PARK",
-      currentClickedEntityDescription: props.description || "No description"
+      currentClickedEntityDescription: props.description || "No description",
+      creatorId: props.creatorId,
+      currentClickedEntityId: props.id
     });
+    console.log(park)
+    console.log(props.creatorId)
+
   }
 
   onParkPathDetailClose() {
     this.setState({
       currentClickedEntityType: undefined,
-      currentClickedEntityDescription: undefined
+      currentClickedEntityDescription: undefined,
+      creatorId: null,
+      currentClickedEntityId: null
     });
   }
 
@@ -194,6 +146,7 @@ class Map extends React.Component {
       longitude: position.coords.longitude
     };
     let userId = localStorage.getItem('loggedInUserId');
+    this.setState({loggedInUserId : userId})
     api.updateLocation(userId, loc, this.locationPutCallback)
   }
 
@@ -275,7 +228,7 @@ class Map extends React.Component {
     
     usersApi.getAllUsers(this.getUsersCallback);
     parksApi.getParks(visibleAreaFilter, this.getParksCallback);
-    pathsApi.pathsGet(visibleAreaFilter, this.getPathsCallback);
+    pathsApi.getPaths(visibleAreaFilter, this.getPathsCallback);
   }
 
   getUsersCallback(error, data, response) {
@@ -307,7 +260,6 @@ class Map extends React.Component {
       console.error(error);
       return;
     }
-
     console.log(response.body);
 
     this.setState({
@@ -405,6 +357,47 @@ class Map extends React.Component {
     window.location.reload(false);
   }
 
+  deletePark(parkId) {
+    let client = GetApiClient();
+    let parksApi = new ParksApi(client);
+    parksApi.deletePark(parkId, this.deleteParkCallback)
+  }
+
+  deleteParkCallback(error, data, response) {
+    if (error) {
+      console.error(error);
+      return;
+    }
+    let parks = [...this.state.parks];
+    let index = parks.indexOf(this.state.currentClickedEntityId);
+    parks.splice(index,1)
+    this.setState({
+      parks: parks,
+    });
+    this.onParkPathDetailClose()
+  }
+
+  deletePath(pathId) {
+    let client = GetApiClient();
+    let pathsApi = new PathsApi(client);
+    pathsApi.deletePath(pathId, this.deletePathCallback)
+  }
+
+  deletePathCallback(error, data, response) {
+    if (error) {
+      console.error(error);
+      return;
+    }
+    let paths = [...this.state.paths];
+    let index = paths.indexOf(this.state.currentClickedEntityId);
+    paths.splice(index,1)
+    this.setState({
+      paths: paths,
+    });
+    this.onParkPathDetailClose()
+  }
+
+
   render() {
     let showOverlay = this.state.currentLocation.lat === null ||
       this.state.currentLocation.lng === null ||
@@ -437,20 +430,7 @@ class Map extends React.Component {
           <div className="flex flex-col h-screen w-full">
             <div className="flex-1">
               {showOverlay ?
-                <div className="space-x-4 z-50 w-screen h-full flex-1 overflow-auto p-4 z-10 bg-gray-100" disabled={true}>
-                  <div className="flex h-16 mt-20 flex-col items-center flex justify-center  text-4xl" >
-                    <Dog1 >🐩</Dog1>
-                    <Dog2>🐕‍🦺</Dog2>
-                    <Dog3>🐕</Dog3>
-                    <Dog4>🦮</Dog4>
-                    <Dog5>🐆</Dog5>
-                    <Dog6>🐅</Dog6>
-
-
-                    <span className="flex">🦴 </span>
-                  </div>
-                  <h1 className=" p-16 mx-auto text-center font-semibold text-2xl mt-5 text-gray-900 ">{overlayText}</h1>
-                </div>
+                <LoadingContainer loadingtext={overlayText} ></LoadingContainer>
                 :
                 <div className="z-50 w-screen h-full flex-1">
                   <GoogleMap
@@ -501,6 +481,7 @@ class Map extends React.Component {
                           <Marker 
                             id={park.id}
                             key={park.id}
+                            creatorId={park.creatorId}
                             position={{ lat: park.coordinate.latitude, lng: park.coordinate.longitude }}
                             description={park.description}
                             onClick={this.onParkClick}
@@ -515,6 +496,7 @@ class Map extends React.Component {
                           <Polyline
                             id={path.id}
                             key={path.id}
+                            creatorId={path.creatorId}
                             path={coords}
                             description={path.description}
                             strokeColor="#27AE60"
@@ -546,7 +528,8 @@ class Map extends React.Component {
                         title={"Your current location"}
                         key={this.id}
                         position={{lat: this.state.currentLocation.lat, lng: this.state.currentLocation.lng}}
-                        icon={"/images/map/marker-own.png"}/>
+                        icon={"/images/map/marker-own.png"}
+                        onClick={this.onCurrentUserClick}/>
 
                       {!this.state.isInDrawingMode &&
                         <div>
@@ -599,11 +582,34 @@ class Map extends React.Component {
             saveCallback={(description) => this.saveDrawingEntity(description)}/>
         }
 
+        {/*show delete button for path / park when the park / path was created by the user itself */}
+        {console.log(this.state.path, this.state.parks)}
         {this.state.currentClickedEntityType && this.state.currentClickedEntityDescription &&
-          <div className="absolute inset-x-0 bottom-0 z-50 bg-gray-300 p-4">
+          <div className="absolute inset-x-0 bottom-0 z-50 bg-gray-300 p-2 ">
             <span className="font-bold absolute right-4 top-4 cursor-pointer" onClick={this.onParkPathDetailClose}>x</span>
-            <h2 className="text-xl font-bold">{this.state.currentClickedEntityType == "PARK" ? "Park" : "Walking Route"}</h2>
+            <h2 className="text-xl font-bold">{this.state.currentClickedEntityType === "PARK" ? "Park" : "Walking Route"}</h2>
             <p className="text-md mb-8">{this.state.currentClickedEntityDescription}</p>
+            {(parseInt(this.state.loggedInUserId) === parseInt(this.state.creatorId)) && this.state.currentClickedEntityType === "PARK"?
+              <span className={"cursor-pointer hover:bg-gray-500 flex-grow inline-block p-3 mr-2 absolute mt-1 left-1 top-14 bg-gray-400 text-xs rounded-md cursor-pointer"}
+                   onClick={(e) => {
+                     if (window.confirm('Are you sure you want to remove the park from the map?')) this.deletePark(this.state.currentClickedEntityId)
+                   }}>
+                <h3 className="font-bold leading-none">
+                  Delete Park
+                  <span className="text-gray-700 ml-1"> x</span>
+                </h3>
+              </span>
+              : (parseInt(this.state.loggedInUserId) === parseInt(this.state.creatorId)) && this.state.currentClickedEntityType === "PATH"?
+                <span className={"cursor-pointer hover:bg-gray-500 flex-grow inline-block p-3 mr-2 absolute mt-1 left-1 top-14 bg-gray-400 text-xs rounded-md cursor-pointer"}
+                      onClick={(e) => {
+                        if (window.confirm('Are you sure you want to remove the path from the map?')) this.deletePath(this.state.currentClickedEntityId)
+                      }}>
+                <h3 className="font-bold leading-none">
+                  Delete Path
+                  <span className="text-gray-700 ml-1"> x</span>
+                </h3>
+              </span>
+                : null}
           </div>
         }
       </div>

@@ -8,6 +8,7 @@ import Tag from "../../views/profile/Tag";
 import GetApiClient from "../../helpers/ApiClientFactory";
 import {DogsApi, UsersApi, TagsApi} from "sopra-fs21-group-02-dogs-api";
 import { getDomain } from "../../helpers/getDomain";
+import LoadingContainer from "../../views/design/LoadingContainer";
 
 
 class Profile extends React.Component {
@@ -144,8 +145,7 @@ class Profile extends React.Component {
   render() {
     if (this.state.user === undefined){
       return(
-        <h2>Loading ...</h2>
-      )
+        <LoadingContainer loadingtext={"Loading ..."}/>      )
     }
     return (
       <div className="h-screen w-full flex flex-col">
@@ -187,8 +187,8 @@ class Profile extends React.Component {
                 let ageString = DateHelper.getAgeStringFromDateOfBirth(dog.dateOfBirth);
                 let imageUrl = `${getDomain()}/v1/users/${this.state.user.id}/dogs/${dog.id}/image`;
                 return (
-                  <div key={dog.id} className="w-1/2 " dog={dog}
-                    onClick={() => this.redirectToEditDog(dog.id)}>
+                  <div key={dog.id} className="w-1/2 cursor-pointer" dog={dog}
+                       onClick={() => this.redirectToEditDog(dog.id)}>
                     <Dog name={dog.name} sex={dog.sex} breed={dog.breed} age={ageString} imageUrl={imageUrl} editable={true}></Dog>
                   </div>
                 )

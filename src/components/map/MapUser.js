@@ -164,7 +164,7 @@ class MapUser extends React.Component {
               <Button onClick={this.redirectToProfile}>View Full Profile</Button>
             </div>
           </div>
-          <div className="flex-1 overflow-auto mb-12">
+          <div className="flex-1 overflow-auto">
           <GoogleMap
               google={this.props.google}
               zoom={18}
@@ -174,7 +174,6 @@ class MapUser extends React.Component {
               mapTypeControl={false}
               streetViewControl={false}
               onReady={(mapProps, map) => this._mapLoaded(mapProps, map)}
-              style={mapStyle}
           >
 
             <Marker
@@ -188,7 +187,7 @@ class MapUser extends React.Component {
           </GoogleMap>
         </div>
 
-        <div className="absolute inset-x-0 bottom-0">
+        <div className="flex-none">
           <TabBar active="map" />
         </div>
       </div>
