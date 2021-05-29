@@ -82,6 +82,11 @@ class Map extends React.Component {
 
   _mapLoaded(mapProps, map) {
     this.map = map;
+
+    if(this.state.currentLocation.lat && this.state.currentLocation.lng) {
+      map.panTo(this.state.currentLocation);
+    }
+
     map.setOptions({
       styles: mapStyle
     })
@@ -133,10 +138,8 @@ class Map extends React.Component {
       isLocationDenied: false
     });
 
-    if (this.state.isMapDragged === false) {
-      if (this.map) {
-        this.map.panTo(this.state.currentLocation);
-      }
+    if (this.state.isMapDragged === false && this.map) {
+      this.map.panTo(this.state.currentLocation);
     }
 
     let client = GetApiClient();
