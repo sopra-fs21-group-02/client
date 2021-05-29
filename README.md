@@ -116,7 +116,11 @@ From the map, users have the possibility of adding parks and walking routes for 
 
 ## Roadmap
 
-TODO
+Some features that we would like to see implemented next:
+
+- Users can review parks and paths so they can share their opinion with others
+- Users can track health information about their dogs in the app (weight, vaccinations, ...)
+
 
 ## Authors and Acknowledgement
 
@@ -127,4 +131,4 @@ We'd also like to thank our TA Alain Küng and the other groups who have provide
 
 ## License
 
-TODO
+This project is licensed under a dog-friendly modification of the MIT license. Please check the LICENSE file for detailed terms.
