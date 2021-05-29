@@ -8,6 +8,7 @@ import Tag from "../../views/profile/Tag";
 import GetApiClient from "../../helpers/ApiClientFactory";
 import {DogsApi, UsersApi, TagsApi} from "sopra-fs21-group-02-dogs-api";
 import { getDomain } from "../../helpers/getDomain";
+import LoadingContainer from "../../views/design/LoadingContainer";
 
 
 class Profile extends React.Component {
@@ -144,8 +145,7 @@ class Profile extends React.Component {
   render() {
     if (this.state.user === undefined){
       return(
-        <h2>Loading ...</h2>
-      )
+        <LoadingContainer loadingtext={"Loading ..."}/>      )
     }
     return (
       <div className="h-screen w-full flex flex-col">
@@ -161,7 +161,7 @@ class Profile extends React.Component {
             </div>
             <div className="flex-1">
               <div>
-                <h2 className="font-bold text-black text-2xl">{this.state.user.name}</h2>
+                <h2 className="font-bold text-black text-2xl overflow-ellipsis">{this.state.user.name}</h2>
               </div>
               <div className="mt-1">
                 <StatusIndicator status={this.state.user.status} />
@@ -187,9 +187,8 @@ class Profile extends React.Component {
                 let ageString = DateHelper.getAgeStringFromDateOfBirth(dog.dateOfBirth);
                 let imageUrl = `${getDomain()}/v1/users/${this.state.user.id}/dogs/${dog.id}/image`;
                 return (
-                  <div key={dog.id} className="w-1/2 " dog={dog}
-                    onClick={() => this.redirectToEditDog(dog.id)}>
-                    <Dog name={dog.name} sex={dog.sex} breed={dog.breed} age={ageString} imageUrl={imageUrl} editable={true}></Dog>
+                  <div key={dog.id} className="w-1/2 truncate" dog={dog}>
+                    <Dog name={dog.name} sex={dog.sex} breed={dog.breed} age={ageString} imageUrl={imageUrl} editable={true} click={() => this.redirectToEditDog(dog.id)}></Dog>
                   </div>
                 )
               })}
@@ -220,7 +219,7 @@ class Profile extends React.Component {
                   )
                 }
               })}
-              <button className="flex mb-4 cursor-pointer w-18 h-10 mt-2 place-items-center inline-block p-2 bg-gray-300 rounded-md"
+              <button className="flex mb-4 cursor-pointer w-18 h-10 mt-1 place-items-center inline-block p-2 bg-gray-300 rounded-md"
                    onClick={() => this.redirectToAddTag("offering")}>
                 <div className="flex-none mr-2">
                   <svg width="12" height="28" viewBox="0 0 18 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -244,7 +243,7 @@ class Profile extends React.Component {
                 )
               }
             })}
-            <div className="flex mb-4 cursor-pointer w-18 h-10 mt-2 place-items-center inline-block p-2 bg-gray-300 rounded-md"
+            <div className="flex mb-4 cursor-pointer w-18 h-10 mt-1 place-items-center inline-block p-2 bg-gray-300 rounded-md"
                  onClick={() => this.redirectToAddTag("looking")}>
               <div className="flex-none mr-2">
                 <svg width="12" height="28" viewBox="0 0 18 20" fill="none" xmlns="http://www.w3.org/2000/svg">

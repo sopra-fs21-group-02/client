@@ -117,7 +117,7 @@ TODO
 
 FriendlyFetch was developed during the course "Software Praktikum" in the spring semester 2021 at Unviersity of Zurich by Ksenia Beloturkina, Céline Salzmann, Benjamin Schneider (Team Lead) and Neha Singh.
 
-We'd also like to think our TA Alain Küng and the other groups who have provided feedback during milestone presentations and the beta testing phase.
+We'd also like to thank our TA Alain Küng and the other groups who have provided feedback during milestone presentations and the beta testing phase.
 
 
 ## License

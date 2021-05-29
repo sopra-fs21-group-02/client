@@ -6,6 +6,7 @@ import RecenterMap from '../../views/design/icons/RecenterMap';
 import GetApiClient from '../../helpers/ApiClientFactory';
 import { ConversationsApi, UsersApi } from 'sopra-fs21-group-02-dogs-api';
 import Users from '../../views/design/icons/Users';
+import LoadingContainer from "../../views/design/LoadingContainer";
 
 class Conversation extends React.Component {
   constructor(props) {
@@ -145,14 +146,13 @@ class Conversation extends React.Component {
 
   redirectToProfile() {
     let url = "/users/chat/" + this.state.participant.id.toString();
-    console.log(url)
 
     this.props.history.push(url);
   }
 
   render() {
     if (!this.state.isLoaded) {
-      return (<div>Not loaded!</div>);
+      return (<LoadingContainer loadingtext={"Loading..."}/>);
     }
 
     return (
@@ -172,7 +172,7 @@ class Conversation extends React.Component {
           </div>
         </div>
 
-        <div className="overflow-auto flex-1 pb-4" id="messagesContainer">
+        <div className="overflow-auto flex-1 pb-4 truncate" id="messagesContainer">
           {this.state.messages.map(message => {
             let float = message.receiver.id === this.state.participant.id ? 
                         'float-right' : 

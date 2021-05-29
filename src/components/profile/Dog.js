@@ -195,7 +195,7 @@ class Dog extends React.Component {
   }
 
   render() {
-    let container = "cursor-pointer hover:bg-gray-400 flex-grow inline-block p-3 mr-2 bg-gray-300 text-xs rounded-md";
+    let container = "cursor-pointer hover:bg-gray-400 flex-grow inline-block p-3 mr-2 mb-2 bg-gray-300 text-xs rounded-md";
     let containerMale = container;
     if (this.state.active === "MALE") {
       containerMale += " bg-gray-400";
@@ -222,16 +222,16 @@ class Dog extends React.Component {
       imageUrl = URL.createObjectURL(this.state.newImage);
     }
 
-    var dtToday = new Date();
-    var month = dtToday.getMonth() + 1;
-    var day = dtToday.getDate();
-    var year = dtToday.getFullYear();
+    let dtToday = new Date();
+    let month = dtToday.getMonth() + 1;
+    let day = dtToday.getDate();
+    let year = dtToday.getFullYear();
     if(month < 10)
         month = '0' + month.toString();
     if(day < 10)
         day = '0' + day.toString();
-    
-    var maxDate = year + '-' + month + '-' + day;
+
+    let maxDate = year + '-' + month + '-' + day;
 
     return (
       <div className="h-screen w-full flex-col flex">
@@ -245,16 +245,16 @@ class Dog extends React.Component {
         </div>
 
         {/* to edit or add */}
-        <div className="overflow-auto p-4 flex flex-cols">
+        <div className="overflow-auto p-4 flex-1 flex flex-cols">
           {/* attributes of dog: name, breed, date of birth and sex and del dog*/}
-          <div className="flex-grow w-full">
+          <div className="flex-grow w-full ">
             <h2 className="font-bold">NAME</h2>
             <input
               placeholder="Enter the name of your dog here (e.g. Fifi)."
               name="name"
               value={this.state.dog.name}
               onChange={this.handleInputChange}
-              className="w-full placeholder-grey rounded border h-9 p-2"
+              className="w-full placeholder-grey rounded border h-9 p-2 overflow-ellipsis"
             />
             <h2 className="font-bold text-black mt-5">BREED</h2>
             <input

@@ -69,8 +69,8 @@ class Inbox extends React.Component {
 
   render() {
     return (
-      <div>
-        <div className="h-12 bg-gray-300 text-center">
+      <div className="flex flex-col h-screen">
+        <div className="h-12 bg-gray-300 text-center flex-none">
           <h1 className="font-bold text-xl align-middle pt-2.5">Chat</h1>
           <div className="absolute top-3 right-4 cursor-pointer" onClick={() => this.redirectToUserList()}>
             <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -79,31 +79,32 @@ class Inbox extends React.Component {
           </div>
         </div>
 
-        {this.state.conversations.map((conversation) => {
-          let lastMessage = conversation.lastMessage;
-          let userId = localStorage.getItem('loggedInUserId');
-          let otherUser = null;
-          if (lastMessage.sender && lastMessage.receiver) {
-            otherUser = conversation.lastMessage.sender.id == userId ?
-                          conversation.lastMessage.receiver :
-                          conversation.lastMessage.sender;
-          }
-          
-          return (
-            <InboxConversationItem 
-              key={otherUser ? otherUser.id : Math.random().toString}
-              userImageURL={otherUser ? otherUser.profilePicture : ""}
-              userName={otherUser ? otherUser.name : "Deleted User"}
-              userStatus={otherUser ? otherUser.status : "OFFLINE"}
-              lastMessageText={lastMessage.message}
-              lastMessageTimestamp={lastMessage.timeStamp}
-              unread={lastMessage.unread && (lastMessage.sender && lastMessage.sender.id != userId)}
-              onClick={otherUser ? () => this.redirectToConversation(otherUser.id) : () => {alert('Conversation is no longer available')}}
-            />
-          )
-        })}
+        <div className="overflow-auto flex-1">
+          {this.state.conversations.map((conversation) => {
+            let lastMessage = conversation.lastMessage;
+            let userId = localStorage.getItem('loggedInUserId');
+            let otherUser = null;
+            if (lastMessage.sender && lastMessage.receiver) {
+              otherUser = conversation.lastMessage.sender.id == userId ?
+                            conversation.lastMessage.receiver :
+                            conversation.lastMessage.sender;
+            }
 
-        <div className="absolute inset-x-0 bottom-0">
+            return (
+              <InboxConversationItem
+                key={otherUser ? otherUser.id : Math.random().toString}
+                userImageURL={otherUser ? otherUser.profilePicture : ""}
+                userName={otherUser ? otherUser.name : "Deleted User"}
+                userStatus={otherUser ? otherUser.status : "OFFLINE"}
+                lastMessageText={lastMessage.message}
+                lastMessageTimestamp={lastMessage.timeStamp}
+                unread={lastMessage.unread && (lastMessage.sender && lastMessage.sender.id != userId)}
+                onClick={otherUser ? () => this.redirectToConversation(otherUser.id) : () => {alert('Conversation is no longer available')}}
+              />
+            )
+          })}
+        </div>
+        <div className="flex-none">
           <TabBar active="chat" />
         </div>
       </div>

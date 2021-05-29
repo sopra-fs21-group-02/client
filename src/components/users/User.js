@@ -168,7 +168,7 @@ class User extends React.Component {
             <h2 className="ml-0 font-bold text-lg mt-4">LOOKING FOR</h2>
             <div className="flex flex-wrap">
               {this.state.user.tags.map(tag => {
-                if (tag.tagType === "LOOKING") {
+                if (tag.tagType === "LOOKINGFOR") {
                   return (
                     <div key={tag.id} className="w-flex mt-2 ">
                       <Tag name={tag.name}></Tag>
