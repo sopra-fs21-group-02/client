@@ -417,9 +417,7 @@ class Map extends React.Component {
       overlayText = "Your browser does not support location tracking."
     }
 
-    if (this.state.isInDrawingMode) {
-      style.height = 'calc(100% - 48px)';
-    }
+    style.height = this.state.isInDrawingMode ? 'calc(100% - 48px)' : '100%';
 
     let drawnPathCoords = undefined;
     let pathLength = 0;
