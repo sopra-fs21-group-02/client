@@ -6,7 +6,12 @@ Software Praktikum FS 2021 — Group 2
 
 ## Project Overview
 
-FriendlyFetch is a community app for dog owners. It allows them to find other dog owners nearby, share information about dog-friendly parks and walking routes on a map, and 
+FriendlyFetch is a community app for dog owners. It allows them to find and talk to other dog owners nearby, share information about dog-friendly parks and walking routes on a map, and indicate what they are looking for from others or have to offer to the community.
+
+## Requirements
+
+When testing, please note that the application is optimized for portrait-orientation and smartphone screen sizes. Additionally, the external login via google requires third-party cookies to be allowed in order to function as intended.
+
 
 ## Technologies
 
