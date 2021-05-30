@@ -369,7 +369,8 @@ class Map extends React.Component {
       return;
     }
     let parks = [...this.state.parks];
-    let index = parks.indexOf(this.state.currentClickedEntityId);
+    let index = parks.findIndex(p => p.id === this.state.currentClickedEntityId)
+    // let index = parks.indexOf(this.state.currentClickedEntityId);
     parks.splice(index,1)
     this.setState({
       parks: parks,
@@ -389,7 +390,8 @@ class Map extends React.Component {
       return;
     }
     let paths = [...this.state.paths];
-    let index = paths.indexOf(this.state.currentClickedEntityId);
+    // let index = paths.indexOf(this.state.currentClickedEntityId);
+    let index = paths.findIndex(p => p.id === this.state.currentClickedEntityId)
     paths.splice(index,1)
     this.setState({
       paths: paths,
