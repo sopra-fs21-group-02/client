@@ -35,9 +35,13 @@ The login page is implemented in [Login.js](src/components/login/Login.js). It w
 
 After login, existing users are taken to the map. This is implemented in [Map.js](src/components/map/Map.js) and lets users find other users as well as add and find parks and walking routes.
 
-### Profile
+### Own Profile
 
 New users are taken to their own profile after logging in so they can start by completing it. This is implemented in [Profile.js](src/components/profile/Profile.js). On their profile, users can enter a short bio as well as add their dogs. Additionally, they can add tags indicating to other users what they can offer or are looking for (e.g. bulk-ordering food or going on walks together with other users, dogsitting, etc.).
+
+### Other Profiles
+
+Users can view other users' profiles in two distinct locations. The short profile including a small map is implemented in [MapUser.js](src/components/map/MapUser.js), and is what is opened when the user clicks on another user from the map. From there and chat conversations, they can also view the full profile which includes the "looking for" and "offering" tags the user has indicated. This is implemented in [User.js](src/components/users/User.js)
 
 ### Chat
 
