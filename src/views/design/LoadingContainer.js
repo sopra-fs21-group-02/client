@@ -73,8 +73,8 @@ const Dog6 = styled.div`
 class LoadingContainer extends React.Component {
 
   render() {
-    return(<div className="space-x-4 z-50 w-screen h-full flex-1 overflow-auto p-4 z-10 bg-gray-100" disabled={true}>
-      <div className="flex h-16 mt-20 flex-col items-center flex justify-center  text-4xl" >
+    return(<div className="space-x-4 z-50 w-screen h-full flex-1 overflow-auto p-4 z-10" disabled={true}>
+      <div className="flex h-16 mt-20 flex-col items-center flex justify-center text-4xl" >
         <Dog1 >🐩</Dog1>
         <Dog2>🐕‍🦺</Dog2>
         <Dog3>🐕</Dog3>
