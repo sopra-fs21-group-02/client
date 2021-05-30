@@ -432,10 +432,13 @@ class Map extends React.Component {
     }
 
     let isPathLengthValid = (pathLength <= 10);
-    let saveCursor = isPathLengthValid ? "cursor-pointer" : "cursor-not-allowed";
 
     let isOwnerOfClickedEntity = this.state.currentClickedEntityType && 
       parseInt(this.state.loggedInUserId) === parseInt(this.state.creatorId);
+
+    let hasEntityBeenDrawn = (this.state.drawingModeEntityType === "PARK" && this.state.drawnParkLocation !== undefined) ||
+                                (this.state.drawingModeEntityType === "PATH" && this.state.drawnPathPoints.length > 1);
+    let saveCursor = (isPathLengthValid && hasEntityBeenDrawn) ? "cursor-pointer" : "cursor-not-allowed";
 
     return (
       <div className="flex flex-col h-screen  w-full">
@@ -451,7 +454,7 @@ class Map extends React.Component {
                     style={style}
                     containerStyle={containerStyle}
                     center={this.state.center}
-                    initialCenter={{ lat: 47.380391912642196, lng: 8.536707613815768}} // Zurich
+                    initialCenter={{ lat: 47.380391912642196, lng: 8.536707613815768}}
                     zoom={this.state.mapZoom}
                     fullscreenControl={false}
                     mapTypeControl={true}
@@ -582,7 +585,7 @@ class Map extends React.Component {
                   </h1>
                 <h1
                   className={"hover:font-bold text-xl align-middle pt-2.5 w-1/2 font-semibold " + saveCursor}
-                  onClick={isPathLengthValid ? () => this.setState({ showSaveDialog: true }) : undefined}>
+                  onClick={(isPathLengthValid && hasEntityBeenDrawn) ? () => this.setState({ showSaveDialog: true }) : undefined}>
                   {isPathLengthValid ? "Save" : "Path too long"}
                   </h1>
               </div>
