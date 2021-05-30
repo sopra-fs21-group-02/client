@@ -216,7 +216,6 @@ class Map extends React.Component {
     let pathsApi = new PathsApi(client);
     let parksApi = new ParksApi(client);
 
-    // TODO: Remove area filters?
     let visibleAreaFilter = {
       visibleArea: [
         { latitude: -180, longitude: -90 },
@@ -248,8 +247,6 @@ class Map extends React.Component {
       return;
     }
 
-    console.log(response.body);
-
     this.setState({
       parks: response.body
     });
@@ -260,7 +257,6 @@ class Map extends React.Component {
       console.error(error);
       return;
     }
-    console.log(response.body);
 
     this.setState({
       paths: response.body
@@ -439,9 +435,18 @@ class Map extends React.Component {
     let hasEntityBeenDrawn = (this.state.drawingModeEntityType === "PARK" && this.state.drawnParkLocation !== undefined) ||
                                 (this.state.drawingModeEntityType === "PATH" && this.state.drawnPathPoints.length > 1);
     let saveCursor = (isPathLengthValid && hasEntityBeenDrawn) ? "cursor-pointer" : "cursor-not-allowed";
+    let showClickNotice = (this.state.drawingModeEntityType === "PATH" && this.state.drawnPathPoints.length < 2) ||
+                            (this.state.drawingModeEntityType === "PARK" && this.state.drawnParkLocation === undefined);
 
     return (
       <div className="flex flex-col h-screen  w-full">
+        {showClickNotice &&
+          <div className="h-12 absolute top-0 inset-x-0 bg-yellow-300 z-50 text-center align-middle">          
+            <h1 className="h-12 text-xl align-middle pt-2.5">
+              {this.state.drawingModeEntityType === "PARK" ? "Please click to place your park" : "Please click at least two points"}
+            </h1>
+          </div>
+        }
         {!this.state.showSaveDialog &&
           <div className="flex flex-col h-screen w-full">
             <div className="flex-1">
@@ -483,7 +488,6 @@ class Map extends React.Component {
                           name={user.name}
                           id={user.id}
                           key={user.id}
-                          // TODO: Handle case where user doesn't have a latestLocation (yet)...
                           position={{lat: userLocation.latitude, lng: userLocation.longitude}}
                           onClick={this.onMarkerClick}
                           icon={iconUrl}/>
@@ -508,7 +512,6 @@ class Map extends React.Component {
                       {/* Show paths */}
                       {this.state.paths.map((path, id) => {
                         let coords = path.listOfCoordinates.map(c => {return { lat: c.latitude, lng: c.longitude }});
-                        console.log(path.id);
                         return (
                           <Polyline
                             id={path.id}
@@ -577,7 +580,7 @@ class Map extends React.Component {
             }
 
             {this.state.isInDrawingMode &&
-              <div className="h-12 bg-gray-300 absolute inset-x-0 bottom-0 text-center flex">
+              <div className="bg-gray-300 absolute inset-x-0 bottom-0 text-center flex h-12">
                 <h1
                   className="cursor-pointer hover:font-bold text-xl align-middle pt-2.5 w-1/2"
                   onClick={() => this.exitDrawingMode()}>

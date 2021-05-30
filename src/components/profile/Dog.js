@@ -44,7 +44,6 @@ class Dog extends React.Component {
   componentDidMount() {
     this.inputRef.current.focus();
     let routeId = this.props.match.params.dogId;
-    console.log(routeId)
     if (routeId === "new") { // New dog
       this.setState({
         dog: {
@@ -91,7 +90,6 @@ class Dog extends React.Component {
   }
 
   saveDog() {
-    console.log("clicked")
     if (this.state.alreadyClicked === true){
       alert("You already clicked the save button.")
       return;
@@ -113,7 +111,6 @@ class Dog extends React.Component {
       return;
     }
 
-    console.log(this.state.name)
     if (this.state.dog.name.length >= 255 ){
       alert("Please enter a shorter name")
       this.setState({alreadyClicked: false})
@@ -165,7 +162,6 @@ class Dog extends React.Component {
   }
 
   apiCallback(error, data, response){
-    console.log("callback has been called")
     if(error){
       console.error(error);
       return;
@@ -192,21 +188,17 @@ class Dog extends React.Component {
     this.setState(prevState => {
       let dog = Object.assign({}, prevState.dog);
       dog[event.target.name] = event.target.value;
-      console.log(this.state.dog)
       return { dog };
     })
   }
 
-  //TODO adapt method once API is integrated
   saveSex(sex) {
     this.setState(prevState => {
       let dog = Object.assign({}, prevState.dog);
       dog.sex = sex;
-      console.log(this.state.dog)
       return { dog };
     })
     this.setState({ active: sex })
-    console.log(this.state.dog)
   }
 
   render() {

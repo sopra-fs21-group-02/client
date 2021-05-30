@@ -29,16 +29,6 @@ class AppRouter extends React.Component {
               </SignedOutGuard>
             )}
           />
-          <Route
-            path="/sign-out"
-            render={() => (
-              <SignedInGuard>
-                {/* TODO: Log out the user here! */}
-                {alert("Logged out!")}
-                <Redirect to={"/"}></Redirect>
-              </SignedInGuard>
-            )}
-          />
 
           {/* Subrouter for Users area */}
           <Route
