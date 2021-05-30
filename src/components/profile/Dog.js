@@ -99,14 +99,29 @@ class Dog extends React.Component {
     this.setState({alreadyClicked: true})
     if (!this.state.dog.sex || !this.state.dog.name || !this.state.dog.breed || !this.state.dog.dateOfBirth) {
       alert("Please enter all attributes of your dog. Name, breed, date of birth and sex");
+      this.setState({alreadyClicked: false})
       return;
     }
     if (!this.checkDate()) {
       alert("Please enter a correct birth date (format JJJJ-MM-DD)");
+      this.setState({alreadyClicked: false})
       return;
     }
     if (!this.checkImage()) {
       alert("Please select a valid picture (jpg, gif, tif, or png)");
+      this.setState({alreadyClicked: false})
+      return;
+    }
+
+    console.log(this.state.name)
+    if (this.state.dog.name.length >= 255 ){
+      alert("Please enter a shorter name")
+      this.setState({alreadyClicked: false})
+      return;
+      }
+    if (this.state.dog.breed.length >= 255 ){
+      alert("Please enter a shorter breed name")
+      this.setState({alreadyClicked: false})
       return;
     }
 
@@ -252,6 +267,7 @@ class Dog extends React.Component {
             <input
               placeholder="Enter the name of your dog here (e.g. Fifi)."
               name="name"
+              maxLength={255}
               value={this.state.dog.name}
               onChange={this.handleInputChange}
               className="w-full placeholder-grey rounded border h-9 p-2 overflow-ellipsis"
@@ -260,6 +276,7 @@ class Dog extends React.Component {
             <input
               placeholder="Enter the breed of your dog here (e.g. Dalmatian)."
               name="breed"
+              maxLength={255}
               value={this.state.dog.breed}
               onChange={this.handleInputChange}
               className="w-full placeholder-grey rounded border h-9 p-2"
