@@ -177,7 +177,7 @@ class Conversation extends React.Component {
             let float = message.receiver.id === this.state.participant.id ? 
                         'float-right' : 
                         'float-left';
-            let msgClass = "p-2 m-2 mb-0 truncate bg-gray-200 rounded-lg w-5/6 " + float;
+            let msgClass = "p-2 m-2 mb-0 bg-gray-200 rounded-lg w-5/6 " + float;
             return (
               <div className={msgClass} key={message.id}>
                 <p>{message.message}</p>
