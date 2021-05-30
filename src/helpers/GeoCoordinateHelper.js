@@ -18,7 +18,6 @@ class GeoCoordinateHelper {
         navigator.geolocation.getCurrentPosition(callback);
     }
     else{
-        console.log("else ")
         throw "you did not allow your location. Please allow it to use the app"
     }
   }

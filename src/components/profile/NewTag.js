@@ -107,7 +107,6 @@ class NewTag extends React.Component {
   }
 
   apiCallback(error, data, response) {
-    console.log("add callback has been called")
     if (error) {
       console.error(error);
     }

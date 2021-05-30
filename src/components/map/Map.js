@@ -247,8 +247,6 @@ class Map extends React.Component {
       return;
     }
 
-    console.log(response.body);
-
     this.setState({
       parks: response.body
     });
@@ -259,7 +257,6 @@ class Map extends React.Component {
       console.error(error);
       return;
     }
-    console.log(response.body);
 
     this.setState({
       paths: response.body
@@ -506,7 +503,6 @@ class Map extends React.Component {
                       {/* Show paths */}
                       {this.state.paths.map((path, id) => {
                         let coords = path.listOfCoordinates.map(c => {return { lat: c.latitude, lng: c.longitude }});
-                        console.log(path.id);
                         return (
                           <Polyline
                             id={path.id}
