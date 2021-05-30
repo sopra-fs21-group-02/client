@@ -172,7 +172,7 @@ class Conversation extends React.Component {
           </div>
         </div>
 
-        <div className="overflow-auto flex-1 pb-4 truncate" id="messagesContainer">
+        <div className="overflow-auto flex-1 pb-4" id="messagesContainer">
           {this.state.messages.map(message => {
             let float = message.receiver.id === this.state.participant.id ? 
                         'float-right' : 
@@ -180,7 +180,7 @@ class Conversation extends React.Component {
             let msgClass = "p-2 m-2 mb-0 bg-gray-200 rounded-lg w-5/6 " + float;
             return (
               <div className={msgClass} key={message.id}>
-                <p>{message.message}</p>
+                <p className="overflow-ellipsis overflow-hidden">{message.message}</p>
               </div>
             )
           })}
