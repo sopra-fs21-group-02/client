@@ -108,7 +108,6 @@ class Map extends React.Component {
       creatorId: props.creatorId,
       currentClickedEntityId: props.id
     });
-    console.log(props.id)
   }
 
   onParkClick(props, park, e) {
@@ -118,9 +117,6 @@ class Map extends React.Component {
       creatorId: props.creatorId,
       currentClickedEntityId: props.id
     });
-    console.log(park)
-    console.log(props.creatorId)
-
   }
 
   onParkPathDetailClose() {
@@ -438,6 +434,9 @@ class Map extends React.Component {
     let isPathLengthValid = (pathLength <= 10);
     let saveCursor = isPathLengthValid ? "cursor-pointer" : "cursor-not-allowed";
 
+    let isOwnerOfClickedEntity = this.state.currentClickedEntityType && 
+      parseInt(this.state.loggedInUserId) === parseInt(this.state.creatorId);
+
     return (
       <div className="flex flex-col h-screen  w-full">
         {!this.state.showSaveDialog &&
@@ -506,11 +505,12 @@ class Map extends React.Component {
                       {/* Show paths */}
                       {this.state.paths.map((path, id) => {
                         let coords = path.listOfCoordinates.map(c => {return { lat: c.latitude, lng: c.longitude }});
+                        console.log(path.id);
                         return (
                           <Polyline
                             id={path.id}
                             key={path.id}
-                            creatorId={path.creatorId}
+                            creatorId={path.creator.id}
                             path={coords}
                             description={path.description}
                             strokeColor="#27AE60"
@@ -598,33 +598,44 @@ class Map extends React.Component {
         }
 
         {/*show delete button for path / park when the park / path was created by the user itself */}
-        {console.log(this.state.path, this.state.parks)}
-        {this.state.currentClickedEntityType && this.state.currentClickedEntityDescription &&
+        {this.state.currentClickedEntityType && (this.state.currentClickedEntityDescription || isOwnerOfClickedEntity) &&
           <div className="absolute inset-x-0 bottom-0 z-50 bg-gray-300 p-2 ">
             <span className="font-bold absolute right-4 top-4 cursor-pointer" onClick={this.onParkPathDetailClose}>x</span>
             <h2 className="text-xl font-bold">{this.state.currentClickedEntityType === "PARK" ? "Park" : "Walking Route"}</h2>
-            <p className="text-md mb-8">{this.state.currentClickedEntityDescription}</p>
-            {(parseInt(this.state.loggedInUserId) === parseInt(this.state.creatorId)) && this.state.currentClickedEntityType === "PARK"?
-              <span className={"cursor-pointer hover:bg-gray-500 flex-grow inline-block p-3 mr-2 absolute mt-1 left-1 top-14 bg-gray-400 text-xs rounded-md cursor-pointer"}
-                   onClick={(e) => {
-                     if (window.confirm('Are you sure you want to remove the park from the map?')) this.deletePark(this.state.currentClickedEntityId)
-                   }}>
-                <h3 className="font-bold leading-none">
-                  Delete Park
-                  <span className="text-gray-700 ml-1"> x</span>
-                </h3>
-              </span>
-              : (parseInt(this.state.loggedInUserId) === parseInt(this.state.creatorId)) && this.state.currentClickedEntityType === "PATH"?
-                <span className={"cursor-pointer hover:bg-gray-500 flex-grow inline-block p-3 mr-2 absolute mt-1 left-1 top-14 bg-gray-400 text-xs rounded-md cursor-pointer"}
-                      onClick={(e) => {
-                        if (window.confirm('Are you sure you want to remove the path from the map?')) this.deletePath(this.state.currentClickedEntityId)
-                      }}>
-                <h3 className="font-bold leading-none">
-                  Delete Path
-                  <span className="text-gray-700 ml-1"> x</span>
-                </h3>
-              </span>
-                : null}
+            {this.state.currentClickedEntityDescription &&
+              <p className="text-md mb-8">{this.state.currentClickedEntityDescription}</p>
+            }
+            {isOwnerOfClickedEntity &&
+              <div>
+                {this.state.currentClickedEntityType === "PARK" &&
+                  <span>
+                    <span className={"cursor-pointer hover:bg-gray-500 flex-grow inline-block p-3 mr-2 absolute mt-1 left-1 top-14 bg-gray-400 text-xs rounded-md cursor-pointer"}
+                       onClick={(e) => {
+                         if (window.confirm('Are you sure you want to remove the park from the map?')) this.deletePark(this.state.currentClickedEntityId)
+                       }}>
+                      <h3 className="font-bold leading-none">
+                        Delete Park
+                        <span className="text-gray-700 ml-1"> x</span>
+                      </h3>
+                    </span>  
+                  </span>
+                }
+
+                {this.state.currentClickedEntityType === "PATH" &&
+                  <span>
+                    <span className={"cursor-pointer hover:bg-gray-500 flex-grow inline-block p-3 mr-2 absolute mt-1 left-1 top-14 bg-gray-400 text-xs rounded-md cursor-pointer"}
+                          onClick={(e) => {
+                            if (window.confirm('Are you sure you want to remove the path from the map?')) this.deletePath(this.state.currentClickedEntityId)
+                          }}>
+                      <h3 className="font-bold leading-none">
+                        Delete Path
+                        <span className="text-gray-700 ml-1"> x</span>
+                      </h3>
+                    </span>
+                  </span>
+                }
+              </div>
+            }
           </div>
         }
       </div>
