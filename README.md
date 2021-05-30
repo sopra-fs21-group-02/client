@@ -10,7 +10,7 @@ FriendlyFetch is a community app for dog owners. It allows them to find and talk
 
 ## Requirements
 
-When testing, please note that the application is optimized for portrait-orientation and smartphone screen sizes. Additionally, the external login via google requires third-party cookies to be allowed in order to function as intended.
+When testing, please note that the application is optimized for portrait-orientation and smartphone screen sizes. Additionally, the external login via google requires third-party cookies to be allowed in order to function as intended. Due to a limitation of safari for setting cross-domain cookies, the user is signed out on refreshing the page (this works in chrome). We did not address this, since it would have required registering a domain or finding a cumbersome workaround with an IFrame.
 
 
 ## Technologies
