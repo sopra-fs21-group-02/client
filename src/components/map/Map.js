@@ -216,7 +216,6 @@ class Map extends React.Component {
     let pathsApi = new PathsApi(client);
     let parksApi = new ParksApi(client);
 
-    // TODO: Remove area filters?
     let visibleAreaFilter = {
       visibleArea: [
         { latitude: -180, longitude: -90 },
@@ -483,7 +482,6 @@ class Map extends React.Component {
                           name={user.name}
                           id={user.id}
                           key={user.id}
-                          // TODO: Handle case where user doesn't have a latestLocation (yet)...
                           position={{lat: userLocation.latitude, lng: userLocation.longitude}}
                           onClick={this.onMarkerClick}
                           icon={iconUrl}/>
