@@ -510,7 +510,7 @@ class Map extends React.Component {
                           <Polyline
                             id={path.id}
                             key={path.id}
-                            creatorId={path.creator.id}
+                            creatorId={path.creator ? path.creator.id : undefined}
                             path={coords}
                             description={path.description}
                             strokeColor="#27AE60"
